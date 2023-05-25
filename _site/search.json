@@ -1,0 +1,79 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Nic Crane, PhD",
+    "section": "",
+    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast, currently working at Voltron Data on Apache Arrow."
+  },
+  {
+    "objectID": "talks.html",
+    "href": "talks.html",
+    "title": "Talks",
+    "section": "",
+    "text": "What they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "talks/rstudioconf2019/index.html",
+    "href": "talks/rstudioconf2019/index.html",
+    "title": "The future’s Shiny: Pioneering genomic medicine in R",
+    "section": "",
+    "text": "Shiny's expanding capabilities are rapidly transforming how it is used in an enterprise. This talk details the creation of a large-scale application, supporting hundreds of concurrent users, making use of the future and promises packages. The 100,000 genomes project is an ambitious exercise that follows on from the Human Genome Project - aiming to put the UK at the forefront of genomic medicine, with the NHS as the first health service in the world to offer precision medicine to patients with rare diseases and cancer. Data is at the heart of this project; not only the outputs of the genomic sequencing, but vast amounts of metadata used to track progress against the 100,000 genome target and the status and path of each case through the sample tracking pipeline. In order to make this data readily available to stakeholders, Shiny was used to create an application containing multiple interactive dashboards. A scaled-up version of the app is being rolled out in early 2019 to a much larger audience to support the National Genomics Informatics Service, with the challenge of creating a complex app capable of supporting so many users without grinding to a halt. In this talk, I will explain why Shiny was the obvious technology choice for this task, and discuss the design decisions which enabled this project’s success."
+  },
+  {
+    "objectID": "talks/rstudioconf2022/index.html",
+    "href": "talks/rstudioconf2022/index.html",
+    "title": "What they forgot to teach you about becoming an open source contributor",
+    "section": "",
+    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
+  },
+  {
+    "objectID": "posts/r-examples/index.html",
+    "href": "posts/r-examples/index.html",
+    "title": "R package documentation - what makes a good example?",
+    "section": "",
+    "text": "I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to the examples included as part of function documentation. In my experience, the best way for me to achieve rapid familiarity with an R function I haven’t worked with before, or understand how to use a function about which I already understand the basics, is by having example code that I can run. In the book ‘R Packages’, Hadley Wickham remarks that examples are “a very important part of the documentation because many people look at the examples first” and rOpenSci recommend that each of a package’s exported functions should be accompanied by examples.\nIn this blog post, I will explore the things that I believe make for good function examples in documentation, focussing mainly on R."
+  },
+  {
+    "objectID": "posts/r-examples/index.html#what-good-looks-like-in-r",
+    "href": "posts/r-examples/index.html#what-good-looks-like-in-r",
+    "title": "R package documentation - what makes a good example?",
+    "section": "What good looks like in R",
+    "text": "What good looks like in R\nI asked people on Twitter for their opinions of good R package documentation in general, and Jonathan Sinclair highlighted the ‘examples’ section from dplyr::case_when, the beginning of which is shown below.\n\n\n\n(image from: https://rdrr.io/cran/dplyr/man/case_when.html)\n\n\nI think Jonathan is spot on in his assessment. To paraphrase, the highlights for him are:\n\nthere is next to no prose or intro\nthere are plenty of comments, as needed, to explain the examples\nthere is a variety of different examples\nthere are examples of what not to do.\n\nThis kind of documentation appeals to my skim-reading self. If I’m trying to accomplish a task, sometimes I just want to run some code and see what happens to get an intuitive feel for what a function does. While I am fully prepared to slow down and read the rest of the documentation, a “quick win” motivates me to invest the additional effort. It tells me that the developers of this code have prioritised making things easy to understand and that the time I am investing will pay off.\nI’ve been skimming through the documentation of some tidyverse and related packages - as I consider many of these to be well documented and easy to read. Here are some things I’ve observed which I think one can do to make function examples look great:\n\ninclude the most basic usage of a function\nuse very simple toy datasets or standard in-built datasets\ndemonstrate non-obvious behaviours of a function\ndemonstrate different parameter values/combinations where relevant\ndemonstrate any unusual parameters\ndemonstrate on different objects if appropriate\nsometimes go beyond the use of an individual function to include common mini-workflows\ngroup documentation and examples for similar functions together\ninclude examples that may lead to unexpected results\ninclude comments to explain examples\nno examples for deprecated functions to discourage their use\nno unpredictable external dependencies - rvest::html_text manually creates HTML to demonstrate capabilities rather than scraping an external site\nsometimes showing the output when it adds to the example (e.g. tidyselect::starts_with() and many other examples from that package)\nexamples should be correct and run without error (unless intended to show erroneous output)"
+  },
+  {
+    "objectID": "posts/r-examples/index.html#what-bad-looks-like-in-r",
+    "href": "posts/r-examples/index.html#what-bad-looks-like-in-r",
+    "title": "R package documentation - what makes a good example?",
+    "section": "What bad looks like in R",
+    "text": "What bad looks like in R\nI am not intending to “name and shame” any package authors who haven’t included examples for their functions. It may have been overlooked, there may be plenty of explanation elsewhere, or they may have felt that the code was not sufficiently complex to require examples. It might be true that it seems obvious what a function does, but that makes assumptions about the users of your code that might not hold."
+  },
+  {
+    "objectID": "posts/r-examples/index.html#what-good-looks-like-generally",
+    "href": "posts/r-examples/index.html#what-good-looks-like-generally",
+    "title": "R package documentation - what makes a good example?",
+    "section": "What good looks like generally",
+    "text": "What good looks like generally\nWhen reading through examples, one thing that struck me is that when I’m looking at Python docs in Jupyter Notebook (press shift + tab), I also see the output of running the examples.\n\nSimilarly, both examples and outputs are shown in the official docs for some libraries, for example, pandas.\n\nI think this is a helpful feature - less effort is required to see how a function works.\nIn R function documentation, runnable code is often included, but in most cases needs to be manually run by the reader to see the output. I’m torn as to whether this is good or not. On the one hand, it encourages you to run the code and get a more tangible feel for what it does and saves valuable space in the Viewer window in RStudio. On the other hand, it adds an extra manual step to your workflow and lengthens the time until that precious “quick win” of enlightenment when exploring a new function.\nYou get a lot closer to this on the website rdrr.io, which indexes R package documentation and allows examples to be run inline. However, examples are run one after the other without the original code being displayed. So in the case of multiple examples, you have to match up the output to which example it is from.\n\n\n\n(from https://rdrr.io/cran/dplyr/man/case_when.html)\n\n\nSome packages include output as comments within their examples. For instance, the tidyselect package; here’s an example from tidyselect::all_of:\n\n\n\n(from https://rdrr.io/cran/tidyselect/man/all_of.html)\n\n\nAll that said, while the ability to see the output of examples is a nice-to-have, I don’t think it’s essential to good function documentation. With any piece of documentation, it’s necessary to consider the purpose; at a minimum, examples exist to tell the reader how to use a function, and you don’t need to see the output to do that.\nSince I first wrote this, I found out that it is possible to easily run examples from help files by selecting them and then hitting Ctrl+Enter, the same as running code in the Source pane.\n\nAnother thing I wasn’t aware of - pkgdown - commonly used to automatically render docs for packages run examples and displays the output underneath. Check out the example below from the Arrow pkgdown site.\n\nIn conclusion, good examples make functions easier to work with and help readers of your documentation gain a deeper understanding of how a function works. While any examples are better than no examples, you can give your users the best chance of success when using your code with careful thought about the content of your documentation.\nHuge thanks to everyone who responded to my Twitter thread, and to my fantastic colleague Joris Van den Bossche for reading the first draft of this, and our conversations about how things are done in R and Python."
+  },
+  {
+    "objectID": "projects/test/index.html",
+    "href": "projects/test/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "R package documentation - what makes a good example?\n\n\n\n\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Welcome To My Blog\n\n\n\n\n\n\nTristan O’Malley\n\n\nMay 22, 2023\n\n\n\n\n\n\n\n\nNo matching items"
+  }
+]

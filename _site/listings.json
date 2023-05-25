@@ -1,0 +1,21 @@
+[
+  {
+    "listing": "/talks.html",
+    "items": [
+      "/talks/rstudioconf2022/index.html",
+      "/talks/rstudioconf2019/index.html"
+    ]
+  },
+  {
+    "listing": "/blog.html",
+    "items": [
+      "/posts/r-examples/index.html"
+    ]
+  },
+  {
+    "listing": "/projects.html",
+    "items": [
+      "/projects/test/index.html"
+    ]
+  }
+]

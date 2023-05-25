@@ -1,0 +1,4 @@
+- source: project
+  netlify:
+    - id: 6ff08106-5b77-443e-8ffb-acaceb7467c8
+      url: 'https://gleeful-semolina-ef102e.netlify.app'

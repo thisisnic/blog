@@ -1,0 +1,19 @@
+project:
+  type: website
+
+website:
+  title: "Nic Crane"
+  navbar:
+    right:
+      - text: About
+        file: index.qmd
+      - talks.qmd
+#      - projects.qmd # add this in when content more substantial
+      - blog.qmd
+format:
+  html:
+    theme: sandstone
+    css: styles.css
+
+editor: visual
+

@@ -1,0 +1,21 @@
+---
+title: "Nic Crane, PhD"
+image: nic_crane.png
+about:
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://www.linkedin.com/in/nicolacrane/
+    - icon: github
+      text: Github
+      href: https://github.com/thisisnic
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/nic_crane
+    - icon: mastodon
+      text: Mastodon
+      href: https://fosstodon.org/@nic_crane
+---
+
+Hi, I'm Nic! I'm a data scientist, software engineer, and R enthusiast, currently working at Voltron Data on Apache Arrow.
