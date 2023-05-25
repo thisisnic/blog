@@ -3,6 +3,8 @@ project:
 
 website:
   title: "Nic Crane"
+  site-url: https://niccrane.com
+  description: "Nic Crane's Blog"
   navbar:
     right:
       - text: About
@@ -10,6 +12,8 @@ website:
       - talks.qmd
 #      - projects.qmd # add this in when content more substantial
       - blog.qmd
+      - icon: rss
+        href: blog.xml
 format:
   html:
     theme: sandstone

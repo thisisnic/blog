@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss  xmlns:atom="http://www.w3.org/2005/Atom" 
+      xmlns:media="http://search.yahoo.com/mrss/" 
+      xmlns:content="http://purl.org/rss/1.0/modules/content/" 
+      xmlns:dc="http://purl.org/dc/elements/1.1/" 
+      version="2.0">
+<channel>
+<title>Nic Crane</title>
+<link>https://niccrane.com/blog.html</link>
+<atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
+<description>Nic Crane&#39;s Blog</description>
+<generator>quarto-1.3.353</generator>
+<lastBuildDate>Mon, 17 May 2021 22:00:00 GMT</lastBuildDate>
+<item>
+  <title>R package documentation - what makes a good example?</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/r-examples/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to the examples included as part of function documentation. In my experience, the best way for me to achieve rapid familiarity with an R function I haven’t worked with before, or understand how to use a function about which I already understand the basics, is by having example code that I can run. In the book ‘R Packages’, Hadley Wickham <a href="https://r-pkgs.org/man.html#man-functions">remarks</a> that examples are “a very important part of the documentation because many people look at the examples first” and <a href="https://devguide.ropensci.org/building.html#general">rOpenSci recommend</a> that each of a package’s exported functions should be accompanied by examples.</p>
+<p>In this blog post, I will explore the things that I believe make for good function examples in documentation, focussing mainly on R.</p>
+<section id="what-good-looks-like-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="what-good-looks-like-in-r">What good looks like in R</h2>
+<p>I asked people on Twitter for their opinions of good R package documentation in general, and <a href="https://twitter.com/_J_sinclair/status/1391677551261650945">Jonathan Sinclair</a> highlighted the ‘examples’ section from <a href="https://rdrr.io/cran/dplyr/man/case_when.html"><code>dplyr::case_when</code></a>, the beginning of which is shown below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/r-examples/dplyr_case_when.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">(image from: https://rdrr.io/cran/dplyr/man/case_when.html)</figcaption>
+</figure>
+</div>
+<p>I think Jonathan is spot on in his assessment. To paraphrase, the highlights for him are:</p>
+<ul>
+<li>there is next to no prose or intro</li>
+<li>there are plenty of comments, as needed, to explain the examples</li>
+<li>there is a variety of different examples</li>
+<li>there are examples of what <em>not</em> to do.</li>
+</ul>
+<p>This kind of documentation appeals to my skim-reading self. If I’m trying to accomplish a task, sometimes I just want to run some code and see what happens to get an intuitive feel for what a function does. While I am fully prepared to slow down and read the rest of the documentation, a “quick win” motivates me to invest the additional effort. It tells me that the developers of this code have prioritised making things easy to understand and that the time I am investing will pay off.</p>
+<p>I’ve been skimming through the documentation of some tidyverse and related packages - as I consider many of these to be well documented and easy to read. Here are some things I’ve observed which I think one can do to make function examples look great:</p>
+<ul>
+<li>include the most basic usage of a function</li>
+<li>use very simple toy datasets or standard in-built datasets</li>
+<li>demonstrate non-obvious behaviours of a function</li>
+<li>demonstrate different parameter values/combinations where relevant</li>
+<li>demonstrate any unusual parameters</li>
+<li>demonstrate on different objects if appropriate</li>
+<li>sometimes go beyond the use of an individual function to include common mini-workflows</li>
+<li>group documentation and examples for similar functions together</li>
+<li>include examples that may lead to unexpected results</li>
+<li>include comments to explain examples</li>
+<li>no examples for deprecated functions to discourage their use</li>
+<li>no unpredictable external dependencies - <code>rvest::html_text</code> manually creates HTML to demonstrate capabilities rather than scraping an external site</li>
+<li>sometimes showing the output when it adds to the example (e.g.&nbsp;<code>tidyselect::starts_with()</code> and many other examples from that package)</li>
+<li>examples should be correct and run without error (unless intended to show erroneous output)</li>
+</ul>
+</section>
+<section id="what-bad-looks-like-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="what-bad-looks-like-in-r">What bad looks like in R</h2>
+<p>I am not intending to “name and shame” any package authors who haven’t included examples for their functions. It may have been overlooked, there may be plenty of explanation elsewhere, or they may have felt that the code was not sufficiently complex to require examples. It might be true that it seems obvious what a function does, but that makes assumptions about the users of your code that might not hold.</p>
+</section>
+<section id="what-good-looks-like-generally" class="level2">
+<h2 class="anchored" data-anchor-id="what-good-looks-like-generally">What good looks like generally</h2>
+<p>When reading through examples, one thing that struck me is that when I’m looking at Python docs in Jupyter Notebook (<a href="https://stackoverflow.com/questions/30855169/how-can-i-see-function-arguments-in-ipython-notebook-server-3">press shift + tab</a>), I also see the output of running the examples.</p>
+<p><img src="https://niccrane.com/posts/r-examples/sklearn_docs.png" class="img-fluid"></p>
+<p>Similarly, both examples and outputs are shown in the official docs for some libraries, for example, pandas.</p>
+<p><img src="https://niccrane.com/posts/r-examples/pandas.png" class="img-fluid"></p>
+<p>I think this is a helpful feature - less effort is required to see how a function works.</p>
+<p>In R function documentation, runnable code is often included, but in most cases needs to be manually run by the reader to see the output. I’m torn as to whether this is good or not. On the one hand, it encourages you to run the code and get a more tangible feel for what it does and saves valuable space in the Viewer window in RStudio. On the other hand, it adds an extra manual step to your workflow and lengthens the time until that precious “quick win” of enlightenment when exploring a new function.</p>
+<p>You get a lot closer to this on the website <a href="https://rdrr.io/">rdrr.io</a>, which indexes R package documentation and allows examples to be run inline. However, examples are run one after the other without the original code being displayed. So in the case of multiple examples, you have to match up the output to which example it is from.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/r-examples/rdrr.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">(from https://rdrr.io/cran/dplyr/man/case_when.html)</figcaption>
+</figure>
+</div>
+<p>Some packages include output as comments within their examples. For instance, the <code>tidyselect</code> package; here’s an example from <code>tidyselect::all_of</code>:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/r-examples/tidyselect.png" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">(from https://rdrr.io/cran/tidyselect/man/all_of.html)</figcaption>
+</figure>
+</div>
+<p>All that said, while the ability to see the output of examples is a nice-to-have, I don’t think it’s essential to good function documentation. With any piece of documentation, it’s necessary to consider the purpose; at a minimum, examples exist to tell the reader how to use a function, and you don’t need to see the output to do that.</p>
+<p>Since I first wrote this, I found out that it is possible to easily <a href="https://blog.rstudio.com/2017/09/13/rstudio-v1.1-the-little-things/">run examples from help files by selecting them and then hitting Ctrl+Enter</a>, the same as running code in the Source pane.</p>
+<p><img src="https://niccrane.com/posts/r-examples/execute_help.png" class="img-fluid"></p>
+<p>Another thing I wasn’t aware of - <a href="https://pkgdown.r-lib.org/">pkgdown</a> - commonly used to automatically render docs for packages run examples and displays the output underneath. Check out the example below from the Arrow pkgdown site.</p>
+<p><img src="https://niccrane.com/posts/r-examples/arrow_examples.png" class="img-fluid"></p>
+<p>In conclusion, good examples make functions easier to work with and help readers of your documentation gain a deeper understanding of how a function works. While any examples are better than no examples, you can give your users the best chance of success when using your code with careful thought about the content of your documentation.</p>
+<p>Huge thanks to everyone who responded to my Twitter thread, and to my fantastic colleague <a href="https://twitter.com/jorisvdbossche">Joris Van den Bossche</a> for reading the first draft of this, and our conversations about how things are done in R and Python.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Python</category>
+  <guid>https://niccrane.com/posts/r-examples/index.html</guid>
+  <pubDate>Mon, 17 May 2021 22:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
+</item>
+</channel>
+</rss>
