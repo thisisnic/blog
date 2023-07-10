@@ -10,7 +10,7 @@ website:
       - text: About
         file: index.qmd
       - talks.qmd
-#      - projects.qmd # add this in when content more substantial
+      - projects.qmd
       - blog.qmd
       - icon: rss
         href: blog.xml
