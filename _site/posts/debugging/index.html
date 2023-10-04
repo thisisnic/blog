@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Nic Crane">
+<meta name="dcterms.date" content="2023-10-04">
 
-<title>Nic Crane - Blog</title>
+<title>Nic Crane - Debugging</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,50 +61,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Nic Crane" href="blog.xml"></head>
-
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Nic Crane</span>
     </a>
   </div>
@@ -115,23 +84,23 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
+    <a class="nav-link" href="../../index.html" rel="" target="">
  <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./talks.html" rel="" target="">
+    <a class="nav-link" href="../../talks.html" rel="" target="">
  <span class="menu-text">Talks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./projects.html" rel="" target="">
+    <a class="nav-link" href="../../projects.html" rel="" target="">
  <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./blog.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../../blog.html" rel="" target="">
  <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./blog.xml" rel="" target=""><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../blog.xml" rel="" target=""><i class="bi bi-rss" role="img">
 </i> 
  <span class="menu-text"></span></a>
   </li>  
@@ -145,151 +114,58 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Blog</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Debugging</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nic Crane </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 4, 2023</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(3)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
+<p>As a package maintainer, I’m constantly disappointed when folks mention Arrow bugs they’re aware of but haven’t reported. Not disappointed with the individual in question, but disappointed with the fact that we’re not at the point where we’ve created an environment in which folks are happy to just report bugs immediately. This is not an Arrow-specific problem, and I find myself behaving in exactly the same way with other open source projects. If I’m not entirely sure something is a bug, I’m not going to risk looking foolish publicly by complaining, but the irony of this is that I don’t judge users who make those mistakes with Arrow, as usually it means we need to improve our docs to be more clear, and that in itself is valuable feedback.</p>
+<p>I really love interacting with people who use the package, as without that interaction, development and maintenance can feel like shouting into the void. I like being able to solve problems that make other people’s lives easier, and I thrive off that social energy. I implemented bindings for <code>dplyr::across()</code> because someone commented on Twitter that they’d love to see it as a feature. Last night I got home from a friend’s birthday drinks, saw a <a href="https://stackoverflow.com/questions/77225402/rarrow-reading-double-with-comma-decimal-separator">user question on Stack Overflow which had an easy win</a>, and within an hour had a pull request up which implemented a new function and fixed the particular issue. I am not promising this level of responsiveness in perpetuity, but I’m still at the point where I find this kind of thing exciting and energising.</p>
+<p>One particular bug which has haunted me for the past 6 months, is a particularly irritating one whereby when working with a partitioned CSV dataset in arrow (I’m using lowercase to denote the R package, rather than Arrow the overall project), if the user manually specified a schema, the variable used for partitioning did not appear in the resulting dataset. This is a huge problem IMO - while we can sit here all day talking about the virtues of Parquet, in reality, a lot of our users will be using CSVs, and it’s issues like these that can rule out being able to use arrow at all in some cases.</p>
+<p>When I opened <a href="https://github.com/apache/arrow/issues/34640">the original issue</a> based on <a href="https://github.com/apache/arrow/issues/34589">another user issue</a>, I knew it was important, but felt a bit stuck. It wasn’t immediately obvious to anyone what the source of the error was. I’d assumed it must be a C++ error and flagged it as such, but nobody had taken a look at it, and I’m always hesitant to mindlessly tag folks on issues when I don’t feel like I’ve done the work to investigate (though to be fair, didn’t really know what “the work” should be in this case).</p>
+<p>I’d ended up assuming that this bit of functionality just didn’t work with CSV datasets, and had been working around it, until I was presenting about arrow at <a href="https://www.meetup.com/nyhackr/events/295322075/">New York Open Statistical Programming Meetup</a>, and someone asked about it again. I take 1 user question as representative of 99 other people with the same issue who aren’t being so vocal about it, and felt like it needed to be fixed. I am unashamed to admit that I occasionally have the taste for a bit of melodrama, and publicly declared it to a few of my fellow contributors as “my white whale”, and so set out to find the source, even if it required me to delve deep into the guts of Arrow’s C++ libraries, a task which can often send me down endless rabbit holes and chasing red herrings (this sentence has become quite the nature park…)</p>
+<p>My original exploration didn’t result in much useful - the arrow package does some cool things with R6 objects to binding them to Arrow C++ objects, but accessing the inner properties of these bound objects would mean manually creating print methods for every single one of them, and when you don’t know in which class the problem lies, this becomes, frankly, a massive pain in the arse. I still didn’t have enough to go on to take it to an Arrow C++ contributor and ask for their help, but showing I’d done some of “the work” to at least make an effort myself.</p>
+<p>And then collaborative debugging saved me! I had a catchup with the fantastic Dane Pitkin, and I asked for his help just walking through the problem. Dane’s main contributions to Arrow have been to Python, though he has a ton of previous C++ experience, even if he isn’t a regular contributor to the Arrow C++ library. I walked through the problem with him, and the steps I’d taken so far to try to figure things out, and the fact that I still needed to figure out if the problem was in R or C++. Dane commented that the object bindings we’d been looking at had little surface area for the problem to be in R - most of them were straight-up mappings from the C++ object to an R6 object with no extension. This was my first big clue! I remembered that there’s a bit of <code>open_dataset()</code> where we do some manual reconfiguration of specified options, which involves a whole load of R code - something I’ll come back to later. Dane also suggested I check out Stack Overflow to see if people were complaining about the issue in C++ there. I was sceptical that I’d find anything - lots of these bugs are more often surfaced in the R and Python libraries - but realised that this wasn’t the dead end that I’d thought. It suddenly occurred to me that if I could reproduce the bug in PyArrow, then the problem must lie in the C++ library, but if I couldn’t, then the problem lay in the R code.</p>
+<p>Fifteen minutes later, and I had confirmed it was an R problem. I happened to mention on Slack the problem I was having, steps I’d taken so far to investigate, and potential ideas to look at next, and ended up engaging in a bit more collaborative debugging, this time with the wonderful Dewey Dunnington, who mentioned more disparities between PyArrow and R in terms of how we construct schemas, which put me on the path of testing the schema values at different points in Dataset creation and able to rule that out. At that point, with a smaller problem space to explore, the only logical thing left to look into was the R code which sets up the options for the various Arrow classes, and I ended up spotting the <a href="https://github.com/apache/arrow/pull/37658/files#diff-c4ba5d2ce71a988d61b7d773689979d0be972fd3e717f204b407fc408f6d6955L478-L483">rogue instantiation of CSVReadOptions</a> which just needed to have the partitioning column excluded (it relates to the reading in of the individual files which make up the dataset, and so has no “knowledge” of the partitions, and so previously raised an error as it treated them as an extraneous column).</p>
+<p>One pull request later, and the problem that I’d given myself a week to look at had been solved in less than a day! This is probably one of the most gratifying bugs I’d worked on all year; there was a user with a problem to solve, a bug which had been annoying me for ages, the chance to fall into the puzzle-like aspects of debugging, and some great opportunities for collaboration with folks whose help here I really appreciated. This is one of the things I enjoy most about being a software engineer; this process of starting off feeling entirely clueless about something, and having to work out where I need to be and how I’m going to get there, and then doing it. Actually, in the abstract, that’s probably one of the things I enjoy most about being a human :)</p>
 
 
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="R" data-listing-date-sort="1696374000000" data-listing-file-modified-sort="1696406493767" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
-<div class="thumbnail">
-<p><a href="./posts/debugging/index.html"> <img src="./posts/debugging/ahab.jpg" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/debugging/index.html">
-<h3 class="no-anchor listing-title">
-Debugging
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<a href="./posts/debugging/index.html">
-<div class="listing-description">
-As a package maintainer, I’m constantly disappointed when folks mention Arrow bugs they’re aware of but haven’t reported. Not disappointed with the individual in question…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/debugging/index.html">
-<div class="listing-date">
-Oct 4, 2023
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="R" data-listing-date-sort="1696287600000" data-listing-file-modified-sort="1696408203196" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11">
-<div class="thumbnail">
-<p><a href="./posts/goats/index.html"> <img src="./posts/goats/goats.jpg" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/goats/index.html">
-<h3 class="no-anchor listing-title">
-Three Goats in a Raincoat
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<a href="./posts/goats/index.html">
-<div class="listing-description">
-I am not a fan of the term “imposter syndrome.” It’s a lazy way of ignoring the complex and interconnected, often structural…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/goats/index.html">
-<div class="listing-date">
-Oct 3, 2023
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="R,Python" data-listing-date-sort="1621292400000" data-listing-file-modified-sort="1694001453080" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
-<div class="thumbnail">
-<p><a href="./posts/r-examples/index.html"> <img src="./posts/r-examples/arrow_examples.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/r-examples/index.html">
-<h3 class="no-anchor listing-title">
-R package documentation - what makes a good example?
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
-Python
-</div>
-</div>
-<a href="./posts/r-examples/index.html">
-<div class="listing-description">
-I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/r-examples/index.html">
-<div class="listing-date">
-May 18, 2021
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

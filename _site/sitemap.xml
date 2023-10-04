@@ -2,34 +2,46 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://niccrane.com/index.html</loc>
-    <lastmod>2023-07-10T09:17:35.308Z</lastmod>
+    <lastmod>2023-10-04T08:00:16.820Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/talks.html</loc>
-    <lastmod>2023-07-10T09:17:35.588Z</lastmod>
+    <lastmod>2023-10-04T08:00:18.264Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
-    <lastmod>2023-07-10T09:17:35.808Z</lastmod>
+    <lastmod>2023-10-04T08:00:17.896Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
-    <lastmod>2023-07-10T09:17:36.008Z</lastmod>
+    <lastmod>2023-10-04T08:00:17.608Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/r-examples/index.html</loc>
-    <lastmod>2023-07-10T09:17:36.344Z</lastmod>
+    <lastmod>2023-10-04T08:00:18.656Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/projects/phd/index.html</loc>
-    <lastmod>2023-07-10T09:17:36.568Z</lastmod>
+    <lastmod>2023-10-04T08:00:17.108Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/blog.html</loc>
-    <lastmod>2023-07-10T09:17:36.800Z</lastmod>
+    <lastmod>2023-10-04T08:30:11.560Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/projects.html</loc>
-    <lastmod>2023-07-10T09:17:37.028Z</lastmod>
+    <lastmod>2023-10-04T08:00:17.364Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/debugging/index.html</loc>
+    <lastmod>2023-10-04T08:30:59.485Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/udfs/index.html</loc>
+    <lastmod>2023-10-04T08:00:46.658Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/goats/index.html</loc>
+    <lastmod>2023-10-04T08:30:11.124Z</lastmod>
   </url>
 </urlset>
