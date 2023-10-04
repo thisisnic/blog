@@ -1,0 +1,14 @@
+{
+  "hash": "99836de7a682ccdd8f32ddfaa715b9b2",
+  "result": {
+    "markdown": "---\ntitle: \"User-defined functions in arrow\"\nauthor: \"Nic Crane\"\ndate: \"2021-05-18\"\ncategories: [R]\nimage: \"arrow_examples.png\"\n---\n\n::: {.cell}\n\n```{.r .cell-code}\nlibrary(arrow)\nlibrary(dplyr)\n\nregister_scalar_function(\n  name = \"add_one\",\n  function(context, trip_distance) {\n    trip_distance + 1\n  },\n  in_type = schema(\n    trip_distance = float64()\n  ),\n  out_type = float64(),\n  auto_convert = TRUE\n)\n```\n:::\n\n::: {.cell hash='index_cache/html/unnamed-chunk-2_00566d52603faa28516d703fddb068f7'}\n\n```{.r .cell-code}\nresults <- bench::mark(\n  compute = open_dataset(\"~/data/nyc-taxi\") |>\n    filter(year == 2019, month == 9) |>\n    transmute(x = trip_distance + 1) |>\n    collect(),\n  udf = open_dataset(\"~/data/nyc-taxi\") |>\n    filter(year == 2019, month == 9) |>\n    transmute(x = add_one(trip_distance)) |>\n    collect(),\n  iterations = 10,\n  check = FALSE\n)\n```\n\n::: {.cell-output .cell-output-stderr}\n```\nWarning: Some expressions had a GC in every iteration; so filtering is\ndisabled.\n```\n:::\n:::\n\n::: {.cell}\n\n```{.r .cell-code}\nresults\n```\n\n::: {.cell-output .cell-output-stdout}\n```\n# A tibble: 2 × 6\n  expression      min   median `itr/sec` mem_alloc `gc/sec`\n  <bch:expr> <bch:tm> <bch:tm>     <dbl> <bch:byt>    <dbl>\n1 compute    632.17ms 662.55ms     1.49     6.08MB    0.744\n2 udf           1.36s    1.44s     0.690   53.34MB    7.11 \n```\n:::\n:::\n\nThe time it took when using Arrow's in-built compute function was about hald the time it took using a UDF.  Crucially, there was significantly more memory allocated by R when using the UDF, as well as more garbage collections performed, which leads me to conclude that the UDF is being run after the results have been pulled back into R.\n\n\n\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}

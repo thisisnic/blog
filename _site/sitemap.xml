@@ -1,47 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://niccrane.com/index.html</loc>
-    <lastmod>2023-10-04T08:00:16.820Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks.html</loc>
-    <lastmod>2023-10-04T08:00:18.264Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
-    <lastmod>2023-10-04T08:00:17.896Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
-    <lastmod>2023-10-04T08:00:17.608Z</lastmod>
+    <loc>https://niccrane.com/posts/goats/index.html</loc>
+    <lastmod>2023-10-04T08:39:02.924Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/r-examples/index.html</loc>
-    <lastmod>2023-10-04T08:00:18.656Z</lastmod>
+    <lastmod>2023-10-04T08:35:10.262Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks.html</loc>
+    <lastmod>2023-10-04T08:35:07.982Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
+    <lastmod>2023-10-04T08:35:07.298Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/projects/phd/index.html</loc>
-    <lastmod>2023-10-04T08:00:17.108Z</lastmod>
+    <lastmod>2023-10-04T08:35:06.718Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/blog.html</loc>
-    <lastmod>2023-10-04T08:30:11.560Z</lastmod>
+    <lastmod>2023-10-04T08:35:06.162Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/index.html</loc>
+    <lastmod>2023-10-04T08:35:06.418Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/projects.html</loc>
-    <lastmod>2023-10-04T08:00:17.364Z</lastmod>
+    <lastmod>2023-10-04T08:35:07.042Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
+    <lastmod>2023-10-04T08:35:07.598Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/draft_posts/udfs/index.html</loc>
+    <lastmod>2023-10-04T08:35:09.822Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/debugging/index.html</loc>
-    <lastmod>2023-10-04T08:30:59.485Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts/udfs/index.html</loc>
-    <lastmod>2023-10-04T08:00:46.658Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts/goats/index.html</loc>
-    <lastmod>2023-10-04T08:30:11.124Z</lastmod>
+    <lastmod>2023-10-04T08:35:10.738Z</lastmod>
   </url>
 </urlset>

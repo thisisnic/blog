@@ -146,46 +146,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">User-defined functions in arrow</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">R</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Nic Crane </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">May 18, 2021</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">User-defined functions in arrow</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+  </div>
+  </div>
 
 
 
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nic Crane </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 18, 2021</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
 
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(arrow)</span>
@@ -224,11 +222,13 @@ disabled.</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 2 × 6
-  expression      min   median `itr/sec` mem_alloc `gc/sec`
-  &lt;bch:expr&gt; &lt;bch:tm&gt; &lt;bch:tm&gt;     &lt;dbl&gt; &lt;bch:byt&gt;    &lt;dbl&gt;
-1 compute    632.17ms 662.55ms     1.49     6.08MB    0.744
-2 udf           1.36s    1.44s     0.690   53.34MB    7.11 </code></pre>
+<pre><code># A tibble: 2 × 13
+  expression min        median     `itr/sec` mem_alloc  `gc/sec` n_itr  n_gc
+  &lt;bnch_xpr&gt; &lt;bench_tm&gt; &lt;bench_tm&gt;     &lt;dbl&gt; &lt;bnch_byt&gt;    &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
+1 &lt;language&gt; 0.6321745  0.6625475      1.49   6372712      0.744    10     5
+2 &lt;language&gt; 1.3555642  1.4408504      0.690 55933824      7.11     10   103
+# ℹ 5 more variables: total_time &lt;bench_tm&gt;, result &lt;list&gt;, memory &lt;list&gt;,
+#   time &lt;list&gt;, gc &lt;list&gt;</code></pre>
 </div>
 </div>
 <p>The time it took when using Arrow’s in-built compute function was about hald the time it took using a UDF. Crucially, there was significantly more memory allocated by R when using the UDF, as well as more garbage collections performed, which leads me to conclude that the UDF is being run after the results have been pulled back into R.</p>
