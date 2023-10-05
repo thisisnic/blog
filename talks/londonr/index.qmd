@@ -1,0 +1,11 @@
+---
+title: "Ten Steps To Becoming A Tidyverse Contributor"
+author: "Nic Crane"
+date: "2018-11-27"
+categories: [open-source]
+image: thumbnail.png
+---
+
+A talk about getting involved in open source!
+
+[Slides here](https://github.com/thisisnic/TenStepsToBecomingATidyverseContributor/blob/master/Ten_Steps_to_Becoming_a_Tidyverse_Contributor.pptx.pdf)

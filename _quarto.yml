@@ -9,7 +9,8 @@ website:
     right:
       - text: About
         file: index.qmd
-      - talks.qmd
+      - text: Talks & Workshops
+        file: talks.qmd
       - projects.qmd
       - blog.qmd
       - icon: rss

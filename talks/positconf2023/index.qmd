@@ -1,0 +1,24 @@
+---
+title: "Big Data in R with Arrow"
+author: "Nic Crane"
+date: "2023-09-17"
+categories: [open-source]
+image: thumbnail.png
+---
+
+
+A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023.
+
+[Course homepage](https://posit-conf-2023.github.io/arrow/)
+
+## Overview
+
+Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.
+
+The workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.
+
+This course is for you if you:
+
+- want to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow
+- want to learn about Parquet and other file formats that are powerful alternatives to CSV files
+- want to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow

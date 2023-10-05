@@ -1,0 +1,11 @@
+---
+title: "Efficiently Engineering Bigger Data with Arrow"
+author: "Nic Crane"
+date: "2023-08-29"
+categories: [open-source]
+image: thumbnail.png
+---
+
+{{< video https://www.youtube.com/embed/7AcutG5V2BI >}}
+
+Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I'll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow's functionality, as well as applying data engineering principles to speed things up even more.

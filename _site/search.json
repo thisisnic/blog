@@ -11,7 +11,7 @@
     "href": "posts/goats/index.html#the-tyranny-of-should",
     "title": "Three Goats in a Raincoat",
     "section": "The tyranny of “should”",
-    "text": "The tyranny of “should”\nI’ve spent much of this year suffering from the tyranny of “should” regarding my own knowledge and abilities, in a way that has been verging on ridiculous. A lot of it is the perfect storm of adjusting to new responsibility, the deeply unhelpful way in which my self-image when I was younger was built up around being “smart” and “knowing things”, and a knack for punching above my weight by being good at figuring out just enough about a topic to get shit done. I don’t know every single detail of object orientation in R, but I know enough to be able to create new bindings between C++ objects and R6 classes in the arrow R package and expose their methods via fields and active bindings. Despite having looked it up repeatedly over the past few years, I still cannot recall the difference between how things work with static and shared libraries, but I did manage to fix a bug requiring me to bump the version of the C++ date library that Arrow vendors, via inspecting old pull requests and helpful feedback I received on the PR I submitted.\nIt came to a head at this year’s posit::conf, where I had the privilege of co-teaching a workshop about Arrow with the wonderful Stephanie Hazlitt. We spent months preparing materials and practicing teaching to our laptop screens, but when the event itself rolled around, teaching it to a room just shy of 60 people was a different experience entirely. It was intimidating being in front of a room of eager learners, and any jokey asides I was usually capable of making went out of the window, and I just taught the materials fairly plainly. Subsequent feedback from folks I trust enough to deliver at least some honesty alongside their validation has led me to conclude that the only person who really noticed or cared about this was me. I was doing my old trick of snatching defeat from the jaws of victory, and realised later that my self-expectations were totally unreasonable. While I used to be able to absolutely smash through delivering a well-practiced 2-day “introduction to R” course, and delighted in engaging the folks in the room and showing them what they (and R!) were capable of, it’s 5 years since I last did that on the regular. This was the first time these materials had seen the light of day, and at no less than posit::conf, daunting enough on its own. And honestly, this is all ego. We ran a good workshop, people were engaged, and we wrote some quality reusable materials. Yes, there’s room for improvement, but overall it was solid. Delivery of content is something I can (and will) work on. I’ve applied for The Carpentries instructor training, and have plans to get back into the swing of teaching by running workshops (on Arrow and other topics) at user events."
+    "text": "The tyranny of “should”\nI’ve spent much of this year suffering from the tyranny of “should” regarding my own knowledge and abilities, in a way that has been verging on ridiculous. A lot of it is the perfect storm of adjusting to new responsibility, the deeply unhelpful way in which my self-image when I was younger was built up around being “smart” and “knowing things”, and a knack for punching above my weight by being good at figuring out just enough about a topic to get shit done. I don’t know every single detail of object orientation in R, but I know enough to be able to create new bindings between C++ objects and R6 classes in the arrow R package and expose their methods via fields and active bindings. Despite having looked it up repeatedly over the past few years, I still cannot recall the difference between how things work with static and shared libraries, but I did manage to fix a bug requiring me to bump the version of the C++ date library that Arrow vendors, via inspecting old pull requests and helpful feedback I received on the PR I submitted.\nIt came to a head at this year’s posit::conf, where I had the privilege of co-teaching a workshop about Arrow with the wonderful Stephanie Hazlitt. We spent months preparing materials and practicing teaching to our laptop screens, but when the event itself rolled around, teaching it to a room just shy of 60 people was a different experience entirely. It was intimidating being in front of a room of eager learners, and any jokey asides I was usually capable of making went out of the window, and I just taught the materials fairly plainly, stumbling over my words a bit, and finding the moments of silence in the room as I was teaching pretty awful. Subsequent feedback from folks I trust enough to deliver at least some honesty alongside their validation has led me to conclude that the only person who really noticed or cared about this was me. I was doing my old trick of snatching defeat from the jaws of victory, and realised later that my self-expectations were totally unreasonable. While I used to be able to absolutely smash through delivering a well-practiced 2-day “introduction to R” course, and delighted in engaging the folks in the room and showing them what they (and R!) were capable of, it’s 5 years since I last did that on the regular. This was the first time these materials had seen the light of day, and at no less than posit::conf, daunting enough on its own. And honestly, this is all ego. We ran a good workshop, people were engaged, and we wrote some quality reusable materials. Yes, there’s room for improvement, but overall it was solid. Delivery of content is something I can (and will) work on. I’ve applied for The Carpentries instructor training, and have plans to get back into the swing of teaching by running workshops (on Arrow and other topics) at user events."
   },
   {
     "objectID": "posts/goats/index.html#the-power-of-i-dont-know-but-i-can-find-out",
@@ -79,37 +79,30 @@
   {
     "objectID": "talks.html",
     "href": "talks.html",
-    "title": "Talks",
+    "title": "Talks and Workshops",
     "section": "",
-    "text": "What they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Big Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nSep 17, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "talks/rstudioconf2022/index.html",
-    "href": "talks/rstudioconf2022/index.html",
-    "title": "What they forgot to teach you about becoming an open source contributor",
+    "objectID": "talks/londonr/index.html",
+    "href": "talks/londonr/index.html",
+    "title": "Ten Steps To Becoming A Tidyverse Contributor",
     "section": "",
-    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
+    "text": "A talk about getting involved in open source!\nSlides here"
   },
   {
-    "objectID": "projects/phd/index.html",
-    "href": "projects/phd/index.html",
-    "title": "PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis",
+    "objectID": "talks/positconf2023/index.html",
+    "href": "talks/positconf2023/index.html",
+    "title": "Big Data in R with Arrow",
     "section": "",
-    "text": "Download here: PDF, 2.1MB\nThis thesis focuses on deductive reasoning and how the belief bias effect can be reduced or ameliorated.\nBelief bias is a phenomenon whereby the evaluation of the logical validity of an argument is skewed by the degree to which the reasoner believes the conclusion. There has been little research examining ways of reducing such bias and whether there is some sort of effective intervention which makes people reason more on the basis of logic. Traditional analyses of this data has focussed on simple measures of accuracy, typically deducting the number of incorrect answers from the number of correct answers to give an accuracy score. However, recent theoretical developments have shown that this approach fails to separate reasoning biases and response biases. A reasoning bias, is one which affects individuals’ ability to discriminate between valid and invalid arguments, whereas a response bias is simply the individual’s tendency to give a particular answer, independent of reasoning. A Signal Detection Theory (SDT) approach is used to calculate measures of reasoning accuracy and response bias. These measures are then analysed using mixed effects models.\nChapter 1 gives a general introduction to the topic, and outlines the content of subsequent chapters. In Chapter 2, I review the psychological literature around belief bias, the growth of the use of SDT models, and approaches to reducing bias. Chapter 3 covers the methodology, and includes a a thorough description of the calculation of the SDT measures, and an explanation of the mixed effects models I used to analyse these. Chapter 4 presents an experiment in which the effects of feedback on reducing belief bias is examined. In Chapter 5, the focus shifts in the direction of individual differences, and looks at the effect of different instructions given to participants, and Chapter 6 examines the effects of both feedback and specific training. Chapter 7 provides a general discussion of the implications of the previous three chapters."
+    "text": "A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023.\nCourse homepage"
   },
   {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Debugging\n\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\n\n\nOct 4, 2023\n\n\nNic Crane\n\n\n\n\n\n\n  \n\n\n\n\nThree Goats in a Raincoat\n\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\n\n\nOct 3, 2023\n\n\nNic Crane\n\n\n\n\n\n\n  \n\n\n\n\nR package documentation - what makes a good example?\n\n\n\n\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Nic Crane, PhD",
-    "section": "",
-    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast, currently working at Voltron Data on Apache Arrow."
+    "objectID": "talks/positconf2023/index.html#overview",
+    "href": "talks/positconf2023/index.html#overview",
+    "title": "Big Data in R with Arrow",
+    "section": "Overview",
+    "text": "Overview\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
   },
   {
     "objectID": "projects.html",
@@ -119,11 +112,46 @@
     "text": "PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis\n\n\n\n\n\n\nNic Crane\n\n\nJul 22, 2016\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Nic Crane, PhD",
+    "section": "",
+    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast, currently working at Voltron Data on Apache Arrow."
+  },
+  {
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Debugging\n\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\n\n\nOct 4, 2023\n\n\nNic Crane\n\n\n\n\n\n\n  \n\n\n\n\nThree Goats in a Raincoat\n\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\n\n\nOct 3, 2023\n\n\nNic Crane\n\n\n\n\n\n\n  \n\n\n\n\nR package documentation - what makes a good example?\n\n\n\n\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "projects/phd/index.html",
+    "href": "projects/phd/index.html",
+    "title": "PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis",
+    "section": "",
+    "text": "Download here: PDF, 2.1MB\nThis thesis focuses on deductive reasoning and how the belief bias effect can be reduced or ameliorated.\nBelief bias is a phenomenon whereby the evaluation of the logical validity of an argument is skewed by the degree to which the reasoner believes the conclusion. There has been little research examining ways of reducing such bias and whether there is some sort of effective intervention which makes people reason more on the basis of logic. Traditional analyses of this data has focussed on simple measures of accuracy, typically deducting the number of incorrect answers from the number of correct answers to give an accuracy score. However, recent theoretical developments have shown that this approach fails to separate reasoning biases and response biases. A reasoning bias, is one which affects individuals’ ability to discriminate between valid and invalid arguments, whereas a response bias is simply the individual’s tendency to give a particular answer, independent of reasoning. A Signal Detection Theory (SDT) approach is used to calculate measures of reasoning accuracy and response bias. These measures are then analysed using mixed effects models.\nChapter 1 gives a general introduction to the topic, and outlines the content of subsequent chapters. In Chapter 2, I review the psychological literature around belief bias, the growth of the use of SDT models, and approaches to reducing bias. Chapter 3 covers the methodology, and includes a a thorough description of the calculation of the SDT measures, and an explanation of the mixed effects models I used to analyse these. Chapter 4 presents an experiment in which the effects of feedback on reducing belief bias is examined. In Chapter 5, the focus shifts in the direction of individual differences, and looks at the effect of different instructions given to participants, and Chapter 6 examines the effects of both feedback and specific training. Chapter 7 provides a general discussion of the implications of the previous three chapters."
+  },
+  {
+    "objectID": "talks/rstudioconf2022/index.html",
+    "href": "talks/rstudioconf2022/index.html",
+    "title": "What they forgot to teach you about becoming an open source contributor",
+    "section": "",
+    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
+  },
+  {
     "objectID": "talks/rstudioconf2019/index.html",
     "href": "talks/rstudioconf2019/index.html",
     "title": "The future’s Shiny: Pioneering genomic medicine in R",
     "section": "",
     "text": "Shiny's expanding capabilities are rapidly transforming how it is used in an enterprise. This talk details the creation of a large-scale application, supporting hundreds of concurrent users, making use of the future and promises packages. The 100,000 genomes project is an ambitious exercise that follows on from the Human Genome Project - aiming to put the UK at the forefront of genomic medicine, with the NHS as the first health service in the world to offer precision medicine to patients with rare diseases and cancer. Data is at the heart of this project; not only the outputs of the genomic sequencing, but vast amounts of metadata used to track progress against the 100,000 genome target and the status and path of each case through the sample tracking pipeline. In order to make this data readily available to stakeholders, Shiny was used to create an application containing multiple interactive dashboards. A scaled-up version of the app is being rolled out in early 2019 to a much larger audience to support the National Genomics Informatics Service, with the challenge of creating a complex app capable of supporting so many users without grinding to a halt. In this talk, I will explain why Shiny was the obvious technology choice for this task, and discuss the design decisions which enabled this project’s success."
+  },
+  {
+    "objectID": "talks/nyhackr/index.html",
+    "href": "talks/nyhackr/index.html",
+    "title": "Efficiently Engineering Bigger Data with Arrow",
+    "section": "",
+    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
   },
   {
     "objectID": "draft_posts/udfs/index.html",
