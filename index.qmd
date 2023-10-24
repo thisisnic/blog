@@ -1,6 +1,6 @@
 ---
 title: "Nic Crane, PhD"
-image: nic_crane.png
+image: nic_crane.jpg
 about:
   template: jolla
   links:
@@ -10,9 +10,6 @@ about:
     - icon: github
       text: Github
       href: https://github.com/thisisnic
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/nic_crane
     - icon: mastodon
       text: Mastodon
       href: https://fosstodon.org/@nic_crane
