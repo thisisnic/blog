@@ -10,7 +10,63 @@
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Nic Crane&#39;s Blog</description>
 <generator>quarto-1.3.433</generator>
-<lastBuildDate>Tue, 03 Oct 2023 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 21 Dec 2023 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Reflections on 2023</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/2023wrapup/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Here’s a summary of my highlights of 2023!</p>
+<section id="arrow-positconf-workshop" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-positconf-workshop">Arrow posit::conf workshop</h2>
+<p>The biggest professional achievement for me was having the privilege of being invited to co-present <a href="https://github.com/posit-conf-2023/arrow">a workshop with Steph Hazlitt about Arrow at posit::conf</a>. Steph is fantastic to work with, and while writing and delivering the workshop was hard work, it paid off in the end - we received really positive feedback from attendees. The experience reignited my passion for teaching, and desire to develop those skills. I’ve applied for Carpentries instructor training, which I’m still waiting to hear back about, and I’m excited to also be working with Steph on creating a 2 hour version of the workshop, which we’re planning on teaching at user events in 2024.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/2023wrapup/posit_conf.jpg" class="img-fluid figure-img" width="500"></p>
+<figcaption class="figure-caption">Hanging out with some awesome people at posit::conf 2023!</figcaption>
+</figure>
+</div>
+</section>
+<section id="arrow-r-maintenance-bot" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-r-maintenance-bot">Arrow R Maintenance bot</h2>
+<p>Another project I enjoyed working on was creating the <a href="https://github.com/thisisnic/arrow_r_maintenance">Arrow maintenance bot</a>. It pulls data from the GitHub API, aggregates the relevant bits, and then posts it to a Zulip channel (though also works for Slack). It was an itch I’d wanted to scratch for a long time, as I’d previously got this information by clicking on various bookmarks every so often whenever I remembered. The output is shown in the screenshot below; basically, it summarises new bug tickets which need investigating, investigated bugs which need a fix, and open PRs which may need reviewing. <img src="https://niccrane.com/posts/2023wrapup/r_maintenance_bot.png" class="img-fluid" width="520" alt="Screenshot showing the output that the maintenance bot produces"></p>
+<p>There are more aspects of arrow maintenance which I’d love to automate and pull together in dashboard form - I’ve been discussing this with a friend, and I hope we find the time to work on this in 2024!</p>
+</section>
+<section id="arrow-maintenance-and-book" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-maintenance-and-book">Arrow maintenance and book</h2>
+<p>In January, I became the official package maintainer on CRAN. It took my some time to get my head around this; it’s a daunting responsibility, and in reality I’m part of a wider team, all of whom play an important part.</p>
+<p>The amount of time I’ve been able to spend on Arrow has dropped significantly since I left Voltron Data, though I’m hoping to be able to spend more time this year on it. I feel like my focus will shift a little, away from code, and more towards encouraging new contributors, as well as teaching people how to use the package.</p>
+<p>Most excitingly though, is the book which I am co-authoring! This is taking up the main chunk of my Arrow-related time, but the aim is to have the manuscript submitted to the publishers by summer, if not sooner.</p>
+</section>
+<section id="c" class="level2">
+<h2 class="anchored" data-anchor-id="c">C++</h2>
+<p>Having interacted with bits of C++ code while working on Arrow, I decided to spend time learning C++ more formally. I’ve generally found this tricky - frankly, higher-level languages seem to have more engaging content out there. I made a start on the Udacity C++ Nanodegree, which I completed over half of, but was limited on time and so paused this - I plan to pick it up again next year though. I also tried a more practical approach, and decided to make a PR to the Arrow C++ codebase - one of the PRs I am most proud of this year is <a href="https://github.com/apache/arrow/pull/34050/">this one, adding support for the Substrait cast expression</a>. It was hard, though most of the complexity came from peripheral tasks, like working out how to run the code interactively in the debugger.</p>
+</section>
+<section id="joining-the-rladies-global-team" class="level2">
+<h2 class="anchored" data-anchor-id="joining-the-rladies-global-team">Joining the RLadies Global team</h2>
+<p>I spent some time thinking about how I could engage more with the wider R community, and so I volunteered to join the RLadies global team, helping set up new chapters on meetup.com. I’ve not done much here yet, but am delighted to be part of the organisation, and hope to be able to help out more in 2024</p>
+</section>
+<section id="career-break-and-plans-for-2024-recurse-center" class="level2">
+<h2 class="anchored" data-anchor-id="career-break-and-plans-for-2024-recurse-center">Career break and plans for 2024 (Recurse Center!)</h2>
+<p>Last, but absolutely not least, is my decision to take a career break. After leaving Voltron Data, I’d been working part-time in a contractor capacity, alongside working on the Arrow book, but I decided I wanted to narrow my focus and take some time out for me.</p>
+<p>I’m taking a break and spending the next couple of months focusing on writing. Once most of the book is done, I plan to spend more time on my open source work in general, which will involve teaching and talking about Arrow, as well as pushing forward a few side projects.</p>
+<p>The most exciting news I’ve had this year is that I applied to the Recurse Center a few weeks ago. RC is like a writer’s retreat for programmers, and attendees spend 12 weeks together working on programming problems of their choice. I want to get to grips with R’s internals, and learn about the C API, as well as levelling up my C++ skills in general. I’m delighted to say that I was accepted to attend this morning, and will be joining the spring batch in late March! I’ve got a ton of ideas for projects I want to work on, but will have to see how much time I ultimately end up having.</p>
+<p>Longer-term - I don’t know. Ultimately, I’d love to get paid to work on open source again, but those opportunities are few and far between. I also have some professional goals I’d like to hit before I’m going to be in the right headspace to engage with this too - between writing the book and my plans for Recurse Center, I’ll be there pretty soon.</p>
+<p>This year has been a real rollercoaster, but I’m extremely grateful to all my friends and mentors who have helped me during this time.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/2023wrapup/index.html</guid>
+  <pubDate>Thu, 21 Dec 2023 00:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/2023wrapup/2023.png" medium="image" type="image/png" height="66" width="144"/>
+</item>
 <item>
   <title>Debugging</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -37,6 +93,59 @@
   <guid>https://niccrane.com/posts/debugging/index.html</guid>
   <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
+</item>
+<item>
+  <title>Three Goats in a Raincoat</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/goats/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>I am not a fan of the term “imposter syndrome.” It’s a lazy way of ignoring the complex and interconnected, often structural reasons that contribute to many people’s feelings, which manifests itself in a variety of deeply idiosyncratic ways. But I guess the tl;dr is that this is what this post is about.</p>
+<p>I am not someone who has “hobbies” as such; I have interests that I adopt with great enthusiasm, pursue obsessively for a short period of time, often declaring that I have found a lifelong fascination, and then drop once the initial feeling of “endless possibility” has worn off and something else shiny and new finds it way across my path. I suppose my hobby is “pursuing novelty.” The 2022-2023 edition of this came in the form of tabletop role-playing games, and earlier this year, I found myself sitting with some good friends, beers and snacks, working out how my character, “Ach!”, a small goat with a fondness for fainting at inappropriate moments <a href="https://rpggeek.com/image/4971174/goat-crashers">could make their way into a human party undetected</a>.</p>
+<p>The solution for Ach! and friends was to don a disguise and stand on each others’ shoulders, and this image of 3 goats in a raincoat trying to sneak into a human party perfectly reflects how I feel about myself sometimes as an open source maintainer.</p>
+<p>(Here, I need to get round to commissioning an image of 3 goats in a raincoat standing on each other’s shoulders. The top one has black and red braids and is wearing a hat and fake beard/moustache)</p>
+<p>I am the current maintainer of the arrow R package, which in reality just means I am the person who is listed as such in the package DESCRIPTION file, and have the responsibility of clicking the link in the confirmation email from CRAN when someone submits the latest version of of the package to CRAN. Of course, I do more than just this; I triage bugs, submit patches, review PRs, and occasionally implement new features, but so do other people. While for career-serving purposes, I can technically claim to be “the” maintainer of the package, honestly, I am “a” maintainer and part of a team. This isn’t always reflected in other people’s language, and results in weird moments where people say things to me like, “ah, you wrote arrow!” and I have to respond with, “I absolutely did not, though I did write a lot of the bindings for dplyr::across!”, a topic which subsequently interests me more than it does them.</p>
+<section id="the-tyranny-of-should" class="level2">
+<h2 class="anchored" data-anchor-id="the-tyranny-of-should">The tyranny of “should”</h2>
+<p>I’ve spent much of this year suffering from the tyranny of “should” regarding my own knowledge and abilities, in a way that has been verging on ridiculous. A lot of it is the perfect storm of adjusting to new responsibility, the deeply unhelpful way in which my self-image when I was younger was built up around being “smart” and “knowing things”, and a knack for punching above my weight by being good at figuring out just enough about a topic to get shit done. I don’t know every single detail of object orientation in R, but I know enough to be able to create new bindings between C++ objects and R6 classes in the arrow R package and expose their methods via fields and active bindings. Despite having looked it up repeatedly over the past few years, I still cannot recall the difference between how things work with static and shared libraries, but I did manage to fix a bug requiring me to bump the version of the C++ date library that Arrow vendors, via inspecting old pull requests and helpful feedback I received on the PR I submitted.</p>
+<p>It came to a head at this year’s posit::conf, where I had the privilege of co-teaching a workshop about Arrow with the wonderful Stephanie Hazlitt. We spent months preparing materials and practicing teaching to our laptop screens, but when the event itself rolled around, teaching it to a room just shy of 60 people was a different experience entirely. It was intimidating being in front of a room of eager learners, and any jokey asides I was usually capable of making went out of the window, and I just taught the materials fairly plainly, stumbling over my words a bit, and finding the moments of silence in the room as I was teaching pretty awful. Subsequent feedback from folks I trust enough to deliver at least some honesty alongside their validation has led me to conclude that the only person who really noticed or cared about this was me. I was doing my old trick of snatching defeat from the jaws of victory, and realised later that my self-expectations were totally unreasonable. While I used to be able to absolutely smash through delivering a well-practiced 2-day “introduction to R” course, and delighted in engaging the folks in the room and showing them what they (and R!) were capable of, it’s 5 years since I last did that on the regular. This was the first time these materials had seen the light of day, and at no less than posit::conf, daunting enough on its own. And honestly, this is all ego. We ran a good workshop, people were engaged, and we wrote some quality reusable materials. Yes, there’s room for improvement, but overall it was solid. Delivery of content is something I can (and will) work on. I’ve applied for The Carpentries instructor training, and have plans to get back into the swing of teaching by running workshops (on Arrow and other topics) at user events.</p>
+</section>
+<section id="the-power-of-i-dont-know-but-i-can-find-out" class="level2">
+<h2 class="anchored" data-anchor-id="the-power-of-i-dont-know-but-i-can-find-out">The power of “I don’t know but I can find out”</h2>
+<p>The second day of posit::conf was spent being a teaching assistant for the fantastic Andy Teucher, who was teaching “Fundamentals of Package Development”. I managed to escape a lot of this “should” nonsense here, so when one of the course attendees asked me about where to store CSV files to use in unit tests, I happily admitted I wasn’t sure but could find out, and together we had a look in “Writing R Packages”, where I couldn’t find the information, and then suggested the approach I usually take when working on arrow - look at what folks who often define best practices do in the packages that they maintain. We took a look at readr, found the files in the testthat directory, and concluded that unless there’s reason to want to do anything more complicated (like make those datasets available to end users), then that approach is fine. Not knowing the answer instantly wasn’t a hindrance to working out the necessary solution. Learning how to say “I don’t know, but let’s find out together” is one of the most important things I learned when I was first teaching people how to use R. A teacher doesn’t have to know everything, but should be able to help a learner find the information they need.</p>
+</section>
+<section id="the-power-of-community" class="level2">
+<h2 class="anchored" data-anchor-id="the-power-of-community">The power of community</h2>
+<p>The rest of the conference week was pretty awesome. I was in the middle of a CRAN resubmission (well, actually a re-re-resubmission, but let’s not go there) which had got a bit hairy, and I needed some help tracking down the source of the bug. I spent some time briefly engaging in a bit of pair programming with Jonathan Keane and Neal Richardson, who’ve both been involved with Arrow for a lot longer than me, and I’m always taken aback by just how quickly they both get to the source of a problem any time I ask for help. Part of my “knowledge anxiety” manifests as me sometimes taking longer than I would like to process things when communicating verbally about technical topics, which leads to me getting really frustrated when I’m just not “getting” things in the moment that I know later will seem pretty obvious and uncomplicated. This happened when we were looking at the arrow bug, but I had this sudden moment of clarity upon realising…nobody cared except me. Jon and Neal are great collaborators and are always happy to explain things again if there’s time, and aren’t going to judge me for it.</p>
+<p>I also realised that there is no universal measure of what I should know or where I should be at. While I always want to know more about how things work, I don’t have to know everything and it’s a pretty unrealistic expectation for me to have of myself; sure I can (and often do!) go read a whole load of the codebase and related concepts, but that’ll never be the same as also leaning on other people’s years of experience and knowledge. The whole point of being part of a community is to be able to share both overlapping and divergent knowledge.</p>
+</section>
+<section id="progress-is-power" class="level2">
+<h2 class="anchored" data-anchor-id="progress-is-power">Progress is power</h2>
+<p>I don’t think there is a universal solution to this problem of feeling like you “should” know more, but all I know is what has worked for me. Public work is important - social media, blog posts, talks, workshops, whatever. It can be scaled to wherever you’re at. There’s always something you’ll be surprised that you know but others don’t. And it creates a lovely feedback loop whereby a little bit of external validation can go a long way.</p>
+<p>Learning is also important - I did the first half of the Udacity C++ Nanodegree this year, and while a lot of what it taught me was that I never want to be a full-blown C++ developer (I’d rather make weird buildings and spaceships out of existing Lego pieces than become a polymer scientist just to create custom bricks), realising that I could learn C++ at that level if I really wanted to, was invaluable. Part of the course involved getting acquainted with cmake, and whilst I can’t claim expertise there, dabbling in a bit of the whats and whys helped make many related Arrow project issues seem less mystical.</p>
+<p>Reassurance and validation are good and well, but in my experience, having tangible proof of the things that I do know is more effective.</p>
+</section>
+<section id="fake-it-til-you-make-it-is-deeply-problematic" class="level2">
+<h2 class="anchored" data-anchor-id="fake-it-til-you-make-it-is-deeply-problematic">“Fake it til you make it” is deeply problematic</h2>
+<p>The commonly received advice is “fake it ’til you make it”. Pretend you feel like you belong and are confident, until that becomes the case. I’ve spent a long time attempting this, and the problem is that it doesn’t actually work, because it doesn’t address the underlying issue. It’s only since I started to own the fact that I don’t feel comfortable in every environment or domain and working out what I need to do to feel more comfortable that I’ve felt my confidence growing.</p>
+<p>In the past month, I’ve been a lot more open about how I’ve been feeling around this. It’s been tricky as I’ve been scared that my vulnerability just looks weakness that I shouldn’t show around other people, or just come off as moaning, but it’s had massive benefits. During the first couple of days of posit::conf this year, I suffered the worst ongoing anxiety I’ve had all year - I had a constant knot in my chest - but despite that managed to have a good time as everyone was very accepting. I can say without a doubt that pretending to be fine would have made things infinitely worse.</p>
+<p>There was another point during the conference when I casually mentioning that I was feeling quite hopeful about a potential opportunity but not entirely sure if it was in the bag, as I suspected I might be up against someone whose background I find impressive. It was kindly pointed out to me that each of us bring different things to the table, a comment which has since set off a chain reaction of me starting to appreciate what I can do rather than what I can’t.</p>
+</section>
+<section id="the-cure-for-imposter-syndrome" class="level2">
+<h2 class="anchored" data-anchor-id="the-cure-for-imposter-syndrome">The cure for imposter syndrome</h2>
+<p>The most important thing I learned this year is that the cure for imposter syndrome isn’t persuading yourself that you aren’t just 3 goats in a raincoat pretending to be a person, but instead surrounding yourself with folks who wouldn’t really care if you were anyway because goats are cool and that’s a pretty awesome feat of acrobatics and balancing.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/goats/index.html</guid>
+  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>R package documentation - what makes a good example?</title>

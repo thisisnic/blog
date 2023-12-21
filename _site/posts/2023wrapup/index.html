@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Nic Crane">
+<meta name="dcterms.date" content="2023-12-21">
 
-<title>Nic Crane - Blog</title>
+<title>Nic Crane - Reflections on 2023</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,50 +61,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Nic Crane" href="blog.xml"></head>
-
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Nic Crane</span>
     </a>
   </div>
@@ -115,23 +84,23 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
+    <a class="nav-link" href="../../index.html" rel="" target="">
  <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./talks.html" rel="" target="">
+    <a class="nav-link" href="../../talks.html" rel="" target="">
  <span class="menu-text">Talks &amp; Workshops</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./projects.html" rel="" target="">
+    <a class="nav-link" href="../../projects.html" rel="" target="">
  <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./blog.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../../blog.html" rel="" target="">
  <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./blog.xml" rel="" target=""><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../blog.xml" rel="" target=""><i class="bi bi-rss" role="img">
 </i> 
  <span class="menu-text"></span></a>
   </li>  
@@ -145,186 +114,87 @@ ul.task-list li input[type="checkbox"] {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Blog</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Reflections on 2023</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+              </div>
+                  </div>
   </div>
     
   
   <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nic Crane </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 21, 2023</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(4)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
+<p>Here’s a summary of my highlights of 2023!</p>
+<section id="arrow-positconf-workshop" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-positconf-workshop">Arrow posit::conf workshop</h2>
+<p>The biggest professional achievement for me was having the privilege of being invited to co-present <a href="https://github.com/posit-conf-2023/arrow">a workshop with Steph Hazlitt about Arrow at posit::conf</a>. Steph is fantastic to work with, and while writing and delivering the workshop was hard work, it paid off in the end - we received really positive feedback from attendees. The experience reignited my passion for teaching, and desire to develop those skills. I’ve applied for Carpentries instructor training, which I’m still waiting to hear back about, and I’m excited to also be working with Steph on creating a 2 hour version of the workshop, which we’re planning on teaching at user events in 2024.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="posit_conf.jpg" class="img-fluid figure-img" width="500"></p>
+<figcaption class="figure-caption">Hanging out with some awesome people at posit::conf 2023!</figcaption>
+</figure>
+</div>
+</section>
+<section id="arrow-r-maintenance-bot" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-r-maintenance-bot">Arrow R Maintenance bot</h2>
+<p>Another project I enjoyed working on was creating the <a href="https://github.com/thisisnic/arrow_r_maintenance">Arrow maintenance bot</a>. It pulls data from the GitHub API, aggregates the relevant bits, and then posts it to a Zulip channel (though also works for Slack). It was an itch I’d wanted to scratch for a long time, as I’d previously got this information by clicking on various bookmarks every so often whenever I remembered. The output is shown in the screenshot below; basically, it summarises new bug tickets which need investigating, investigated bugs which need a fix, and open PRs which may need reviewing. <img src="r_maintenance_bot.png" class="img-fluid" width="520" alt="Screenshot showing the output that the maintenance bot produces"></p>
+<p>There are more aspects of arrow maintenance which I’d love to automate and pull together in dashboard form - I’ve been discussing this with a friend, and I hope we find the time to work on this in 2024!</p>
+</section>
+<section id="arrow-maintenance-and-book" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-maintenance-and-book">Arrow maintenance and book</h2>
+<p>In January, I became the official package maintainer on CRAN. It took my some time to get my head around this; it’s a daunting responsibility, and in reality I’m part of a wider team, all of whom play an important part.</p>
+<p>The amount of time I’ve been able to spend on Arrow has dropped significantly since I left Voltron Data, though I’m hoping to be able to spend more time this year on it. I feel like my focus will shift a little, away from code, and more towards encouraging new contributors, as well as teaching people how to use the package.</p>
+<p>Most excitingly though, is the book which I am co-authoring! This is taking up the main chunk of my Arrow-related time, but the aim is to have the manuscript submitted to the publishers by summer, if not sooner.</p>
+</section>
+<section id="c" class="level2">
+<h2 class="anchored" data-anchor-id="c">C++</h2>
+<p>Having interacted with bits of C++ code while working on Arrow, I decided to spend time learning C++ more formally. I’ve generally found this tricky - frankly, higher-level languages seem to have more engaging content out there. I made a start on the Udacity C++ Nanodegree, which I completed over half of, but was limited on time and so paused this - I plan to pick it up again next year though. I also tried a more practical approach, and decided to make a PR to the Arrow C++ codebase - one of the PRs I am most proud of this year is <a href="https://github.com/apache/arrow/pull/34050/">this one, adding support for the Substrait cast expression</a>. It was hard, though most of the complexity came from peripheral tasks, like working out how to run the code interactively in the debugger.</p>
+</section>
+<section id="joining-the-rladies-global-team" class="level2">
+<h2 class="anchored" data-anchor-id="joining-the-rladies-global-team">Joining the RLadies Global team</h2>
+<p>I spent some time thinking about how I could engage more with the wider R community, and so I volunteered to join the RLadies global team, helping set up new chapters on meetup.com. I’ve not done much here yet, but am delighted to be part of the organisation, and hope to be able to help out more in 2024</p>
+</section>
+<section id="career-break-and-plans-for-2024-recurse-center" class="level2">
+<h2 class="anchored" data-anchor-id="career-break-and-plans-for-2024-recurse-center">Career break and plans for 2024 (Recurse Center!)</h2>
+<p>Last, but absolutely not least, is my decision to take a career break. After leaving Voltron Data, I’d been working part-time in a contractor capacity, alongside working on the Arrow book, but I decided I wanted to narrow my focus and take some time out for me.</p>
+<p>I’m taking a break and spending the next couple of months focusing on writing. Once most of the book is done, I plan to spend more time on my open source work in general, which will involve teaching and talking about Arrow, as well as pushing forward a few side projects.</p>
+<p>The most exciting news I’ve had this year is that I applied to the Recurse Center a few weeks ago. RC is like a writer’s retreat for programmers, and attendees spend 12 weeks together working on programming problems of their choice. I want to get to grips with R’s internals, and learn about the C API, as well as levelling up my C++ skills in general. I’m delighted to say that I was accepted to attend this morning, and will be joining the spring batch in late March! I’ve got a ton of ideas for projects I want to work on, but will have to see how much time I ultimately end up having.</p>
+<p>Longer-term - I don’t know. Ultimately, I’d love to get paid to work on open source again, but those opportunities are few and far between. I also have some professional goals I’d like to hit before I’m going to be in the right headspace to engage with this too - between writing the book and my plans for Recurse Center, I’ll be there pretty soon.</p>
+<p>This year has been a real rollercoaster, but I’m extremely grateful to all my friends and mentors who have helped me during this time.</p>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="R" data-listing-date-sort="1703116800000" data-listing-file-modified-sort="1703159194500" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
-<div class="thumbnail">
-<p><a href="./posts/2023wrapup/index.html"> <img src="./posts/2023wrapup/2023.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/2023wrapup/index.html">
-<h3 class="no-anchor listing-title">
-Reflections on 2023
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<a href="./posts/2023wrapup/index.html">
-<div class="listing-description">
-Here’s a summary of my highlights of 2023!
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/2023wrapup/index.html">
-<div class="listing-date">
-Dec 21, 2023
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="R" data-listing-date-sort="1696374000000" data-listing-file-modified-sort="1696406493767" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
-<div class="thumbnail">
-<p><a href="./posts/debugging/index.html"> <img src="./posts/debugging/ahab.jpg" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/debugging/index.html">
-<h3 class="no-anchor listing-title">
-Debugging
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<a href="./posts/debugging/index.html">
-<div class="listing-description">
-As a package maintainer, I’m constantly disappointed when folks mention Arrow bugs they’re aware of but haven’t reported. Not disappointed with the individual in question…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/debugging/index.html">
-<div class="listing-date">
-Oct 4, 2023
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="R" data-listing-date-sort="1696287600000" data-listing-file-modified-sort="1696519556333" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11">
-<div class="thumbnail">
-<p><a href="./posts/goats/index.html"> <img src="./posts/goats/goats.jpg" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/goats/index.html">
-<h3 class="no-anchor listing-title">
-Three Goats in a Raincoat
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<a href="./posts/goats/index.html">
-<div class="listing-description">
-I am not a fan of the term “imposter syndrome.” It’s a lazy way of ignoring the complex and interconnected, often structural…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/goats/index.html">
-<div class="listing-date">
-Oct 3, 2023
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="R,Python" data-listing-date-sort="1621292400000" data-listing-file-modified-sort="1694001453080" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
-<div class="thumbnail">
-<p><a href="./posts/r-examples/index.html"> <img src="./posts/r-examples/arrow_examples.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/r-examples/index.html">
-<h3 class="no-anchor listing-title">
-R package documentation - what makes a good example?
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
-Python
-</div>
-</div>
-<a href="./posts/r-examples/index.html">
-<div class="listing-description">
-I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/r-examples/index.html">
-<div class="listing-date">
-May 18, 2021
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

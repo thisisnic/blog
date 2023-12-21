@@ -1,0 +1,80 @@
+---
+title: "Getting to Grips with Complex Codebases"
+author: "Nic Crane"
+date: "2023-12-19"
+categories: [R]
+image: "kraken.png"
+---
+
+Getting to grips with a large and complex codebase can be an intimidating task.
+When I first started working on Apache Arrow, I found it pretty overwhelming - the GitHub repo for the project contains the code for multiple Arrow implementations.
+Even when I narrowed things down to only the R package, there was still a lot to deal with.
+After some time I developed some strategies that I always use now when dealing with new codebases, and I'm writing this post to share these ideas.
+
+## 1. Make notes. Lots of notes.
+
+When ingested large amounts of information, there will inevitably more than you can store and process at once, and so getting it down on paper can help.
+I find it useful to make notes with diagrams, or descriptions of things with indented descriptions to represent functions within functions.
+The most important thing here is to have no expectation that these notes be tidy or shareable.
+You can come back and make a revised version later, but your only priority in this raw version is helping the thinking process.
+I also find it helpful to write down questions I have - then, even if I disappear down a tangent or rabbit hole, I know how I got there and can easily loop back to my main train of thought later.
+
+A side-effect of this kind of writing is that it sometimes produces excellent docs.
+At no other point do you know less about this code, and so are the person most equipped to be teaching other newcomers and asking the same kinds of questions they'll have.
+Don't get too attached to your notes turning into docs though, as this can be a distraction, but do keep it in mind.
+
+I tend to start from the top, and try to find answers to questions like:
+
+-   what are the most important functions in this package?
+    To answer this, I usually check out the README on the GitHub repo, the reference page on the pkgdown site, and any vignettes)
+
+-   what does this code look like at a high level?
+    Where is the most complexity?
+    What kinda of structures are used or passed around in the code?
+
+As a bonus, if there is someone more knowledgeable around, you could get them to look over the cleaned-up version of your notes to give you feedback on how accurate they are, and if you're missing anything.
+I only realistically do this about 5% of the time.
+
+## 2. Find a single thing to fix or understand
+
+A top-down view has a certain amount of utility in getting a broad idea of the codebase, but it can still be overwhelming at this point.
+Finding a single bug to fix, issue to investigate, or even just concept to understand, can make it easier to zoom in on one place.
+Once you've worked this out, you can branch outwards to other areas of the code.
+When working on Arrow, I spent a lot of time focused on the bindings to dplyr functions, before I even looked at how the file-reading functionality worked.
+Getting some specialism in an area before expanding out can help build confidence too.
+
+## 3. Run the unit tests
+
+Sometimes you'll need to understand functions which don't have many examples in the documentation, but are still crucial to understanding how the package works.
+In this case, it can be helpful to take a look at the unit tests for the functions.
+This can help you get a better idea of expected inputs and outputs, but also the kinds of things which result in errors from incorrect usage.
+
+## 4. Step through the code one line at a time
+
+So you found a function you want to understand better, ran some unit tests to get an idea of typical behaviour, but there's still a lot more to learn, so now what?
+At this point I like to use the debugger to run through the code one line at a time.
+In R, there are a few ways of doing this - you can insert a call to `browser()` at the point you want to step into the debugger, or you can wrap the function call in `debug()` or `debugonce()` to start from the beginning.
+Here, I'll step through the code line-by-line, often printing out the values of variables repeatedly to see how they change at each step.
+I also like to draw diagrams of what calls what, with some functions starting off as "black boxes" and then extra detail being added as I step through those.
+I'll write plain language description of the functions, either as comments in the codebase, or written on paper with line numbers next to my notes.
+These descriptions tend to be indented, following the structure of the code, so I can start to build my own mental model of the shape of it.
+
+## 5. Using analogy - finding other bits of code that do the same thing
+
+Understanding every line of code can be helpful, but what if there's just too much, or it's in a completely unfamiliar language?
+One of my first PRs to the Arrow codebase was moving some C++ code from the Arrow R package to the Arrow C++ codebase.
+I'd never written a single line of C++ in my life, and didn't really understand it in great depath.
+However, I could see similar things nearby, and focused on reading the variable names and seeing what went where.
+Another time anaology has come in useful has been looking at other PRs that do similar things.
+
+## 6. Just make a PR
+
+Code review is a conversation.
+Sometimes I've tried everything I can think of, and made some progress, but ended up completely stuck.
+I've gotten comfortable with the idea that if I can show and explain my working (i.e. "I tried X because I thought Y, but not I'm not sure if Z is a better approach"), then that can be enough to get a reasonable PR together and wait for feedback.
+While it's important to do the work of reading up and exploring the code first, there's a point at which there are diminishing returns for pushing on when I'm entirely stuck.
+A pull request is a conversation, and presenting an initial approach which ends up being revised is no terrible thing.
+
+I'd love to hear from you - is there anything in this post you're going to try?
+What other approaches do you recommend?
+Let me know on Mastodon or LinkedIn!

@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Nic Crane">
+<meta name="dcterms.date" content="2023-12-19">
 
-<title>Nic Crane - Blog</title>
+<title>Nic Crane - Getting to Grips with Complex Codebases</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,24 +25,22 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -61,50 +61,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Nic Crane" href="blog.xml"></head>
-
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg navbar-dark ">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Nic Crane</span>
     </a>
   </div>
@@ -115,23 +84,23 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
+    <a class="nav-link" href="../../index.html" rel="" target="">
  <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./talks.html" rel="" target="">
+    <a class="nav-link" href="../../talks.html" rel="" target="">
  <span class="menu-text">Talks &amp; Workshops</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./projects.html" rel="" target="">
+    <a class="nav-link" href="../../projects.html" rel="" target="">
  <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./blog.html" rel="" target="" aria-current="page">
+    <a class="nav-link" href="../../blog.html" rel="" target="">
  <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./blog.xml" rel="" target=""><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../blog.xml" rel="" target=""><i class="bi bi-rss" role="img">
 </i> 
  <span class="menu-text"></span></a>
   </li>  
@@ -143,188 +112,82 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Blog</h1>
-                      </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(4)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Getting to Grips with Complex Codebases</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+  </div>
+  </div>
 
 
 
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nic Crane </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 19, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>Getting to grips with a large and complex codebase can be an intimidating task. When I first started working on Apache Arrow, I found it pretty overwhelming - the GitHub repo for the project contains the code for multiple Arrow implementations. Even when I narrowed things down to only the R package, there was still a lot to deal with. After some time I developed some strategies that I always use now when dealing with new codebases, and I’m writing this post to share these ideas.</p>
+<section id="make-notes.-lots-of-notes." class="level2">
+<h2 class="anchored" data-anchor-id="make-notes.-lots-of-notes.">1. Make notes. Lots of notes.</h2>
+<p>When ingested large amounts of information, there will inevitably more than you can store and process at once, and so getting it down on paper can help. I find it useful to make notes with diagrams, or descriptions of things with indented descriptions to represent functions within functions. The most important thing here is to have no expectation that these notes be tidy or shareable. You can come back and make a revised version later, but your only priority in this raw version is helping the thinking process. I also find it helpful to write down questions I have - then, even if I disappear down a tangent or rabbit hole, I know how I got there and can easily loop back to my main train of thought later.</p>
+<p>A side-effect of this kind of writing is that it sometimes produces excellent docs. At no other point do you know less about this code, and so are the person most equipped to be teaching other newcomers and asking the same kinds of questions they’ll have. Don’t get too attached to your notes turning into docs though, as this can be a distraction, but do keep it in mind.</p>
+<p>I tend to start from the top, and try to find answers to questions like:</p>
+<ul>
+<li><p>what are the most important functions in this package? To answer this, I usually check out the README on the GitHub repo, the reference page on the pkgdown site, and any vignettes)</p></li>
+<li><p>what does this code look like at a high level? Where is the most complexity? What kinda of structures are used or passed around in the code?</p></li>
+</ul>
+<p>As a bonus, if there is someone more knowledgeable around, you could get them to look over the cleaned-up version of your notes to give you feedback on how accurate they are, and if you’re missing anything. I only realistically do this about 5% of the time.</p>
+</section>
+<section id="find-a-single-thing-to-fix-or-understand" class="level2">
+<h2 class="anchored" data-anchor-id="find-a-single-thing-to-fix-or-understand">2. Find a single thing to fix or understand</h2>
+<p>A top-down view has a certain amount of utility in getting a broad idea of the codebase, but it can still be overwhelming at this point. Finding a single bug to fix, issue to investigate, or even just concept to understand, can make it easier to zoom in on one place. Once you’ve worked this out, you can branch outwards to other areas of the code. When working on Arrow, I spent a lot of time focused on the bindings to dplyr functions, before I even looked at how the file-reading functionality worked. Getting some specialism in an area before expanding out can help build confidence too.</p>
+</section>
+<section id="run-the-unit-tests" class="level2">
+<h2 class="anchored" data-anchor-id="run-the-unit-tests">3. Run the unit tests</h2>
+<p>Sometimes you’ll need to understand functions which don’t have many examples in the documentation, but are still crucial to understanding how the package works. In this case, it can be helpful to take a look at the unit tests for the functions. This can help you get a better idea of expected inputs and outputs, but also the kinds of things which result in errors from incorrect usage.</p>
+</section>
+<section id="step-through-the-code-one-line-at-a-time" class="level2">
+<h2 class="anchored" data-anchor-id="step-through-the-code-one-line-at-a-time">4. Step through the code one line at a time</h2>
+<p>So you found a function you want to understand better, ran some unit tests to get an idea of typical behaviour, but there’s still a lot more to learn, so now what? At this point I like to use the debugger to run through the code one line at a time. In R, there are a few ways of doing this - you can insert a call to <code>browser()</code> at the point you want to step into the debugger, or you can wrap the function call in <code>debug()</code> or <code>debugonce()</code> to start from the beginning. Here, I’ll step through the code line-by-line, often printing out the values of variables repeatedly to see how they change at each step. I also like to draw diagrams of what calls what, with some functions starting off as “black boxes” and then extra detail being added as I step through those. I’ll write plain language description of the functions, either as comments in the codebase, or written on paper with line numbers next to my notes. These descriptions tend to be indented, following the structure of the code, so I can start to build my own mental model of the shape of it.</p>
+</section>
+<section id="using-analogy---finding-other-bits-of-code-that-do-the-same-thing" class="level2">
+<h2 class="anchored" data-anchor-id="using-analogy---finding-other-bits-of-code-that-do-the-same-thing">5. Using analogy - finding other bits of code that do the same thing</h2>
+<p>Understanding every line of code can be helpful, but what if there’s just too much, or it’s in a completely unfamiliar language? One of my first PRs to the Arrow codebase was moving some C++ code from the Arrow R package to the Arrow C++ codebase. I’d never written a single line of C++ in my life, and didn’t really understand it in great depath. However, I could see similar things nearby, and focused on reading the variable names and seeing what went where. Another time anaology has come in useful has been looking at other PRs that do similar things.</p>
+</section>
+<section id="just-make-a-pr" class="level2">
+<h2 class="anchored" data-anchor-id="just-make-a-pr">6. Just make a PR</h2>
+<p>Code review is a conversation. Sometimes I’ve tried everything I can think of, and made some progress, but ended up completely stuck. I’ve gotten comfortable with the idea that if I can show and explain my working (i.e.&nbsp;“I tried X because I thought Y, but not I’m not sure if Z is a better approach”), then that can be enough to get a reasonable PR together and wait for feedback. While it’s important to do the work of reading up and exploring the code first, there’s a point at which there are diminishing returns for pushing on when I’m entirely stuck. A pull request is a conversation, and presenting an initial approach which ends up being revised is no terrible thing.</p>
+<p>I’d love to hear from you - is there anything in this post you’re going to try? What other approaches do you recommend? Let me know on Mastodon or LinkedIn!</p>
 
 
+</section>
 
-
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="R" data-listing-date-sort="1703116800000" data-listing-file-modified-sort="1703159194500" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
-<div class="thumbnail">
-<p><a href="./posts/2023wrapup/index.html"> <img src="./posts/2023wrapup/2023.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/2023wrapup/index.html">
-<h3 class="no-anchor listing-title">
-Reflections on 2023
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<a href="./posts/2023wrapup/index.html">
-<div class="listing-description">
-Here’s a summary of my highlights of 2023!
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/2023wrapup/index.html">
-<div class="listing-date">
-Dec 21, 2023
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="R" data-listing-date-sort="1696374000000" data-listing-file-modified-sort="1696406493767" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
-<div class="thumbnail">
-<p><a href="./posts/debugging/index.html"> <img src="./posts/debugging/ahab.jpg" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/debugging/index.html">
-<h3 class="no-anchor listing-title">
-Debugging
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<a href="./posts/debugging/index.html">
-<div class="listing-description">
-As a package maintainer, I’m constantly disappointed when folks mention Arrow bugs they’re aware of but haven’t reported. Not disappointed with the individual in question…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/debugging/index.html">
-<div class="listing-date">
-Oct 4, 2023
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="R" data-listing-date-sort="1696287600000" data-listing-file-modified-sort="1696519556333" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11">
-<div class="thumbnail">
-<p><a href="./posts/goats/index.html"> <img src="./posts/goats/goats.jpg" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/goats/index.html">
-<h3 class="no-anchor listing-title">
-Three Goats in a Raincoat
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<a href="./posts/goats/index.html">
-<div class="listing-description">
-I am not a fan of the term “imposter syndrome.” It’s a lazy way of ignoring the complex and interconnected, often structural…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/goats/index.html">
-<div class="listing-date">
-Oct 3, 2023
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="R,Python" data-listing-date-sort="1621292400000" data-listing-file-modified-sort="1694001453080" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
-<div class="thumbnail">
-<p><a href="./posts/r-examples/index.html"> <img src="./posts/r-examples/arrow_examples.png" class="thumbnail-image"> </a></p>
-</div>
-<div class="body">
-<a href="./posts/r-examples/index.html">
-<h3 class="no-anchor listing-title">
-R package documentation - what makes a good example?
-</h3>
-<div class="listing-subtitle">
-
-</div>
-</a>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('Python'); return false;">
-Python
-</div>
-</div>
-<a href="./posts/r-examples/index.html">
-<div class="listing-description">
-I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to…
-</div>
-</a>
-</div>
-<div class="metadata">
-<a href="./posts/r-examples/index.html">
-<div class="listing-date">
-May 18, 2021
-</div>
-<div class="listing-author">
-Nic Crane
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
