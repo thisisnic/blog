@@ -2,7 +2,7 @@
 title: "Explaining the C bits at the start of 'Deep R Programming Ch14: Interfacing compiled code'"
 author: "Nic Crane"
 date: "2023-12-23"
-categories: [R]
+categories: [R, C]
 image: "deepr.png"
 ---
 
