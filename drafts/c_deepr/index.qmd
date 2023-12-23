@@ -6,7 +6,7 @@ categories: [R]
 image: "deepr.png"
 ---
 
-One of my goals for this year is to get a deeper understanding of R's C API. I'm making a start on this by reading [Chapter 14 of Deep R Programming by Marek Gagolewski: "Interfacing compiled code"](https://deepr.gagolewski.com/chapter/310-compiled.html).
+One of my goals for next year is to get a deeper understanding of R's C API. I'm making a start on this by reading [Chapter 14 of Deep R Programming by Marek Gagolewski: "Interfacing compiled code"](https://deepr.gagolewski.com/chapter/310-compiled.html).
 It's a great resource, though the chapter preface states "we assume basic knowledge of the C language".
 ~~I do not have this knowledge~~ My C knowledge is fairly limited, and so this blog post will pull out some of the details from that chapter, especially bits where I've had to go "wtf is that?!" or remind myself by googling.
 My current level of C knowledge at the moment is pretty minimal; the main things I know are:
