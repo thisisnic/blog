@@ -1,0 +1,140 @@
+---
+title: "Explaining the C bits at the start of 'Deep R Programming Ch14: Interfacing compiled code'"
+author: "Nic Crane"
+date: "2023-12-23"
+categories: [R]
+image: "deepr.png"
+---
+
+One of my goals for this year is to get a deeper understanding of R's C API. I'm making a start on this by reading [Chapter 14 of Deep R Programming by Marek Gagolewski: "Interfacing compiled code"](https://deepr.gagolewski.com/chapter/310-compiled.html).
+It's a great resource, though the chapter preface states "we assume basic knowledge of the C language".
+~~I do not have this knowledge~~ My C knowledge is fairly limited, and so this blog post will pull out some of the details from that chapter, especially bits where I've had to go "wtf is that?!" or remind myself by googling.
+My current level of C knowledge at the moment is pretty minimal; the main things I know are:
+
+-   C is a compiled language (as opposed to an interpreted language) and C code needs compiling before it can be run
+-   A lot of R's internals are based on C
+-   C is a statically-type language; this means that variable types are defined when the variable is created and cannot later change other than via explicit manual casting
+
+And that's basically it!
+I imagine there are other bits I don't realise I know which I've picked up from being an R package maintainer and dabbling in a few C++ tutorials, but I'll try to explain everything as much as possible.
+OK, let's do this!
+
+The book chapter provides an example package with a simple C function implemented, and walks us through the code step-by-step.
+Great!
+
+Section 14.1.1 starts off with an example of a C function defined in `src/cfunc.h`.
+I guess the first thing to note is the location of the file - in the package's `src` directory.
+This is where any compiled code needs to go, typically C or C++ code, or even Fortran if you're really going old-school.
+
+### Header files and source files
+
+Another thing to note here is the file name, which ends in `.h`.
+C code can be divided into header files (ending in `.h`) and source files (ending in `.c`).
+Header files contain the function declarations (including variable types) and other things like macros (named bits of code for the pre-processor to work with).
+They're sometimes referred to as the interface - they contain information about functions' inputs and outputs - including the argument names and types.
+
+### Once-only includes
+
+The first couple of lines of code in the header file contain these lines:
+
+``` c
+#ifndef __CFUNS_H
+#define __CFUNS_H
+```
+
+and the final line is
+
+``` c
+#endif
+```
+
+What's happening here is that, often we can end up with projects containing multiple files, some of which source each other, and include them.
+We don't want to end up with duplication of the headers which have been included, otherwise the compiler will raise an error, so we put them in an `#ifndef` wrapper, and give them a name.
+Basically, what we're saying to the preprocessor here is that if this name hasn't already been defined, defined it and include this code, but if it's already defined then skip this.
+
+### Includes
+
+The third line in `src/cfunc.h` is:
+
+``` c
+#include <stddef.h>
+```
+
+This allows for the inclusion of a file from [the C standard library](https://en.wikipedia.org/wiki/C_standard_library), which has a few different variables included.
+The key one for us here is `size_t`, which is commonly used for iterating over items in arrays - we need this as we'll be including a `for` loop in the definition of our function.
+
+### The preprocessor
+
+Above I casually mentioned the C preprocessor a couple of times without defining it.
+A succinct and perhaps naive summary is that there are [multiple steps](https://en.wikichip.org/wiki/c/phases_of_translation) in the compilation of C code.
+One of these phases is preprocessing and it involves things like processing any additional files we've said we wanted to include, and replacing macros with their definitions.
+
+### Declarations
+
+So, the declaration for the function in the example looks like this
+
+``` c
+double my_c_sum(const double* x, size_t n);
+```
+
+In words, this means that:
+
+-   it is a function which returns an object of type double
+-   the function name is `my_c_sum`
+-   the first argument is called `x`
+-   `x` is a pointer to a variable of type double
+-   `x` is a `const` variable, which means it won't be modified in the body of the function
+-   the second argument is called `n`
+-   `n` is of type `size_t`
+
+This concept of a pointer just means that `x` contains the memory address of the double that we pass in, rather than a copy of the values in it.
+This prevents us from copying the values unnecessarily.
+
+### Source file
+
+Source files contain the body of the function, sometimes called the implementation.
+
+The code in the book chapter goes on to show the content of the file `src/cfuncs.c`.
+The first line of this file is:
+
+``` c
+#include "cfuns.h"
+```
+
+This is including the header file we discussed above.
+The rest of the code in the source file contains the definition of `my_c_sum`:
+
+``` c
+/* computes the sum of all elements in an array x of size n */
+double my_c_sum(const double* x, size_t n)
+{
+    double s = 0.0;
+    for (size_t i = 0; i < n; ++i) {
+        /* this code does not treat potential missing values specially
+           (they are kinds of NaNs); to fix this, add:
+        if (ISNA(x[i])) return NA_REAL;  // #include <R.h>  */
+        s += x[i];
+    }
+    return s;
+}
+```
+
+The function signature here is identical to how it is defined in the header file.
+The `for` loop uses the `n` argument which was passed in to represent the size of the array to loop through.
+In numerous other languages we'd calculate the size of the array in the body of the function, but in C you cannot have an array of unknown size, and so it must be passed in as a parameter.
+I think this is to do with how the C compiler allocates memory; more modern C *does* have the concept of variable-length arrays.
+
+The chapter goes on to discuss further examples which then show how to include a wrapper which can be called by R.
+I won't discuss this here, as the text there is all explained well, and the contents are more specific to R's C API, and not specifically just C-related topics.
+
+Here's a summary of the C-related topics mentioned here:
+
+-   header files and source files
+-   includes
+-   once-only includes
+-   the preprocessor
+-   variable-length arrays
+-   `const` variables
+-   pointers
+-   statically-typed languages
+-   compiled and interpreted languages
