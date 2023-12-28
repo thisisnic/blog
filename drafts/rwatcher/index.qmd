@@ -1,0 +1,170 @@
+---
+title: "Monitoring R Package Updates with Github Actions"
+author: "Nic Crane"
+date: "2023-12-28"
+categories: [R, GitHub Actions]
+image: "job.png"
+---
+
+As maintainer of the Arrow R package, there are a few packages I want to keep up to date with, so I can make sure that our bindings continue to be compatible with the latest versions of these packages.  The packages I'm most interested in here are:
+
+* dplyr
+* stringr
+* lubridate
+
+I'm also interested in knowing when packages that folks use for vaguely similar purposes have been updated; I like to be up-to-date on this as sometimes people ask me about how things compare.
+
+Previously, I'd occasionally caught glimpses of things via social media, but I wanted a more methodical approach, and so decided to write [a GitHub Actions CRON job that does this](https://github.com/thisisnic/rwatcher/tree/main).  Now, when any of the packages on my list is updated, I receive an email that looks a little like this:
+
+![Email](dplyr_update.png)
+
+In this blog post, I'm going to walk through how I created this repository, and how you can do the same for your own packages.
+
+## How it all works
+
+The repo itself it pretty simple in structure - it contains the GitHub Actions workflow, and a folder containing the changelogs for the packages I'm interested in.  
+
+```
+# tree
+.github
+└── workflows
+    └── compare_hashes.yml
+changelogs
+├── data.table-NEWS.md
+├── dbplyr-NEWS.md
+├── dplyr-NEWS.md
+├── dtplyr-NEWS.md
+├── duckdb-NEWS.md
+├── duckplyr-NEWS.md
+├── lubridate-NEWS.md
+├── r-polars-NEWS.md
+├── stringr-NEWS.md
+└── tidypolars-NEWS.md
+```
+
+The workflow is triggered every day at 1am UTC, and runs a script that compares the hashes of the changelogs in my repo with the hashes of the changelogs in the package repos.  If there's a difference, the new changelog is saved to my repo and it sends me an email.
+
+
+## The GitHub Actions Workflow
+
+In the next sections, I'll walk through the GitHub Actions workflow, step by step, explaining what each bit does.
+
+### Scheduling
+
+The start of the workflow looks like this:
+
+```
+name: Check for package updates
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '00 1 * * *'
+```
+
+It has a name, and the schedule is set to run every day at 1am UTC.  The cron syntax is a bit weird, but there's a handy [crontab guru](https://crontab.guru/) that can help you figure out what you need to put in here.
+
+### Jobs
+
+Next, we set up the different jobs we want to run.  I want 1 job to run for each package.
+
+I used GitHub Copilot to help me with some of the syntax here; it was fantastic when I just added a comment describing what I'd like to be added, and then it filled it in.  This wasn't a perfect process as you have to know what to ask, and setting up the list of packages to work with was tricky, as I didn't quite have the understanding of how matrices (which can run code in parallel) interacted with arrays (for specifying multiple inputs for each parallel job) as I hadn't used this before.  A bit of googling and a skim of StackOverflow and I got there pretty quickly though. 
+
+```
+jobs:
+  compare-hashes:
+    name: ${{matrix.package.name}} updates
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+        matrix:
+          package: 
+            [
+                { name: dbplyr, file: dbplyr-NEWS.md, url: 'https://raw.githubusercontent.com/tidyverse/dbplyr/main/NEWS.md' }, 
+                { name: lubridate, file: lubridate-NEWS.md, url: 'https://raw.githubusercontent.com/tidyverse/lubridate/main/NEWS.md' },
+                { name: dplyr, file: dplyr-NEWS.md, url: 'https://raw.githubusercontent.com/tidyverse/dplyr/main/NEWS.md'}, 
+                { name: data.table, file: data.table-NEWS.md, url: 'https://raw.githubusercontent.com/Rdatatable/data.table/master/NEWS.md'},
+                { name: dtplyr, file: dtplyr-NEWS.md, url: 'https://raw.githubusercontent.com/tidyverse/dtplyr/main/NEWS.md'},
+                { name: duckdb-r, file: duckdb-r-NEWS.md, url: 'https://raw.githubusercontent.com/duckdb/duckdb-r/main/NEWS.md'},
+                { name: r-polars, file: r-polars-NEWS.md, url: 'https://raw.githubusercontent.com/pola-rs/r-polars/main/NEWS.md'},
+                { name: stringr, file: stringr-NEWS.md, url: 'https://raw.githubusercontent.com/tidyverse/stringr/main/NEWS.md'},
+                { name: duckplyr, file: duckplyr-NEWS.md, url: 'https://raw.githubusercontent.com/duckdblabs/duckplyr/main/NEWS.md'},
+                { name: tidypolars, file: tidypolars-NEWS.md, url: 'https://raw.githubusercontent.com/etiennebacher/tidypolars/main/NEWS.md'},
+            ]
+```
+
+The `runs-on` specifies the operating system to run the job on, and the `permissions` section allows the job to write to the repo.  The `strategy` section is where we set up the matrix of packages to work with.  Each package has a name, a file name, and a URL to the changelog.  The `name` of the job is set to the name of the package.
+
+### Steps
+
+Next, we set up the steps that we want to run.  The first step is to check out the repo, and get the hash of the changelog file in the repo.  This is saved to the `GITHUB_OUTPUT` environment variable, which is a file that is shared between all the steps in the job.
+
+```
+    steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+        - name: Get local file hash
+          id: local-hash
+          run: echo "local_hash=$(md5sum changelogs/${{ matrix.package.file }} | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
+```
+
+Next, I want to get the hash of the changelog file in the package repo.  I do this by downloading the file, and then getting the hash of the downloaded file.  This is also saved to the `GITHUB_OUTPUT` environment variable.
+
+```
+        - name: Get remote file
+          id: remote-file
+          run: |
+                  mkdir tmp
+                  curl -s ${{ matrix.package.url }} > tmp/${{ matrix.package.file }}#
+        - name: Get remote file hash
+          id: remote-hash
+          run: echo "remote_hash=$(md5sum tmp/${{ matrix.package.file }} | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
+```
+
+Finally, I want to compare the hashes of the two files.  If they're different, I want to update the changelog in my repo.  I do this by setting up a conditional step that only runs if the hashes are different.  In this case, I'm setting the git config, copying the new changelog to my repo, and then committing and pushing the changes.
+    
+```
+        - name: Update changed files
+          if: ${{ steps.local-hash.outputs.local_hash != steps.remote-hash.outputs.remote_hash }}
+          run: |
+            echo "Hashes do not match!"   
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "GHA Bot"
+            cp tmp/${{ matrix.package.file }} changelogs/${{ matrix.package.file }}
+            git add changelogs/${{ matrix.package.file }}
+            git pull --ff-only
+            git commit -m "Update ${{matrix.package.name}} changelog"
+            git push
+```
+
+Finally, I want to send an email notification if the changelog has been updated.  I do this by setting up a conditional step that only runs if the hashes are different.  I use the `dawidd6/action-send-mail` action to send the email.  I set up a few secrets in my repo to store the email address and password, and then use those in the action.  I also set up the subject and body of the email using the package name and URL.
+
+The username and password are not my actual email address and password; instead, you can set up an app password for your email account, and use that instead, which is more secure.
+
+```
+        - name: Send email notification
+          if: ${{ steps.local-hash.outputs.local_hash != steps.remote-hash.outputs.remote_hash }}
+          uses: dawidd6/action-send-mail@v3
+          with:
+            server_address: smtp.gmail.com
+            server_port: 465
+            username: ${{ secrets.MAIL_USERNAME }}
+            password: ${{ secrets.MAIL_PASSWORD }}
+            subject: "${{matrix.package.name}} update"
+            body: "${{matrix.package.name}} has been updated! Please check the changelog at ${{matrix.package.url}}."
+            to: ${{ secrets.MAIL_RECIPIENT }}
+            from: ${{ secrets.MAIL_USERNAME}}
+```
+
+And that's it!  The full repository can be found [here](https://github.com/thisisnic/rwatcher).  
+
+## Conclusion
+
+I really enjoyed working on this and learning more about GitHub Actions.  This works reasonably well, though there are a few improvements that could be made:
+
+* some packages update their changelog more frequently than others and so some of the updates I get feel a bit spammy. I could fix this by running my CRON job on a weekly rather than daily schedule.
+* I don't use this as much as I anticipated because some changes are really minor, and I tend to skim them and not pay too much attention.  Again, a different CRON frequency could probably help here.
+* I'm more interested in some packages than others.  {dplyr}, {lubridate}, and {stringr} are the most important, whereas others are just a "nice to have" here. I could separate these out into different jobs, and run them on different schedules.
+
+Anyway, I'd love to hear your thoughts - how do you keep up to date with changes in R packages? Do you have any suggestions for improvements to this workflow?  Let me know!  Get in touch via [Mastodon](https://fosstodon.org/@thisisnic) or [LinkedIn](https://www.linkedin.com/in/nicolacrane).
