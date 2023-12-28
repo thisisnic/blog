@@ -2,70 +2,78 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://niccrane.com/posts/c_deepr/index.html</loc>
-    <lastmod>2023-12-23T18:22:01.157Z</lastmod>
+    <lastmod>2023-12-28T10:45:10.814Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/debugging/index.html</loc>
-    <lastmod>2023-12-23T18:21:58.693Z</lastmod>
+    <lastmod>2023-12-28T10:45:08.082Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/2023wrapup/index.html</loc>
-    <lastmod>2023-12-23T18:21:56.425Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks.html</loc>
-    <lastmod>2023-12-23T18:21:51.089Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/londonr/index.html</loc>
-    <lastmod>2023-12-23T18:21:48.885Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/positconf2023/index.html</loc>
-    <lastmod>2023-12-23T18:21:47.393Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/projects.html</loc>
-    <lastmod>2023-12-23T18:21:45.841Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/index.html</loc>
-    <lastmod>2023-12-23T18:21:44.241Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/drafts/complexcodebases/index.html</loc>
-    <lastmod>2023-12-23T18:21:42.049Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/blog.html</loc>
-    <lastmod>2023-12-23T18:21:43.609Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/projects/phd/index.html</loc>
-    <lastmod>2023-12-23T18:21:45.017Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
-    <lastmod>2023-12-23T18:21:46.617Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
-    <lastmod>2023-12-23T18:21:48.137Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/nyhackr/index.html</loc>
-    <lastmod>2023-12-23T18:21:49.609Z</lastmod>
+    <lastmod>2023-12-28T10:45:05.674Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/draft_posts/udfs/index.html</loc>
-    <lastmod>2023-12-23T18:21:55.509Z</lastmod>
+    <lastmod>2023-12-28T10:45:03.494Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/nyhackr/index.html</loc>
+    <lastmod>2023-12-28T10:44:57.186Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
+    <lastmod>2023-12-28T10:44:55.738Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
+    <lastmod>2023-12-28T10:44:53.946Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/projects/phd/index.html</loc>
+    <lastmod>2023-12-28T10:44:51.998Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/blog.html</loc>
+    <lastmod>2023-12-28T10:44:50.174Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/drafts/complexcodebases/index.html</loc>
+    <lastmod>2023-12-28T10:44:47.262Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/drafts/shlib/index.html</loc>
+    <lastmod>2023-12-28T10:44:48.198Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/index.html</loc>
+    <lastmod>2023-12-28T10:44:51.014Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/projects.html</loc>
+    <lastmod>2023-12-28T10:44:53.018Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/positconf2023/index.html</loc>
+    <lastmod>2023-12-28T10:44:54.850Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/londonr/index.html</loc>
+    <lastmod>2023-12-28T10:44:56.442Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks.html</loc>
+    <lastmod>2023-12-28T10:44:58.806Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/rwatcher/index.html</loc>
+    <lastmod>2023-12-28T10:45:04.654Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/r-examples/index.html</loc>
-    <lastmod>2023-12-23T18:21:57.573Z</lastmod>
+    <lastmod>2023-12-28T10:45:06.838Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/goats/index.html</loc>
-    <lastmod>2023-12-23T18:22:00.057Z</lastmod>
+    <lastmod>2023-12-28T10:45:09.538Z</lastmod>
   </url>
 </urlset>
