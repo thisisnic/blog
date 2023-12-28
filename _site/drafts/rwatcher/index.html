@@ -230,14 +230,14 @@ on:
 </section>
 <section id="steps" class="level3">
 <h3 class="anchored" data-anchor-id="steps">Steps</h3>
-<p>Next, we set up the steps that we want to run. The first step is to check out the repo, and get the hash of the changelog file in the repo. This is saved to the <code>GITHUB_OUTPUT</code> environment variable, which is a file that is shared between all the steps in the job.</p>
+<p>Next, we set up the steps that we want to run. The first step is to check out the repo we are working in, and get the hash of the relevant changelog file I have stored in my repo. This is saved to the <code>GITHUB_OUTPUT</code> environment variable, which is a file that is shared between all the steps in the job.</p>
 <pre><code>    steps:
         - name: Checkout code
           uses: actions/checkout@v2
         - name: Get local file hash
           id: local-hash
           run: echo "local_hash=$(md5sum changelogs/${{ matrix.package.file }} | cut -d ' ' -f 1)" &gt;&gt; $GITHUB_OUTPUT</code></pre>
-<p>Next, I want to get the hash of the changelog file in the package repo. I do this by downloading the file, and then getting the hash of the downloaded file. This is also saved to the <code>GITHUB_OUTPUT</code> environment variable.</p>
+<p>Next, I want to get the hash of the latest version of the package’s changelog file. I do this by downloading the file, and then getting the hash of the downloaded file. This is also saved to the <code>GITHUB_OUTPUT</code> environment variable.</p>
 <pre><code>        - name: Get remote file
           id: remote-file
           run: |
@@ -277,7 +277,7 @@ on:
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>I really enjoyed working on this and learning more about GitHub Actions. This works reasonably well, though there are a few improvements that could be made:</p>
+<p>I really enjoyed working on this and learning more about GitHub Actions. This has proved to be a useful tool, though there are a few improvements that could be made:</p>
 <ul>
 <li>some packages update their changelog more frequently than others and so some of the updates I get feel a bit spammy. I could fix this by running my CRON job on a weekly rather than daily schedule.</li>
 <li>I don’t use this as much as I anticipated because some changes are really minor, and I tend to skim them and not pay too much attention. Again, a different CRON frequency could probably help here.</li>

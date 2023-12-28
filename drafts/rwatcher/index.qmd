@@ -98,7 +98,7 @@ The `runs-on` specifies the operating system to run the job on, and the `permiss
 
 ### Steps
 
-Next, we set up the steps that we want to run.  The first step is to check out the repo, and get the hash of the changelog file in the repo.  This is saved to the `GITHUB_OUTPUT` environment variable, which is a file that is shared between all the steps in the job.
+Next, we set up the steps that we want to run.  The first step is to check out the repo we are working in, and get the hash of the relevant changelog file I have stored in my repo.  This is saved to the `GITHUB_OUTPUT` environment variable, which is a file that is shared between all the steps in the job.
 
 ```
     steps:
@@ -109,7 +109,7 @@ Next, we set up the steps that we want to run.  The first step is to check out t
           run: echo "local_hash=$(md5sum changelogs/${{ matrix.package.file }} | cut -d ' ' -f 1)" >> $GITHUB_OUTPUT
 ```
 
-Next, I want to get the hash of the changelog file in the package repo.  I do this by downloading the file, and then getting the hash of the downloaded file.  This is also saved to the `GITHUB_OUTPUT` environment variable.
+Next, I want to get the hash of the latest version of the package's changelog file.  I do this by downloading the file, and then getting the hash of the downloaded file.  This is also saved to the `GITHUB_OUTPUT` environment variable.
 
 ```
         - name: Get remote file
@@ -161,7 +161,7 @@ And that's it!  The full repository can be found [here](https://github.com/thisi
 
 ## Conclusion
 
-I really enjoyed working on this and learning more about GitHub Actions.  This works reasonably well, though there are a few improvements that could be made:
+I really enjoyed working on this and learning more about GitHub Actions.  This has proved to be a useful tool, though there are a few improvements that could be made:
 
 * some packages update their changelog more frequently than others and so some of the updates I get feel a bit spammy. I could fix this by running my CRON job on a weekly rather than daily schedule.
 * I don't use this as much as I anticipated because some changes are really minor, and I tend to skim them and not pay too much attention.  Again, a different CRON frequency could probably help here.
