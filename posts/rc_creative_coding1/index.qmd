@@ -2,7 +2,7 @@
 title: "RC Creative Coding Session 1 - Heart from Cubes with rayrender"
 author: "Nic Crane"
 date: "2024-02-14"
-categories: [R]
+categories: [R, Recurse Center]
 image: "heart.png"
 ---
 
