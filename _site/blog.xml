@@ -10,7 +10,709 @@
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Nic Crane&#39;s Blog</description>
 <generator>quarto-1.3.433</generator>
-<lastBuildDate>Thu, 28 Dec 2023 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 14 Feb 2024 05:00:00 GMT</lastBuildDate>
+<item>
+  <title>RC Creative Coding Session 1 - Heart from Cubes with rayrender</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/rc_creative_coding1/index.html</link>
+  <description><![CDATA[ 
+
+
+
+
+<p>Today was my first day at the Recurse Center hub, and I decided to join in a Creative Coding session. The various sessions are open to anyone, and as I’d felt a bit of envy for folks with projects to work on with an artistic theme, I figured this would be a great way to fulfill that need.</p>
+<p>The brief today was “everybody’s got a hungry heart”, a lyric from the Bruce Springsteen song. I decided to keep life simple and just use the heart element. We had 2 hours to code something, anything we liked, and then had the opportunity to present it to the group.</p>
+<p>I’ve heard a lot of people talk about raytracing and if I’m honest I have no idea what it is, other than for creating 3D graphics and maps. I remember when a lot of folks in the R community were getting super excited about the rayrender package, and I’d never got round to giving it a go, so this seemed like a great opportunity.</p>
+<p>I’ll be honest here, I spent the first 20ish minutes of the workshop installing packages that needed to have their C++ compiled. This isn’t a complaint - how could I complain about that, given I help maintain arrow - though it’s made me appreciate the use of binaries, and I’ll probably go update my setup to go pull these from the Posit Package Manager repo with precompiled Linux binaries in future.</p>
+<p>I originally wanted to recreate something with contour lines and neon effect, but this began to prove tricky, and with limited time I just customised <a href="https://www.tylermw.com/posts/rayverse/getting-started-with-rayrender.html">an example which drew a sword</a> to instead draw a heart. I’ll walk through the code part by part below.</p>
+<p>The first step is to draw the heart shape. If you squint at the matrix below, you should be able to make out a heart drawn in <code>1</code>s amongst all the <code>0</code>s.</p>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(rayrender)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">heart <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(</span>
+<span id="cb1-4">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-5">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-6">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-7">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb1-8">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb1-9">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb1-10">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-11">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-12">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-13">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-14">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-15">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-16">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-17">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb1-18">              <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span></code></pre></div>
+<p>Next I generate the ground. I decided I wanted a black and white background, so set the colours accordingly.</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">scene <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">generate_ground</span>(</span>
+<span id="cb2-2">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">depth=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,</span>
+<span id="cb2-3">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">spheresize=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>,</span>
+<span id="cb2-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">material=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diffuse</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#000000"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">noise=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">noisecolor =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#ffffff"</span>)</span>
+<span id="cb2-5">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb2-6">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">add_object</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sphere</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">55</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">radius=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">material=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diffuse</span>()))</span></code></pre></div>
+<p>I then create individual cubes based on the values in my matrix which are filled in with <code>1</code>.</p>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span>(i <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ncol</span>(heart)) {</span>
+<span id="cb3-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span>(j <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nrow</span>(heart)) {</span>
+<span id="cb3-3">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">if</span>(heart[j,i] <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) {</span>
+<span id="cb3-4">      colorval <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#be2e1b"</span></span>
+<span id="cb3-5">      material <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">metal</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">color=</span>colorval,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fuzz=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>)</span>
+<span id="cb3-6">      scene <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">add_object</span>(scene,<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cube</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">y=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">16</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>j,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">z=</span>i<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">-4</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">material=</span>material))</span>
+<span id="cb3-7">    }</span>
+<span id="cb3-8">  }</span>
+<span id="cb3-9">}</span></code></pre></div>
+<p>Finally, I plot the scene!</p>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">par</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mfrow=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb4-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">render_scene</span>(scene,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">fov=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">width=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">height=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">samples=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">500</span>,</span>
+<span id="cb4-3">             <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">parallel=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lookfrom=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">25</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">lookat =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>))</span></code></pre></div>
+<p>This is closely copied from the tutorial, and doesn’t quite render as centered as I need, so I’ll probably come back and edit this blog post with an update once I get to know the code a bit better.</p>
+<p>I’m pretty happy with this though - creating something from scratch in 2 hours when learning a new library is tough, and while the end result took about 15 minutes, the prior research was needed to work out what was and wasn’t feasible in the time!</p>
+<p><img src="https://niccrane.com/posts/rc_creative_coding1/rayrender_screencast.gif" class="img-fluid"></p>
+<p>It was great to demonstrate cool things in R too - lots of people saw R as something they’d used in grad school for statistics, and didn’t realise the full extent of possibilities. Going from a matrix of 1s and 0s to a 3D scene was a pretty powerful demo too!</p>
+<p>I’m loving Recurse Center so far, and will be updating with more posts like this as I go along!</p>
+
+
+
+ ]]></description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/rc_creative_coding1/index.html</guid>
+  <pubDate>Wed, 14 Feb 2024 05:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/rc_creative_coding1/heart.png" medium="image" type="image/png" height="130" width="144"/>
+</item>
 <item>
   <title>Monitoring R Package Updates with Github Actions</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -160,7 +862,7 @@ on:
   <category>R</category>
   <category>GitHub Actions</category>
   <guid>https://niccrane.com/posts/rwatcher/index.html</guid>
-  <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Thu, 28 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rwatcher/job.png" medium="image" type="image/png" height="117" width="144"/>
 </item>
 <item>
@@ -362,7 +1064,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>R</category>
   <category>C</category>
   <guid>https://niccrane.com/posts/c_deepr/index.html</guid>
-  <pubDate>Sat, 23 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 23 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/c_deepr/deepr.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -418,7 +1120,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/2023wrapup/index.html</guid>
-  <pubDate>Thu, 21 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Thu, 21 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/2023wrapup/2023.png" medium="image" type="image/png" height="66" width="144"/>
 </item>
 <item>
@@ -445,7 +1147,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/debugging/index.html</guid>
-  <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
+  <pubDate>Wed, 04 Oct 2023 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -498,7 +1200,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/goats/index.html</guid>
-  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 03 Oct 2023 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -588,7 +1290,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>R</category>
   <category>Python</category>
   <guid>https://niccrane.com/posts/r-examples/index.html</guid>
-  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 </channel>

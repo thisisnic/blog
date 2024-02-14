@@ -2,78 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://niccrane.com/posts/c_deepr/index.html</loc>
-    <lastmod>2023-12-28T10:51:55.349Z</lastmod>
+    <lastmod>2024-02-14T21:07:43.568Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/debugging/index.html</loc>
-    <lastmod>2023-12-28T10:51:52.849Z</lastmod>
+    <lastmod>2024-02-14T21:07:41.460Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/posts/2023wrapup/index.html</loc>
-    <lastmod>2023-12-28T10:51:50.817Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/draft_posts/udfs/index.html</loc>
-    <lastmod>2023-12-28T10:51:48.901Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/nyhackr/index.html</loc>
-    <lastmod>2023-12-28T10:51:43.689Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
-    <lastmod>2023-12-28T10:51:42.281Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
-    <lastmod>2023-12-28T10:51:40.841Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/projects/phd/index.html</loc>
-    <lastmod>2023-12-28T10:51:39.369Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/blog.html</loc>
-    <lastmod>2023-12-28T10:51:37.781Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/drafts/complexcodebases/index.html</loc>
-    <lastmod>2023-12-28T10:51:35.205Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/drafts/shlib/index.html</loc>
-    <lastmod>2023-12-28T10:51:35.965Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/index.html</loc>
-    <lastmod>2023-12-28T10:51:38.593Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/projects.html</loc>
-    <lastmod>2023-12-28T10:51:40.149Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/positconf2023/index.html</loc>
-    <lastmod>2023-12-28T10:51:41.569Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/londonr/index.html</loc>
-    <lastmod>2023-12-28T10:51:43.009Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks.html</loc>
-    <lastmod>2023-12-28T10:51:45.017Z</lastmod>
+    <loc>https://niccrane.com/posts/rc_creative_coding1/index.html</loc>
+    <lastmod>2024-02-14T21:07:39.500Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/rwatcher/index.html</loc>
-    <lastmod>2023-12-28T10:51:49.913Z</lastmod>
+    <lastmod>2024-02-14T21:07:37.544Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks.html</loc>
+    <lastmod>2024-02-14T21:07:32.788Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/londonr/index.html</loc>
+    <lastmod>2024-02-14T21:07:30.952Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/positconf2023/index.html</loc>
+    <lastmod>2024-02-14T21:07:29.632Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/projects.html</loc>
+    <lastmod>2024-02-14T21:07:28.324Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/index.html</loc>
+    <lastmod>2024-02-14T21:07:26.888Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/drafts/shlib/index.html</loc>
+    <lastmod>2024-02-14T21:07:24.548Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/drafts/complexcodebases/index.html</loc>
+    <lastmod>2024-02-14T21:07:23.880Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/blog.html</loc>
+    <lastmod>2024-02-14T21:07:26.280Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/projects/phd/index.html</loc>
+    <lastmod>2024-02-14T21:07:27.572Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
+    <lastmod>2024-02-14T21:07:28.944Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
+    <lastmod>2024-02-14T21:07:30.324Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/nyhackr/index.html</loc>
+    <lastmod>2024-02-14T21:07:31.528Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/draft_posts/udfs/index.html</loc>
+    <lastmod>2024-02-14T21:07:36.660Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/2023wrapup/index.html</loc>
+    <lastmod>2024-02-14T21:07:38.404Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/r-examples/index.html</loc>
-    <lastmod>2023-12-28T10:51:51.857Z</lastmod>
+    <lastmod>2024-02-14T21:07:40.496Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/goats/index.html</loc>
-    <lastmod>2023-12-28T10:51:54.217Z</lastmod>
+    <lastmod>2024-02-14T21:07:42.596Z</lastmod>
   </url>
 </urlset>
