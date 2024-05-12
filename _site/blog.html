@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.4.553">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -47,7 +47,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -56,6 +62,7 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -94,16 +101,43 @@ ul.task-list li input[type="checkbox"] {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 <link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Nic Crane" href="blog.xml"></head>
+<link rel="alternate" type="application/rss+xml" title="Nic Crane" href="blog.xml" data-external="1"></head>
 
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Nic Crane</span>
     </a>
@@ -115,30 +149,30 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./talks.html" rel="" target="">
- <span class="menu-text">Talks &amp; Workshops</span></a>
+    <a class="nav-link" href="./talks.html"> 
+<span class="menu-text">Talks &amp; Workshops</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./projects.html" rel="" target="">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="./projects.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./blog.html" rel="" target="" aria-current="page">
- <span class="menu-text">Blog</span></a>
+    <a class="nav-link active" href="./blog.html" aria-current="page"> 
+<span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./blog.xml" rel="" target=""><i class="bi bi-rss" role="img">
+    <a class="nav-link" href="./blog.xml"> <i class="bi bi-rss" role="img">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-            <div class="quarto-navbar-tools">
-</div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -151,7 +185,7 @@ ul.task-list li input[type="checkbox"] {
   </div>
     
   
-  <div class="quarto-title-meta">
+  <div class="quarto-title-meta column-page-left">
 
       
     
@@ -164,7 +198,7 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(7)</span></div><div class="category" data-category="C">C <span class="quarto-category-count">(1)</span></div><div class="category" data-category="GitHub Actions">GitHub Actions <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(7)</span></div><div class="category" data-category="Recurse Center">Recurse Center <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(7)</span></div><div class="category" data-category="C">C <span class="quarto-category-count">(1)</span></div><div class="category" data-category="GitHub Actions">GitHub Actions <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Python">Python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(7)</span></div></div></div>
 <!-- main -->
 <main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
 
@@ -175,39 +209,35 @@ ul.task-list li input[type="checkbox"] {
 
 
 
+
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="R,Recurse Center" data-listing-date-sort="1707886800000" data-listing-file-modified-sort="1707945058103" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
+<div class="quarto-post image-right" data-index="0" data-categories="R" data-listing-date-sort="1715468400000" data-listing-file-modified-sort="1715549301261" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1409">
 <div class="thumbnail">
-<p><a href="./posts/rc_creative_coding1/index.html"> <img src="./posts/rc_creative_coding1/heart.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/rc/index.html" class="no-external"></a></p><a href="./posts/rc/index.html" class="no-external">
+<p><img src="./posts/rc/rc.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/rc/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/rc_creative_coding1/index.html">
 <h3 class="no-anchor listing-title">
-RC Creative Coding Session 1 - Heart from Cubes with rayrender
+<a href="./posts/rc/index.html" class="no-external">Recurse Center Return Statement</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/rc/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
 R
 </div>
-<div class="listing-category" onclick="window.quartoListingCategory('Recurse Center'); return false;">
-Recurse Center
 </div>
-</div>
-<a href="./posts/rc_creative_coding1/index.html">
 <div class="listing-description">
-Today was my first day at the Recurse Center hub, and I decided to join in a Creative Coding session. The…
+<a href="./posts/rc/index.html" class="no-external">I spent 3 months earlier this year at Recurse Center in New York. Here’s a summary of the highlights of my time there!</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/rc_creative_coding1/index.html">
+<a href="./posts/rc/index.html" class="no-external">
 <div class="listing-date">
-Feb 14, 2024
+May 12, 2024
 </div>
 <div class="listing-author">
 Nic Crane
@@ -215,19 +245,19 @@ Nic Crane
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="R,GitHub Actions" data-listing-date-sort="1703739600000" data-listing-file-modified-sort="1703760688421" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10">
+<div class="quarto-post image-right" data-index="1" data-categories="R,GitHub Actions" data-listing-date-sort="1703721600000" data-listing-file-modified-sort="1703760688421" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1891">
 <div class="thumbnail">
-<p><a href="./posts/rwatcher/index.html"> <img src="./posts/rwatcher/job.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/rwatcher/index.html" class="no-external"></a></p><a href="./posts/rwatcher/index.html" class="no-external">
+<p><img src="./posts/rwatcher/job.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/rwatcher/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/rwatcher/index.html">
 <h3 class="no-anchor listing-title">
-Monitoring R Package Updates with Github Actions
+<a href="./posts/rwatcher/index.html" class="no-external">Monitoring R Package Updates with Github Actions</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/rwatcher/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
 R
@@ -236,14 +266,12 @@ R
 GitHub Actions
 </div>
 </div>
-<a href="./posts/rwatcher/index.html">
 <div class="listing-description">
-As maintainer of the Arrow R package, there are a few packages I want…
+<a href="./posts/rwatcher/index.html" class="no-external">As maintainer of the Arrow R package, there are a few packages I want to keep up to date with, so I can make sure that our bindings continue to be compatible with the latest…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/rwatcher/index.html">
+<a href="./posts/rwatcher/index.html" class="no-external">
 <div class="listing-date">
 Dec 28, 2023
 </div>
@@ -253,19 +281,19 @@ Nic Crane
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="R,C" data-listing-date-sort="1703307600000" data-listing-file-modified-sort="1703355684058" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
+<div class="quarto-post image-right" data-index="2" data-categories="R,C" data-listing-date-sort="1703289600000" data-listing-file-modified-sort="1703355684058" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1079">
 <div class="thumbnail">
-<p><a href="./posts/c_deepr/index.html"> <img src="./posts/c_deepr/deepr.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/c_deepr/index.html" class="no-external"></a></p><a href="./posts/c_deepr/index.html" class="no-external">
+<p><img src="./posts/c_deepr/deepr.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/c_deepr/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/c_deepr/index.html">
 <h3 class="no-anchor listing-title">
-Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’
+<a href="./posts/c_deepr/index.html" class="no-external">Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/c_deepr/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
 R
@@ -274,14 +302,12 @@ R
 C
 </div>
 </div>
-<a href="./posts/c_deepr/index.html">
 <div class="listing-description">
-One of my goals for next year is to get a deeper understanding of R’s C API. I’m making a start on this by reading Chapter 14 of Deep…<del></del>
+<a href="./posts/c_deepr/index.html" class="no-external">One of my goals for next year is to get a deeper understanding of R’s C API. I’m making a start on this by reading Chapter 14 of Deep R Programming by Marek Gagolewski…<del></del></a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/c_deepr/index.html">
+<a href="./posts/c_deepr/index.html" class="no-external">
 <div class="listing-date">
 Dec 23, 2023
 </div>
@@ -291,32 +317,30 @@ Nic Crane
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="R" data-listing-date-sort="1703134800000" data-listing-file-modified-sort="1703159194500" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5">
+<div class="quarto-post image-right" data-index="3" data-categories="R" data-listing-date-sort="1703116800000" data-listing-file-modified-sort="1703159194500" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="894">
 <div class="thumbnail">
-<p><a href="./posts/2023wrapup/index.html"> <img src="./posts/2023wrapup/2023.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/2023wrapup/index.html" class="no-external"></a></p><a href="./posts/2023wrapup/index.html" class="no-external">
+<p><img src="./posts/2023wrapup/2023.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/2023wrapup/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/2023wrapup/index.html">
 <h3 class="no-anchor listing-title">
-Reflections on 2023
+<a href="./posts/2023wrapup/index.html" class="no-external">Reflections on 2023</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/2023wrapup/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
 R
 </div>
 </div>
-<a href="./posts/2023wrapup/index.html">
 <div class="listing-description">
-Here’s a summary of my highlights of 2023!
+<a href="./posts/2023wrapup/index.html" class="no-external">Here’s a summary of my highlights of 2023!</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/2023wrapup/index.html">
+<a href="./posts/2023wrapup/index.html" class="no-external">
 <div class="listing-date">
 Dec 21, 2023
 </div>
@@ -326,32 +350,30 @@ Nic Crane
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="R" data-listing-date-sort="1696392000000" data-listing-file-modified-sort="1696406493767" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7">
+<div class="quarto-post image-right" data-index="4" data-categories="R" data-listing-date-sort="1696374000000" data-listing-file-modified-sort="1696406493767" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1303">
 <div class="thumbnail">
-<p><a href="./posts/debugging/index.html"> <img src="./posts/debugging/ahab.jpg" class="thumbnail-image"> </a></p>
+<p><a href="./posts/debugging/index.html" class="no-external"></a></p><a href="./posts/debugging/index.html" class="no-external">
+<p><img src="./posts/debugging/ahab.jpg" class="thumbnail-image"></p>
+</a><p><a href="./posts/debugging/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/debugging/index.html">
 <h3 class="no-anchor listing-title">
-Debugging
+<a href="./posts/debugging/index.html" class="no-external">Debugging</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/debugging/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
 R
 </div>
 </div>
-<a href="./posts/debugging/index.html">
 <div class="listing-description">
-As a package maintainer, I’m constantly disappointed when folks mention Arrow bugs they’re aware of but haven’t reported. Not disappointed with the individual in question…
+<a href="./posts/debugging/index.html" class="no-external">As a package maintainer, I’m constantly disappointed when folks mention Arrow bugs they’re aware of but haven’t reported. Not disappointed with the individual in question…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/debugging/index.html">
+<a href="./posts/debugging/index.html" class="no-external">
 <div class="listing-date">
 Oct 4, 2023
 </div>
@@ -361,32 +383,30 @@ Nic Crane
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="R" data-listing-date-sort="1696305600000" data-listing-file-modified-sort="1696519556333" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11">
+<div class="quarto-post image-right" data-index="5" data-categories="R" data-listing-date-sort="1696287600000" data-listing-file-modified-sort="1696519556333" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="11" data-listing-word-count-sort="2028">
 <div class="thumbnail">
-<p><a href="./posts/goats/index.html"> <img src="./posts/goats/goats.jpg" class="thumbnail-image"> </a></p>
+<p><a href="./posts/goats/index.html" class="no-external"></a></p><a href="./posts/goats/index.html" class="no-external">
+<p><img src="./posts/goats/goats.jpg" class="thumbnail-image"></p>
+</a><p><a href="./posts/goats/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/goats/index.html">
 <h3 class="no-anchor listing-title">
-Three Goats in a Raincoat
+<a href="./posts/goats/index.html" class="no-external">Three Goats in a Raincoat</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/goats/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
 R
 </div>
 </div>
-<a href="./posts/goats/index.html">
 <div class="listing-description">
-I am not a fan of the term “imposter syndrome.” It’s a lazy way of ignoring the complex and interconnected, often structural…
+<a href="./posts/goats/index.html" class="no-external">I am not a fan of the term “imposter syndrome.” It’s a lazy way of ignoring the complex and interconnected, often structural reasons that contribute to many people’s…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/goats/index.html">
+<a href="./posts/goats/index.html" class="no-external">
 <div class="listing-date">
 Oct 3, 2023
 </div>
@@ -396,19 +416,19 @@ Nic Crane
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="R,Python" data-listing-date-sort="1621310400000" data-listing-file-modified-sort="1694001453080" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6">
+<div class="quarto-post image-right" data-index="6" data-categories="R,Python" data-listing-date-sort="1621292400000" data-listing-file-modified-sort="1694001453080" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1042">
 <div class="thumbnail">
-<p><a href="./posts/r-examples/index.html"> <img src="./posts/r-examples/arrow_examples.png" class="thumbnail-image"> </a></p>
+<p><a href="./posts/r-examples/index.html" class="no-external"></a></p><a href="./posts/r-examples/index.html" class="no-external">
+<p><img src="./posts/r-examples/arrow_examples.png" class="thumbnail-image"></p>
+</a><p><a href="./posts/r-examples/index.html" class="no-external"></a></p>
 </div>
 <div class="body">
-<a href="./posts/r-examples/index.html">
 <h3 class="no-anchor listing-title">
-R package documentation - what makes a good example?
+<a href="./posts/r-examples/index.html" class="no-external">R package documentation - what makes a good example?</a>
 </h3>
 <div class="listing-subtitle">
-
+<a href="./posts/r-examples/index.html" class="no-external"></a>
 </div>
-</a>
 <div class="listing-categories">
 <div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
 R
@@ -417,14 +437,12 @@ R
 Python
 </div>
 </div>
-<a href="./posts/r-examples/index.html">
 <div class="listing-description">
-I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to…
+<a href="./posts/r-examples/index.html" class="no-external">I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to…</a>
 </div>
-</a>
 </div>
 <div class="metadata">
-<a href="./posts/r-examples/index.html">
+<a href="./posts/r-examples/index.html" class="no-external">
 <div class="listing-date">
 May 18, 2021
 </div>
@@ -518,10 +536,27 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/niccrane\.com");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -531,8 +566,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -544,7 +588,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -588,6 +755,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -613,6 +781,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -673,6 +867,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 

@@ -9,716 +9,143 @@
 <link>https://niccrane.com/blog.html</link>
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Nic Crane&#39;s Blog</description>
-<generator>quarto-1.3.433</generator>
-<lastBuildDate>Wed, 14 Feb 2024 05:00:00 GMT</lastBuildDate>
+<generator>quarto-1.4.553</generator>
+<lastBuildDate>Sat, 11 May 2024 23:00:00 GMT</lastBuildDate>
 <item>
-  <title>RC Creative Coding Session 1 - Heart from Cubes with rayrender</title>
+  <title>Recurse Center Return Statement</title>
   <dc:creator>Nic Crane</dc:creator>
-  <link>https://niccrane.com/posts/rc_creative_coding1/index.html</link>
+  <link>https://niccrane.com/posts/rc/</link>
   <description><![CDATA[ 
 
 
 
 
-<p>Today was my first day at the Recurse Center hub, and I decided to join in a Creative Coding session. The various sessions are open to anyone, and as I’d felt a bit of envy for folks with projects to work on with an artistic theme, I figured this would be a great way to fulfill that need.</p>
-<p>The brief today was “everybody’s got a hungry heart”, a lyric from the Bruce Springsteen song. I decided to keep life simple and just use the heart element. We had 2 hours to code something, anything we liked, and then had the opportunity to present it to the group.</p>
-<p>I’ve heard a lot of people talk about raytracing and if I’m honest I have no idea what it is, other than for creating 3D graphics and maps. I remember when a lot of folks in the R community were getting super excited about the rayrender package, and I’d never got round to giving it a go, so this seemed like a great opportunity.</p>
-<p>I’ll be honest here, I spent the first 20ish minutes of the workshop installing packages that needed to have their C++ compiled. This isn’t a complaint - how could I complain about that, given I help maintain arrow - though it’s made me appreciate the use of binaries, and I’ll probably go update my setup to go pull these from the Posit Package Manager repo with precompiled Linux binaries in future.</p>
-<p>I originally wanted to recreate something with contour lines and neon effect, but this began to prove tricky, and with limited time I just customised <a href="https://www.tylermw.com/posts/rayverse/getting-started-with-rayrender.html">an example which drew a sword</a> to instead draw a heart. I’ll walk through the code part by part below.</p>
-<p>The first step is to draw the heart shape. If you squint at the matrix below, you should be able to make out a heart drawn in <code>1</code>s amongst all the <code>0</code>s.</p>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(rayrender)</span>
-<span id="cb1-2"></span>
-<span id="cb1-3">heart <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(</span>
-<span id="cb1-4">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-5">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-6">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-7">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb1-8">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb1-9">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,</span>
-<span id="cb1-10">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-11">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-12">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-13">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-14">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-15">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-16">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-17">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb1-18">              <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>), <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">15</span>, <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">15</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>)</span></code></pre></div>
-<p>Next I generate the ground. I decided I wanted a black and white background, so set the colours accordingly.</p>
-<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">scene <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">generate_ground</span>(</span>
-<span id="cb2-2">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">depth=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,</span>
-<span id="cb2-3">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">spheresize=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1000</span>,</span>
-<span id="cb2-4">    <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">material=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">diffuse</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">color=</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#000000"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">noise=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">noisecolor =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#ffffff"</span>)</span>
-<span id="cb2-5">  ) <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%&gt;%</span></span>
-<span id="cb2-6">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">add_object</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sphere</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x=</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">60</span>,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">y=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">55</span>,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">radius=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">40</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">material=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">diffuse</span>()))</span></code></pre></div>
-<p>I then create individual cubes based on the values in my matrix which are filled in with <code>1</code>.</p>
-<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span>(i <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ncol</span>(heart)) {</span>
-<span id="cb3-2">  <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span>(j <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">nrow</span>(heart)) {</span>
-<span id="cb3-3">    <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">if</span>(heart[j,i] <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">==</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>) {</span>
-<span id="cb3-4">      colorval <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"#be2e1b"</span></span>
-<span id="cb3-5">      material <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">metal</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">color=</span>colorval,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">fuzz=</span><span class="fl" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0.1</span>)</span>
-<span id="cb3-6">      scene <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">add_object</span>(scene,<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">cube</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">y=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">16</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span>j,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">z=</span>i<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">-4</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">material=</span>material))</span>
-<span id="cb3-7">    }</span>
-<span id="cb3-8">  }</span>
-<span id="cb3-9">}</span></code></pre></div>
-<p>Finally, I plot the scene!</p>
-<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">par</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">mfrow=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>))</span>
-<span id="cb4-2"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">render_scene</span>(scene,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">fov=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">30</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">width=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">500</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">height=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">500</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">samples=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">500</span>,</span>
-<span id="cb4-3">             <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">parallel=</span><span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">lookfrom=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">25</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">25</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>), <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">lookat =</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>))</span></code></pre></div>
-<p>This is closely copied from the tutorial, and doesn’t quite render as centered as I need, so I’ll probably come back and edit this blog post with an update once I get to know the code a bit better.</p>
-<p>I’m pretty happy with this though - creating something from scratch in 2 hours when learning a new library is tough, and while the end result took about 15 minutes, the prior research was needed to work out what was and wasn’t feasible in the time!</p>
-<p><img src="https://niccrane.com/posts/rc_creative_coding1/rayrender_screencast.gif" class="img-fluid"></p>
-<p>It was great to demonstrate cool things in R too - lots of people saw R as something they’d used in grad school for statistics, and didn’t realise the full extent of possibilities. Going from a matrix of 1s and 0s to a 3D scene was a pretty powerful demo too!</p>
-<p>I’m loving Recurse Center so far, and will be updating with more posts like this as I go along!</p>
+
+<p>I spent 3 months earlier this year at Recurse Center in New York. Here’s a summary of the highlights of my time there!</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/rc/nycskyline.jpg" class="img-fluid figure-img"></p>
+<figcaption>The view from the Empire State Building, one of the few tourist attractions I visited in my time in New York!</figcaption>
+</figure>
+</div>
+<section id="what-is-recurse-center" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-recurse-center">What is Recurse Center?</h2>
+<p>The simplest explanation of what Recurse Center <em>is</em> is that it’s like a writer’s retreat but for programmers. Participants have to apply to get in, and there are 3 stages. The first is a written application, followed by a conversational interview, and then a pair programming interview. Generally, the intention is to assess whether you’ll be a good fit for RC. The selection criteria are <a href="https://www.recurse.com/what-we-look-for">stated explicitly on the website</a>, but to summarise, they’re looking for self-motivated people who enjoy programming and are pleasant to be around. It’s not about being an amazing programmer; though I met some people with seriously impressive skills there, I also met newer programmers who were enthusiastic and engaged.</p>
+<p>RC can be attended remotely online or in person, but I opted for the in-person experience to get the most out of it. The hub, the in-person location is in Brooklyn, and takes up 2 floors of an office building. The 4th floor is the main floor where people code, socialise, do pair programming, and hang out in the kitchen, presentation space, or the meeting rooms. The 5th floor is the quiet floor where people can do more focused work without interruption.</p>
+<p>RC has a <a href="https://www.recurse.com/code-of-conduct">code of conduct</a>, as well as 4 more general <a href="https://www.recurse.com/social-rules">social rules</a>:</p>
+<ul>
+<li>No well-actually’s</li>
+<li>No feigned surprise</li>
+<li>No backseat driving</li>
+<li>No subtle -isms</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/rc/rcsocialrules.jpg" class="img-fluid figure-img"></p>
+<figcaption>A printed poster of RC’s social rules</figcaption>
+</figure>
+</div>
+<p>As well as social rules about what <em>not</em> to do, there are 3 guiding principles, or self-directives, about what to do:</p>
+<ul>
+<li>Work at the edge of your abilities</li>
+<li>Build your volitional muscles</li>
+<li>Learn generously</li>
+</ul>
+<p>These explicit expectations lead to a fantastic learning environment where some of the more toxic elements that can sometimes be found in tech were avoided, and folks worked on project that really mattered to them and helped other people do the same.</p>
+<p>Recurse Center is a business, and makes its money from recruitment - RC works with partner companies looking for software engineers and similar roles, though admission to RC isn’t predicated on looking for employment via them, and is never pushed on people.</p>
+</section>
+<section id="why-did-i-go" class="level2">
+<h2 class="anchored" data-anchor-id="why-did-i-go">Why did I go?</h2>
+<p>When I decided to go to RC, I was at the beginning of a career break. I had done some consultancy/contract work early on, but had decided that I needed a proper pause. I had begun working on the book on Arrow that I’m co-authoring, and splitting my attention between the two things wasn’t working well for me. I also wanted some focused learning time - I had a ton of side projects I’d been meaning to work on but had never gotten moving and I felt like this would be a great opportunity to push them forwards.</p>
+<p>My secondary motivation was how I was feeling at the time. I was lacking confidence in some of my technical skills, and know from experience that the best way to tackle that is learn new things and get things done, to disprove some of the insecurities I was having.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/rc/begayfindprimes.jpg" class="img-fluid figure-img"></p>
+<figcaption>A cross-stitched piece on the wall at RC with the text “be gay find primes”</figcaption>
+</figure>
+</div>
+</section>
+<section id="what-did-i-intend-to-work-on" class="level2">
+<h2 class="anchored" data-anchor-id="what-did-i-intend-to-work-on">What did I intend to work on?</h2>
+<p>Before I went to RC, I had a huge list of potential things to work on. I didn’t plan on doing all of these, but this was my initial brain dump of everything I thought might be useful or interesting in future:</p>
+<ul>
+<li>Read “Writing R Extensions”</li>
+<li>Do the course Nand2Tetris to get a better foundation of “lower level stuff”</li>
+<li>Learn C</li>
+<li>Learn more about the finer details of how building R packages work</li>
+<li>contribute to parsermd so it works for Quarto markdown documents</li>
+<li>finish the Udacity C++ nanodegree I’d done some of a while ago</li>
+<li>learn more about the C++ build process</li>
+<li>Do all of the C sessions of CS50</li>
+<li>Do some work on the Arrow book</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/rc/retromachines.jpg" class="img-fluid figure-img"></p>
+<figcaption>Some of the retro machines at the RC hub.</figcaption>
+</figure>
+</div>
+</section>
+<section id="what-did-i-actually-work-on" class="level2">
+<h2 class="anchored" data-anchor-id="what-did-i-actually-work-on">What did I actually work on?</h2>
+<p>One of the principles of RC is to use your volitional muscles and work on what interests you rather than things you think you “should” work on. There’s a balance to be struck here, but there was a great exercise early on where we were guided through questions to ask ourselves to work out what was going to be the best things to focus on.</p>
+<p>In the end, I didn’t get through all of the things on my original list, but had a much more exciting time doing the following things:</p>
+<ul>
+<li>went through most of Nand2Tetris</li>
+<li>played around with compilation and decompilation and how compiler flags change the code produced</li>
+<li>played with assembly code</li>
+<li>starting going through the book Crafting Interpreters and plan to do more another time!</li>
+<li>spent lots of time pairing with other people on my and other people’s code and developing a love for pair programming</li>
+<li>did a few presentations on Nand2Tetris and why it’s such a great course!</li>
+<li>wrote an R-based Quarto markdown parser which implements recursive descent parsing</li>
+<li>delved into the Quarto codebase and developed a new version of the parser which takes advantage of pandoc instead of doing everything the hard way</li>
+</ul>
+<p>And alongside this:</p>
+<ul>
+<li>did a ton of writing of the Arrow book I’m co-authoring</li>
+<li>finished off interviewing for a job I’d applied for at Novartis which I’m super excited to start tomorrow!</li>
+<li>attended 2 days of Carpentries instructor training</li>
+<li>had regular lessons with a public speaking tutor</li>
+<li>submitted and got accepted to co-present a talk to posit::conf</li>
+<li>handed over arrow maintainership to the fantastic Jon Keane</li>
+</ul>
+</section>
+<section id="what-did-i-learn" class="level2">
+<h2 class="anchored" data-anchor-id="what-did-i-learn">What did I learn?</h2>
+<ul>
+<li>low-level programming concepts felt out of reach for a long time; most docs are aimed at people who already understand the tech being described, there’s a lot of foundational computer science knowledge that is assumed that I didn’t have, and it’s hard to know where to find good learning resources. However, I learned that actually, it isn’t nearly as out of reach as I’d thought and all I really need is to find that one good resource, and have time to explore it. Nand2Tetris is an awesome course!</li>
+<li>a solid community of peers is invaluable. I’ve been lucky enough in my career so far to mostly have either a community of peers or excellent mentors, but in future I’m going to aim to make sure I have both, whether that’s via a job role or engaging with wider programming communities more fully.</li>
+<li>pair programming is a wonderful thing and is massively underutilised. Pairing shouldn’t only be utilised when there’s a bug, but be a regular practice. It helps share assumptions and norms,</li>
+<li>working on the things I <em>want</em> to as well as the things I think I <em>should</em> work on is so key to productivity</li>
+<li>to listen to my gut when it comes to my own learning. I have had a frustration for years with public speaking where I know I’m not terrible at it, want to be better, but asking friends and colleagues for feedback often led to (lovely, kind, well-meaning) validation but not the actionable feedback I wanted. Working with a tutor has been amazing for helping me identify my strengths (I convey passion and excitement for my topic, and especially when I teach, really try to connect with my audience) and weaknesses (my natural speaking speed is about 3 times what it should be, and I could work on structuring information better within a talk)</li>
+<li>not to mistake being limited for time to work on a problem with not being able to solve the problem</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/rc/rcsewing.jpg" class="img-fluid figure-img"></p>
+<figcaption>Some craft projects which were on display at RC</figcaption>
+</figure>
+</div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>I can honestly describe the 3 months I spent at Recurse Center as the best solid 3 month period of my life. I learned a huge amount about, not only programming, but my own motivation. I made some amazing friends - my fellow RC participants and the faculty there are some of the coolest people I’ve ever met - and will be staying involved in the community in the longer term.</p>
 
 
+</section>
 
  ]]></description>
   <category>R</category>
-  <category>Recurse Center</category>
-  <guid>https://niccrane.com/posts/rc_creative_coding1/index.html</guid>
-  <pubDate>Wed, 14 Feb 2024 05:00:00 GMT</pubDate>
-  <media:content url="https://niccrane.com/posts/rc_creative_coding1/heart.png" medium="image" type="image/png" height="130" width="144"/>
+  <guid>https://niccrane.com/posts/rc/</guid>
+  <pubDate>Sat, 11 May 2024 23:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/rc/rc.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
   <title>Monitoring R Package Updates with Github Actions</title>
   <dc:creator>Nic Crane</dc:creator>
-  <link>https://niccrane.com/posts/rwatcher/index.html</link>
+  <link>https://niccrane.com/posts/rwatcher/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -734,7 +161,7 @@ font-style: inherit;">0</span>))</span></code></pre></div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://niccrane.com/posts/rwatcher/dplyr_update.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Email</figcaption>
+<figcaption>Email</figcaption>
 </figure>
 </div>
 <p>In this blog post, I’m going to walk through how I created this repository, and how you can do the same for your own packages.</p>
@@ -862,15 +289,16 @@ on:
  ]]></description>
   <category>R</category>
   <category>GitHub Actions</category>
-  <guid>https://niccrane.com/posts/rwatcher/index.html</guid>
-  <pubDate>Thu, 28 Dec 2023 05:00:00 GMT</pubDate>
+  <guid>https://niccrane.com/posts/rwatcher/</guid>
+  <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rwatcher/job.png" medium="image" type="image/png" height="117" width="144"/>
 </item>
 <item>
   <title>Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’</title>
   <dc:creator>Nic Crane</dc:creator>
-  <link>https://niccrane.com/posts/c_deepr/index.html</link>
+  <link>https://niccrane.com/posts/c_deepr/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -986,11 +414,9 @@ font-style: inherit;">{</span></span>
 background-color: null;
 font-style: inherit;">double</span> s <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0</span><span class="er" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">.0</span><span class="op" style="color: #5E5E5E;
+font-style: inherit;">0.0</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">;</span></span>
 <span id="cb6-5">    <span class="cf" style="color: #003B4F;
@@ -1064,15 +490,16 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <category>C</category>
-  <guid>https://niccrane.com/posts/c_deepr/index.html</guid>
-  <pubDate>Sat, 23 Dec 2023 05:00:00 GMT</pubDate>
+  <guid>https://niccrane.com/posts/c_deepr/</guid>
+  <pubDate>Sat, 23 Dec 2023 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/c_deepr/deepr.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
   <title>Reflections on 2023</title>
   <dc:creator>Nic Crane</dc:creator>
-  <link>https://niccrane.com/posts/2023wrapup/index.html</link>
+  <link>https://niccrane.com/posts/2023wrapup/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1084,7 +511,7 @@ font-style: inherit;">}</span></span></code></pre></div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://niccrane.com/posts/2023wrapup/posit_conf.jpg" class="img-fluid figure-img" width="500"></p>
-<figcaption class="figure-caption">Hanging out with some awesome people at posit::conf 2023!</figcaption>
+<figcaption>Hanging out with some awesome people at posit::conf 2023!</figcaption>
 </figure>
 </div>
 </section>
@@ -1120,15 +547,16 @@ font-style: inherit;">}</span></span></code></pre></div>
 
  ]]></description>
   <category>R</category>
-  <guid>https://niccrane.com/posts/2023wrapup/index.html</guid>
-  <pubDate>Thu, 21 Dec 2023 05:00:00 GMT</pubDate>
+  <guid>https://niccrane.com/posts/2023wrapup/</guid>
+  <pubDate>Thu, 21 Dec 2023 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/2023wrapup/2023.png" medium="image" type="image/png" height="66" width="144"/>
 </item>
 <item>
   <title>Debugging</title>
   <dc:creator>Nic Crane</dc:creator>
-  <link>https://niccrane.com/posts/debugging/index.html</link>
+  <link>https://niccrane.com/posts/debugging/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1147,15 +575,16 @@ font-style: inherit;">}</span></span></code></pre></div>
 
  ]]></description>
   <category>R</category>
-  <guid>https://niccrane.com/posts/debugging/index.html</guid>
-  <pubDate>Wed, 04 Oct 2023 04:00:00 GMT</pubDate>
+  <guid>https://niccrane.com/posts/debugging/</guid>
+  <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>Three Goats in a Raincoat</title>
   <dc:creator>Nic Crane</dc:creator>
-  <link>https://niccrane.com/posts/goats/index.html</link>
+  <link>https://niccrane.com/posts/goats/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1200,15 +629,16 @@ font-style: inherit;">}</span></span></code></pre></div>
 
  ]]></description>
   <category>R</category>
-  <guid>https://niccrane.com/posts/goats/index.html</guid>
-  <pubDate>Tue, 03 Oct 2023 04:00:00 GMT</pubDate>
+  <guid>https://niccrane.com/posts/goats/</guid>
+  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
   <title>R package documentation - what makes a good example?</title>
   <dc:creator>Nic Crane</dc:creator>
-  <link>https://niccrane.com/posts/r-examples/index.html</link>
+  <link>https://niccrane.com/posts/r-examples/</link>
   <description><![CDATA[ 
+
 
 
 
@@ -1221,7 +651,7 @@ font-style: inherit;">}</span></span></code></pre></div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://niccrane.com/posts/r-examples/dplyr_case_when.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">(image from: https://rdrr.io/cran/dplyr/man/case_when.html)</figcaption>
+<figcaption>(image from: https://rdrr.io/cran/dplyr/man/case_when.html)</figcaption>
 </figure>
 </div>
 <p>I think Jonathan is spot on in his assessment. To paraphrase, the highlights for him are:</p>
@@ -1266,14 +696,14 @@ font-style: inherit;">}</span></span></code></pre></div>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://niccrane.com/posts/r-examples/rdrr.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">(from https://rdrr.io/cran/dplyr/man/case_when.html)</figcaption>
+<figcaption>(from https://rdrr.io/cran/dplyr/man/case_when.html)</figcaption>
 </figure>
 </div>
 <p>Some packages include output as comments within their examples. For instance, the <code>tidyselect</code> package; here’s an example from <code>tidyselect::all_of</code>:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="https://niccrane.com/posts/r-examples/tidyselect.png" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">(from https://rdrr.io/cran/tidyselect/man/all_of.html)</figcaption>
+<figcaption>(from https://rdrr.io/cran/tidyselect/man/all_of.html)</figcaption>
 </figure>
 </div>
 <p>All that said, while the ability to see the output of examples is a nice-to-have, I don’t think it’s essential to good function documentation. With any piece of documentation, it’s necessary to consider the purpose; at a minimum, examples exist to tell the reader how to use a function, and you don’t need to see the output to do that.</p>
@@ -1290,8 +720,8 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <category>Python</category>
-  <guid>https://niccrane.com/posts/r-examples/index.html</guid>
-  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
+  <guid>https://niccrane.com/posts/r-examples/</guid>
+  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 </channel>

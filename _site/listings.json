@@ -1,12 +1,14 @@
 [
   {
-    "listing": "/talks.html",
+    "listing": "/blog.html",
     "items": [
-      "/talks/positconf2023/index.html",
-      "/talks/nyhackr/index.html",
-      "/talks/rstudioconf2022/index.html",
-      "/talks/rstudioconf2019/index.html",
-      "/talks/londonr/index.html"
+      "/posts/rc/index.html",
+      "/posts/rwatcher/index.html",
+      "/posts/c_deepr/index.html",
+      "/posts/2023wrapup/index.html",
+      "/posts/debugging/index.html",
+      "/posts/goats/index.html",
+      "/posts/r-examples/index.html"
     ]
   },
   {
@@ -16,15 +18,13 @@
     ]
   },
   {
-    "listing": "/blog.html",
+    "listing": "/talks.html",
     "items": [
-      "/posts/rc_creative_coding1/index.html",
-      "/posts/rwatcher/index.html",
-      "/posts/c_deepr/index.html",
-      "/posts/2023wrapup/index.html",
-      "/posts/debugging/index.html",
-      "/posts/goats/index.html",
-      "/posts/r-examples/index.html"
+      "/talks/positconf2023/index.html",
+      "/talks/nyhackr/index.html",
+      "/talks/rstudioconf2022/index.html",
+      "/talks/rstudioconf2019/index.html",
+      "/talks/londonr/index.html"
     ]
   }
 ]
