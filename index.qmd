@@ -1,6 +1,6 @@
 ---
 title: "Nic Crane, PhD"
-image: nic_crane.jpg
+image: nic_crane.jpeg
 about:
   template: jolla
   links:
@@ -15,4 +15,4 @@ about:
       href: https://fosstodon.org/@nic_crane
 ---
 
-Hi, I'm Nic! I'm a data scientist, software engineer, and R enthusiast.  I am part of the team who maintain the arrow R package.
+Hi, I'm Nic! I'm a data scientist, software engineer, and R enthusiast.  I am part of the team who maintain the arrow R package and co-author of [Scaling Up with R and Arrow](https://arrowrbook.com/).

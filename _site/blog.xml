@@ -9,8 +9,8 @@
 <link>https://niccrane.com/blog.html</link>
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Nic Crane&#39;s Blog</description>
-<generator>quarto-1.4.553</generator>
-<lastBuildDate>Sat, 11 May 2024 23:00:00 GMT</lastBuildDate>
+<generator>quarto-1.5.53</generator>
+<lastBuildDate>Sun, 12 May 2024 04:00:00 GMT</lastBuildDate>
 <item>
   <title>Recurse Center Return Statement</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -137,7 +137,7 @@
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/rc/</guid>
-  <pubDate>Sat, 11 May 2024 23:00:00 GMT</pubDate>
+  <pubDate>Sun, 12 May 2024 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rc/rc.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -290,7 +290,7 @@ on:
   <category>R</category>
   <category>GitHub Actions</category>
   <guid>https://niccrane.com/posts/rwatcher/</guid>
-  <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Thu, 28 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rwatcher/job.png" medium="image" type="image/png" height="117" width="144"/>
 </item>
 <item>
@@ -421,6 +421,7 @@ background-color: null;
 font-style: inherit;">;</span></span>
 <span id="cb6-5">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">for</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">(</span><span class="dt" style="color: #AD0000;
@@ -463,6 +464,7 @@ background-color: null;
 font-style: inherit;">}</span></span>
 <span id="cb6-11">    <span class="cf" style="color: #003B4F;
 background-color: null;
+font-weight: bold;
 font-style: inherit;">return</span> s<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">;</span></span>
@@ -491,7 +493,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>R</category>
   <category>C</category>
   <guid>https://niccrane.com/posts/c_deepr/</guid>
-  <pubDate>Sat, 23 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 23 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/c_deepr/deepr.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -548,7 +550,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/2023wrapup/</guid>
-  <pubDate>Thu, 21 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Thu, 21 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/2023wrapup/2023.png" medium="image" type="image/png" height="66" width="144"/>
 </item>
 <item>
@@ -576,7 +578,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/debugging/</guid>
-  <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
+  <pubDate>Wed, 04 Oct 2023 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -630,7 +632,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/goats/</guid>
-  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 03 Oct 2023 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -721,7 +723,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>R</category>
   <category>Python</category>
   <guid>https://niccrane.com/posts/r-examples/</guid>
-  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 </channel>

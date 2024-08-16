@@ -12,12 +12,6 @@
     ]
   },
   {
-    "listing": "/projects.html",
-    "items": [
-      "/projects/phd/index.html"
-    ]
-  },
-  {
     "listing": "/talks.html",
     "items": [
       "/talks/positconf2023/index.html",
@@ -25,6 +19,13 @@
       "/talks/rstudioconf2022/index.html",
       "/talks/rstudioconf2019/index.html",
       "/talks/londonr/index.html"
+    ]
+  },
+  {
+    "listing": "/projects.html",
+    "items": [
+      "/projects/book/index.html",
+      "/projects/phd/index.html"
     ]
   }
 ]
