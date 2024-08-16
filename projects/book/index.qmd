@@ -7,5 +7,5 @@ image: thumbnail.png
   
 [Published online for free at arrowrbook.com](www.arrowrbook.com)
 
-A book I co-authored with Jonathan Keane and Neal Richardson about working with larger-than-memory datasets in R. The paper version will be published later this year.
+A book I co-authored with Jonathan Keane and Neal Richardson about working with larger-than-memory datasets in R with Arrow. The paper version will be published later this year.
 

@@ -165,7 +165,7 @@
     "href": "projects/book/index.html",
     "title": "Scaling Up With R and Arrow",
     "section": "",
-    "text": "Published online for free at arrowrbook.com\nA book I co-authored with Jonathan Keane and Neal Richardson about working with larger-than-memory datasets in R. The paper version will be published later this year."
+    "text": "Published online for free at arrowrbook.com\nA book I co-authored with Jonathan Keane and Neal Richardson about working with larger-than-memory datasets in R with Arrow. The paper version will be published later this year."
   },
   {
     "objectID": "posts/rwatcher/index.html",
