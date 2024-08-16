@@ -98,53 +98,11 @@
     "text": "Download here: PDF, 2.1MB\nThis thesis focuses on deductive reasoning and how the belief bias effect can be reduced or ameliorated.\nBelief bias is a phenomenon whereby the evaluation of the logical validity of an argument is skewed by the degree to which the reasoner believes the conclusion. There has been little research examining ways of reducing such bias and whether there is some sort of effective intervention which makes people reason more on the basis of logic. Traditional analyses of this data has focussed on simple measures of accuracy, typically deducting the number of incorrect answers from the number of correct answers to give an accuracy score. However, recent theoretical developments have shown that this approach fails to separate reasoning biases and response biases. A reasoning bias, is one which affects individuals’ ability to discriminate between valid and invalid arguments, whereas a response bias is simply the individual’s tendency to give a particular answer, independent of reasoning. A Signal Detection Theory (SDT) approach is used to calculate measures of reasoning accuracy and response bias. These measures are then analysed using mixed effects models.\nChapter 1 gives a general introduction to the topic, and outlines the content of subsequent chapters. In Chapter 2, I review the psychological literature around belief bias, the growth of the use of SDT models, and approaches to reducing bias. Chapter 3 covers the methodology, and includes a a thorough description of the calculation of the SDT measures, and an explanation of the mixed effects models I used to analyse these. Chapter 4 presents an experiment in which the effects of feedback on reducing belief bias is examined. In Chapter 5, the focus shifts in the direction of individual differences, and looks at the effect of different instructions given to participants, and Chapter 6 examines the effects of both feedback and specific training. Chapter 7 provides a general discussion of the implications of the previous three chapters."
   },
   {
-    "objectID": "talks.html",
-    "href": "talks.html",
-    "title": "Talks and Workshops",
+    "objectID": "projects/firstcontributions/index.html",
+    "href": "projects/firstcontributions/index.html",
+    "title": "First Contributions (in R) Repo",
     "section": "",
-    "text": "Big Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nSep 17, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "talks/rstudioconf2019/index.html",
-    "href": "talks/rstudioconf2019/index.html",
-    "title": "The future’s Shiny: Pioneering genomic medicine in R",
-    "section": "",
-    "text": "Shiny's expanding capabilities are rapidly transforming how it is used in an enterprise. This talk details the creation of a large-scale application, supporting hundreds of concurrent users, making use of the future and promises packages. The 100,000 genomes project is an ambitious exercise that follows on from the Human Genome Project - aiming to put the UK at the forefront of genomic medicine, with the NHS as the first health service in the world to offer precision medicine to patients with rare diseases and cancer. Data is at the heart of this project; not only the outputs of the genomic sequencing, but vast amounts of metadata used to track progress against the 100,000 genome target and the status and path of each case through the sample tracking pipeline. In order to make this data readily available to stakeholders, Shiny was used to create an application containing multiple interactive dashboards. A scaled-up version of the app is being rolled out in early 2019 to a much larger audience to support the National Genomics Informatics Service, with the challenge of creating a complex app capable of supporting so many users without grinding to a halt. In this talk, I will explain why Shiny was the obvious technology choice for this task, and discuss the design decisions which enabled this project’s success."
-  },
-  {
-    "objectID": "talks/nyhackr/index.html",
-    "href": "talks/nyhackr/index.html",
-    "title": "Efficiently Engineering Bigger Data with Arrow",
-    "section": "",
-    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
-  },
-  {
-    "objectID": "projects.html",
-    "href": "projects.html",
-    "title": "Projects",
-    "section": "",
-    "text": "Scaling Up With R and Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhD Thesis - Debiasing Reasoning: A Signal Detection Analysis\n\n\n\n\n\n\nNic Crane\n\n\nJul 22, 2016\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Nic Crane, PhD",
-    "section": "",
-    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast. I am part of the team who maintain the arrow R package and co-author of Scaling Up with R and Arrow."
-  },
-  {
-    "objectID": "talks/rstudioconf2022/index.html",
-    "href": "talks/rstudioconf2022/index.html",
-    "title": "What they forgot to teach you about becoming an open source contributor",
-    "section": "",
-    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
-  },
-  {
-    "objectID": "talks/londonr/index.html",
-    "href": "talks/londonr/index.html",
-    "title": "Ten Steps To Becoming A Tidyverse Contributor",
-    "section": "",
-    "text": "A talk about getting involved in open source!\nSlides here"
+    "text": "A GitHub repository helping people make their first open source PR. The repo is a chopped-up, trimmed-down, and customised-for-RStudio version of the amazing first contributions repo designed to act as a live tutorial for people making their first open source pull request. Kindly taken over by Forwards who now manage it."
   },
   {
     "objectID": "talks/positconf2023/index.html",
@@ -159,6 +117,55 @@
     "title": "Big Data in R with Arrow",
     "section": "Overview",
     "text": "Overview\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
+  },
+  {
+    "objectID": "talks/londonr/index.html",
+    "href": "talks/londonr/index.html",
+    "title": "Ten Steps To Becoming A Tidyverse Contributor",
+    "section": "",
+    "text": "A talk about getting involved in open source!\nSlides here"
+  },
+  {
+    "objectID": "talks/rstudioconf2022/index.html",
+    "href": "talks/rstudioconf2022/index.html",
+    "title": "What they forgot to teach you about becoming an open source contributor",
+    "section": "",
+    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Nic Crane, PhD",
+    "section": "",
+    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast. I am part of the team who maintain the arrow R package and co-author of Scaling Up with R and Arrow."
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Scaling Up With R and Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFirst Contributions (in R) Repo\n\n\n\n\n\n\nNic Crane\n\n\nNov 28, 2018\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhD Thesis - Debiasing Reasoning: A Signal Detection Analysis\n\n\n\n\n\n\nNic Crane\n\n\nJul 22, 2016\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "talks/nyhackr/index.html",
+    "href": "talks/nyhackr/index.html",
+    "title": "Efficiently Engineering Bigger Data with Arrow",
+    "section": "",
+    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
+  },
+  {
+    "objectID": "talks/rstudioconf2019/index.html",
+    "href": "talks/rstudioconf2019/index.html",
+    "title": "The future’s Shiny: Pioneering genomic medicine in R",
+    "section": "",
+    "text": "Shiny's expanding capabilities are rapidly transforming how it is used in an enterprise. This talk details the creation of a large-scale application, supporting hundreds of concurrent users, making use of the future and promises packages. The 100,000 genomes project is an ambitious exercise that follows on from the Human Genome Project - aiming to put the UK at the forefront of genomic medicine, with the NHS as the first health service in the world to offer precision medicine to patients with rare diseases and cancer. Data is at the heart of this project; not only the outputs of the genomic sequencing, but vast amounts of metadata used to track progress against the 100,000 genome target and the status and path of each case through the sample tracking pipeline. In order to make this data readily available to stakeholders, Shiny was used to create an application containing multiple interactive dashboards. A scaled-up version of the app is being rolled out in early 2019 to a much larger audience to support the National Genomics Informatics Service, with the challenge of creating a complex app capable of supporting so many users without grinding to a halt. In this talk, I will explain why Shiny was the obvious technology choice for this task, and discuss the design decisions which enabled this project’s success."
+  },
+  {
+    "objectID": "talks.html",
+    "href": "talks.html",
+    "title": "Talks and Workshops",
+    "section": "",
+    "text": "Big Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nSep 17, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects/book/index.html",

@@ -1,0 +1,8 @@
+---
+title: "First Contributions (in R) Repo"
+author: "Nic Crane"
+date: "2018-11-28"
+image: thumbnail.png
+---
+
+[A GitHub repository helping people make their first open source PR](https://github.com/forwards/first-contributions). The repo is a chopped-up, trimmed-down, and customised-for-RStudio version of the amazing [first contributions](https://github.com/firstcontributions/first-contributions) repo designed to act as a live tutorial for people making their first open source pull request. Kindly taken over by Forwards who now manage it.
