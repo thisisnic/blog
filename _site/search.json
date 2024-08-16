@@ -126,18 +126,11 @@
     "text": "A talk about getting involved in open source!\nSlides here"
   },
   {
-    "objectID": "talks/rstudioconf2022/index.html",
-    "href": "talks/rstudioconf2022/index.html",
-    "title": "What they forgot to teach you about becoming an open source contributor",
+    "objectID": "talks/nyhackr/index.html",
+    "href": "talks/nyhackr/index.html",
+    "title": "Efficiently Engineering Bigger Data with Arrow",
     "section": "",
-    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Nic Crane, PhD",
-    "section": "",
-    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast. I am part of the team who maintain the arrow R package and co-author of Scaling Up with R and Arrow."
+    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
   },
   {
     "objectID": "projects.html",
@@ -147,11 +140,32 @@
     "text": "Scaling Up With R and Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFirst Contributions (in R) Repo\n\n\n\n\n\n\nNic Crane\n\n\nNov 28, 2018\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhD Thesis - Debiasing Reasoning: A Signal Detection Analysis\n\n\n\n\n\n\nNic Crane\n\n\nJul 22, 2016\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "talks/nyhackr/index.html",
-    "href": "talks/nyhackr/index.html",
-    "title": "Efficiently Engineering Bigger Data with Arrow",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Nic Crane, PhD",
     "section": "",
-    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
+    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast. I am part of the team who maintain the arrow R package and co-author of Scaling Up with R and Arrow."
+  },
+  {
+    "objectID": "talks/rstudioconf2022/index.html",
+    "href": "talks/rstudioconf2022/index.html",
+    "title": "What they forgot to teach you about becoming an open source contributor",
+    "section": "",
+    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
+  },
+  {
+    "objectID": "talks/positconf2024/index.html",
+    "href": "talks/positconf2024/index.html",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2024.\nCourse homepage"
+  },
+  {
+    "objectID": "talks/positconf2024/index.html#overview",
+    "href": "talks/positconf2024/index.html#overview",
+    "title": "Big Data in R with Arrow",
+    "section": "Overview",
+    "text": "Overview\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
   },
   {
     "objectID": "talks/rstudioconf2019/index.html",
@@ -165,7 +179,7 @@
     "href": "talks.html",
     "title": "Talks and Workshops",
     "section": "",
-    "text": "Big Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nSep 17, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\n\n\nNo matching items"
+    "text": "Big Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nSep 17, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBig Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 12, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects/book/index.html",
