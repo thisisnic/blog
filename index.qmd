@@ -15,4 +15,42 @@ about:
       href: https://fosstodon.org/@nic_crane
 ---
 
-Hi, I'm Nic! I'm a data scientist, software engineer, and R enthusiast.  I am part of the team who maintain the arrow R package and co-author of [Scaling Up with R and Arrow](https://arrowrbook.com/).
+Hi, I'm Nic! I'm a data scientist, software engineer, and R enthusiast. I am part of the team who maintain the arrow R package and co-author of [Scaling Up with R and Arrow](https://arrowrbook.com/).
+
+I also provide **professional, tailored consulting and training services** to help organizations unlock the full potential of R and data analysis. With extensive experience in **modernising legacy code**, **building R packages**, **developing Shiny apps**, and **designing data visualization and automated reporting tools**, I focus on delivering scalable, effective solutions that meet specific client needs.
+
+### Training Services
+
+-   Beginner to advanced topics, including **R fundamentals**, **Apache Arrow for big data**, and **AI-powered workflows**.
+
+-   Customized courses tailored to your needs, ensuring relevance and hands-on learning.
+
+-   Proven track record, with workshops taught at **EARL**, **posit::conf** and online courses developed for major platforms.
+
+### **Consulting Expertise**
+
+-   **Shiny app development**: End-to-end creation of interactive dashboards, including:
+
+    -   A Shiny portal designed to monitor the status of genomic analysis pipelines for a large-scale healthcare organization.
+
+    -   An app built to automate data cleaning and visualization for a major pharmaceutical company.
+
+    -   Optimization and redesign of an existing Shiny app for a semiconductor manufacturer, applying best software engineering practices.
+
+-   **Legacy code modernization**: Transitioning from SAS or Excel to R for streamlined analysis.
+
+-   **Diverse technical solutions**:
+
+    -   Delivered a complete Python-based NLP solution, including a backend and dashboard, to analyze online reviews and extract themes and aggregated sentiments for a university project.
+
+-   Open to both short-term problem-solving projects and longer-term collaborations.
+
+### **Why Work with Me?**
+
+-   Trusted reputation in the R community, with open-source contributions and public speaking engagements at industry-leading events.
+
+-   Flexible, remote-friendly services, ensuring cost-effective, high-quality results.
+
+-   Transparent communication, with clear deliverables, timelines, and scope management.
+
+I’m currently accepting new clients and open to partnerships for larger projects. Whether you're looking to **upskill your team**, **modernize your workflows**, or **tackle a specific data challenge**, I’d love to discuss how I can help.
