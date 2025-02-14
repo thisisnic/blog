@@ -1,0 +1,11 @@
+---
+title: "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail"
+author: "Nic Crane"
+date: "2024-08-17"
+categories: [open-source]
+image: arrowdash.png
+---
+
+A talk on Arrow that Alenka Frim and I wrote and presented at posit::conf 2024.
+
+<https://docs.google.com/presentation/d/1ViXduR7CNrz_9QFDk5snAlD3tFJpJs156-UEBxCHiks/edit?usp=sharing>

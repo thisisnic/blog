@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nic Crane">
-<meta name="dcterms.date" content="2024-08-12">
+<meta name="dcterms.date" content="2025-02-14">
 
-<title>Big Data in R with Arrow – Nic Crane</title>
+<title>Generating social media posts to promote blog posts with {shiny} and {ellmer} – Nic Crane</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -76,7 +76,7 @@ ul.task-list li input[type="checkbox"] {
 <body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -119,59 +119,102 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Generating social media posts to promote blog posts with {shiny} and {ellmer}</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">AI</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nic Crane </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 14, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Big Data in R with Arrow</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">open-source</div>
-  </div>
-  </div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nic Crane </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">August 12, 2024</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
 
 
-</header>
-
-
-<p>A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023 and 2024.</p>
-<p><a href="https://posit-conf-2024.github.io/arrow/">Course homepage</a></p>
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.</p>
-<p>The workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.</p>
-<p>This course is for you if you:</p>
+<p>Writing blog posts is fun, but the next step, getting people to actually read them, can be trickier. I wanted to promote a recent blog post I co-authored for R-Ladies, but coming up with multiple social media posts felt like a bit of a chore.Instead of doing it it manually, I decided to automate the process by building a Shiny app that generates social media content using large language models (LLMs). It was a fun little project, and could even be useful for others too!</p>
+<section id="the-solution-a-shiny-app-powered-by-ai" class="level2">
+<h2 class="anchored" data-anchor-id="the-solution-a-shiny-app-powered-by-ai">The Solution: A Shiny App Powered by AI</h2>
+<p>The app does the following:</p>
 <ul>
-<li>want to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow</li>
-<li>want to learn about Parquet and other file formats that are powerful alternatives to CSV files</li>
-<li>want to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow</li>
+<li>Takes a GitHub Markdown link as input.</li>
+<li>Lets users specify hashtags, the number of posts to generate, and whether or not to use emojis.</li>
+<li>Allows selection of tone (e.g., serious, playful, informative).</li>
+<li>Calls Google’s Gemini API via the <a href="https://ellmer.tidyverse.org/"><code>ellmer</code></a> package to generate social media posts promotinhg the blog post.</li>
 </ul>
+<section id="why-ellmer-and-the-gemini-api" class="level3">
+<h3 class="anchored" data-anchor-id="why-ellmer-and-the-gemini-api">Why <code>ellmer</code> and the Gemini API?</h3>
+<p>The <code>ellmer</code> package was released last year, and is a delightfully straightforward way to directly call LLMs from R. Google’s Gemini API, in particular, offers a generous free tier - up to 15 requests per minute, which was more than enough for my needs.</p>
+</section>
+</section>
+<section id="how-it-works" class="level2">
+<h2 class="anchored" data-anchor-id="how-it-works">How It Works</h2>
+<p>The app is simple:</p>
+<ol type="1">
+<li><strong>Enter the GitHub Markdown file link</strong> (or other text source).</li>
+<li><strong>Set your preferences</strong>—hashtags, emojis, tone, and how many posts to generate.</li>
+<li><strong>Click generate</strong>, and it spits out a bunch of posts.</li>
+<li><strong>Copy and paste</strong> into your social media scheduler.</li>
+</ol>
+<p>Under the hood, it builds a prompt using the user’s inputs and calls the Gemini API. The response is formatted into platform-appropriate posts, making it much easier to schedule across different social networks.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="./preview.png" class="img-fluid figure-img"></p>
+<figcaption>Preview of the app</figcaption>
+</figure>
+</div>
+</section>
+<section id="deployment-considerations" class="level2">
+<h2 class="anchored" data-anchor-id="deployment-considerations">Deployment Considerations</h2>
+<p>Right now, the app runs locally, and users need to enter their own Gemini API key as an evironment variable. This prevents abuse of a shared key, but it also makes the app a bit more DIY. I’m considering deploying it on Posit Connect Cloud or a similar service in the future. The trick will be allowing users to bring their own API keys while keeping things secure.</p>
+<p>Another thought: supporting multiple AI models so users can plug in API keys for different services like OpenAI’s ChatGPT or Anthropic’s Claude.</p>
+</section>
+<section id="future-ideas" class="level2">
+<h2 class="anchored" data-anchor-id="future-ideas">Future Ideas</h2>
+<p>Some things I’d love to add:</p>
+<ul>
+<li><strong>More refined prompts</strong> tailored to different platforms (e.g., longer for LinkedIn, punchier for Bluesky).</li>
+<li><strong>Suggested images</strong> to go with posts.</li>
+</ul>
+</section>
+<section id="try-it-yourself" class="level2">
+<h2 class="anchored" data-anchor-id="try-it-yourself">Try It Yourself!</h2>
+<p>Want to give it a go? You can find the repo here: <a href="https://github.com/thisisnic/socialmediagen" class="uri">https://github.com/thisisnic/socialmediagen</a></p>
+</section>
+<section id="wrapping-up" class="level2">
+<h2 class="anchored" data-anchor-id="wrapping-up">Wrapping Up</h2>
+<p>This was a fun little side project that turned out to be actually useful - I’m going to be using it to promote this blog post!</p>
+<p>I’d love to hear if you have any ideas for improvements—hit me up if you try it out!</p>
 
 
 </section>

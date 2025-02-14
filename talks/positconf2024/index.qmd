@@ -1,12 +1,12 @@
 ---
 title: "Big Data in R with Arrow"
 author: "Nic Crane"
-date: "2023-08-12"
+date: "2024-08-12"
 categories: [open-source]
 image: thumbnail.png
 ---
 
-A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2024.
+A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023 and 2024.
 
 [Course homepage](https://posit-conf-2024.github.io/arrow/)
 
@@ -18,7 +18,6 @@ The workshop will focus on using the the arrow R package—a mature R interface 
 
 This course is for you if you:
 
-  - want to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow
-  - want to learn about Parquet and other file formats that are powerful alternatives to CSV files
-  - want to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow
-
+-   want to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow
+-   want to learn about Parquet and other file formats that are powerful alternatives to CSV files
+-   want to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow

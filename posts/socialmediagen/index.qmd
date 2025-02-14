@@ -1,0 +1,59 @@
+---
+title: "Generating social media posts to promote blog posts with {shiny} and {ellmer}"
+author: "Nic Crane"
+date: "2025-02-14"
+categories: [R, AI]
+image: "preview.png"
+---
+  
+Writing blog posts is fun, but the next step, getting people to actually read them, can be trickier. I wanted to promote a recent blog post I co-authored for R-Ladies, but coming up with multiple social media posts felt like a bit of a chore.Instead of doing it it manually, I decided to automate the process by building a Shiny app that generates social media content using large language models (LLMs). It was a fun little project, and could even be useful for others too!
+
+## The Solution: A Shiny App Powered by AI
+
+The app does the following:
+
+- Takes a GitHub Markdown link as input.
+- Lets users specify hashtags, the number of posts to generate, and whether or not to use emojis.
+- Allows selection of tone (e.g., serious, playful, informative).
+- Calls Google's Gemini API via the [`ellmer`](https://ellmer.tidyverse.org/) package to generate social media posts promotinhg the blog post.
+
+### Why `ellmer` and the Gemini API?
+
+The `ellmer` package was released last year, and is a delightfully straightforward way to directly call LLMs from R.  Google's Gemini API, in particular, offers a generous free tier - up to 15 requests per minute, which was more than enough for my needs.
+
+## How It Works
+
+The app is simple:
+
+1. **Enter the GitHub Markdown file link** (or other text source).
+2. **Set your preferences**—hashtags, emojis, tone, and how many posts to generate.
+3. **Click generate**, and it spits out a bunch of posts.
+4. **Copy and paste** into your social media scheduler.
+
+Under the hood, it builds a prompt using the user's inputs and calls the Gemini API. The response is formatted into platform-appropriate posts, making it much easier to schedule across different social networks.
+
+![Preview of the app](./preview.png)
+
+## Deployment Considerations
+
+Right now, the app runs locally, and users need to enter their own Gemini API key as an evironment variable. This prevents abuse of a shared key, but it also makes the app a bit more DIY. I'm considering deploying it on Posit Connect Cloud or a similar service in the future. The trick will be allowing users to bring their own API keys while keeping things secure.
+
+Another thought: supporting multiple AI models so users can plug in API keys for different services like OpenAI's ChatGPT or Anthropic's Claude.
+
+## Future Ideas
+
+Some things I'd love to add:
+
+- **More refined prompts** tailored to different platforms (e.g., longer for LinkedIn, punchier for Bluesky).
+- **Suggested images** to go with posts.
+
+## Try It Yourself!
+
+Want to give it a go? You can find the repo here: <https://github.com/thisisnic/socialmediagen>
+
+## Wrapping Up
+
+This was a fun little side project that turned out to be actually useful - I'm going to be using it to promote this blog post!
+
+I'd love to hear if you have any ideas for improvements—hit me up if you try it out!
+

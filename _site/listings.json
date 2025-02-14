@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/socialmediagen/index.html",
       "/posts/rc/index.html",
       "/posts/rwatcher/index.html",
       "/posts/c_deepr/index.html",
@@ -22,9 +23,9 @@
   {
     "listing": "/talks.html",
     "items": [
-      "/talks/positconf2023/index.html",
-      "/talks/nyhackr/index.html",
+      "/talks/positconf2024_2/index.html",
       "/talks/positconf2024/index.html",
+      "/talks/nyhackr/index.html",
       "/talks/rstudioconf2022/index.html",
       "/talks/rstudioconf2019/index.html",
       "/talks/londonr/index.html"
