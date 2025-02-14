@@ -63,130 +63,53 @@
     "text": "Career break and plans for 2024 (Recurse Center!)\nLast, but absolutely not least, is my decision to take a career break. After leaving Voltron Data, I’d been working part-time in a contractor capacity, alongside working on the Arrow book, but I decided I wanted to narrow my focus and take some time out for me.\nI’m taking a break and spending the next couple of months focusing on writing. Once most of the book is done, I plan to spend more time on my open source work in general, which will involve teaching and talking about Arrow, as well as pushing forward a few side projects.\nThe most exciting news I’ve had this year is that I applied to the Recurse Center a few weeks ago. RC is like a writer’s retreat for programmers, and attendees spend 12 weeks together working on programming problems of their choice. I want to get to grips with R’s internals, and learn about the C API, as well as levelling up my C++ skills in general. I’m delighted to say that I was accepted to attend this morning, and will be joining the spring batch in late March! I’ve got a ton of ideas for projects I want to work on, but will have to see how much time I ultimately end up having.\nLonger-term - I don’t know. Ultimately, I’d love to get paid to work on open source again, but those opportunities are few and far between. I also have some professional goals I’d like to hit before I’m going to be in the right headspace to engage with this too - between writing the book and my plans for Recurse Center, I’ll be there pretty soon.\nThis year has been a real rollercoaster, but I’m extremely grateful to all my friends and mentors who have helped me during this time."
   },
   {
-    "objectID": "posts/r-examples/index.html",
-    "href": "posts/r-examples/index.html",
-    "title": "R package documentation - what makes a good example?",
+    "objectID": "posts/socialmediagen/index.html",
+    "href": "posts/socialmediagen/index.html",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
     "section": "",
-    "text": "I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to the examples included as part of function documentation. In my experience, the best way for me to achieve rapid familiarity with an R function I haven’t worked with before, or understand how to use a function about which I already understand the basics, is by having example code that I can run. In the book ‘R Packages’, Hadley Wickham remarks that examples are “a very important part of the documentation because many people look at the examples first” and rOpenSci recommend that each of a package’s exported functions should be accompanied by examples.\nIn this blog post, I will explore the things that I believe make for good function examples in documentation, focussing mainly on R."
+    "text": "Writing blog posts is fun, but the next step, getting people to actually read them, can be trickier. I wanted to promote a recent blog post I co-authored for R-Ladies, but coming up with multiple social media posts felt like a bit of a chore.Instead of doing it it manually, I decided to automate the process by building a Shiny app that generates social media content using large language models (LLMs). It was a fun little project, and could even be useful for others too!"
   },
   {
-    "objectID": "posts/r-examples/index.html#what-good-looks-like-in-r",
-    "href": "posts/r-examples/index.html#what-good-looks-like-in-r",
-    "title": "R package documentation - what makes a good example?",
-    "section": "What good looks like in R",
-    "text": "What good looks like in R\nI asked people on Twitter for their opinions of good R package documentation in general, and Jonathan Sinclair highlighted the ‘examples’ section from dplyr::case_when, the beginning of which is shown below.\n\n\n\n(image from: https://rdrr.io/cran/dplyr/man/case_when.html)\n\n\nI think Jonathan is spot on in his assessment. To paraphrase, the highlights for him are:\n\nthere is next to no prose or intro\nthere are plenty of comments, as needed, to explain the examples\nthere is a variety of different examples\nthere are examples of what not to do.\n\nThis kind of documentation appeals to my skim-reading self. If I’m trying to accomplish a task, sometimes I just want to run some code and see what happens to get an intuitive feel for what a function does. While I am fully prepared to slow down and read the rest of the documentation, a “quick win” motivates me to invest the additional effort. It tells me that the developers of this code have prioritised making things easy to understand and that the time I am investing will pay off.\nI’ve been skimming through the documentation of some tidyverse and related packages - as I consider many of these to be well documented and easy to read. Here are some things I’ve observed which I think one can do to make function examples look great:\n\ninclude the most basic usage of a function\nuse very simple toy datasets or standard in-built datasets\ndemonstrate non-obvious behaviours of a function\ndemonstrate different parameter values/combinations where relevant\ndemonstrate any unusual parameters\ndemonstrate on different objects if appropriate\nsometimes go beyond the use of an individual function to include common mini-workflows\ngroup documentation and examples for similar functions together\ninclude examples that may lead to unexpected results\ninclude comments to explain examples\nno examples for deprecated functions to discourage their use\nno unpredictable external dependencies - rvest::html_text manually creates HTML to demonstrate capabilities rather than scraping an external site\nsometimes showing the output when it adds to the example (e.g. tidyselect::starts_with() and many other examples from that package)\nexamples should be correct and run without error (unless intended to show erroneous output)"
+    "objectID": "posts/socialmediagen/index.html#the-solution-a-shiny-app-powered-by-ai",
+    "href": "posts/socialmediagen/index.html#the-solution-a-shiny-app-powered-by-ai",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "The Solution: A Shiny App Powered by AI",
+    "text": "The Solution: A Shiny App Powered by AI\nThe app does the following:\n\nTakes a GitHub Markdown link as input.\nLets users specify hashtags, the number of posts to generate, and whether or not to use emojis.\nAllows selection of tone (e.g., serious, playful, informative).\nCalls Google’s Gemini API via the ellmer package to generate social media posts promotinhg the blog post.\n\n\nWhy ellmer and the Gemini API?\nThe ellmer package was released last year, and is a delightfully straightforward way to directly call LLMs from R. Google’s Gemini API, in particular, offers a generous free tier - up to 15 requests per minute, which was more than enough for my needs."
   },
   {
-    "objectID": "posts/r-examples/index.html#what-bad-looks-like-in-r",
-    "href": "posts/r-examples/index.html#what-bad-looks-like-in-r",
-    "title": "R package documentation - what makes a good example?",
-    "section": "What bad looks like in R",
-    "text": "What bad looks like in R\nI am not intending to “name and shame” any package authors who haven’t included examples for their functions. It may have been overlooked, there may be plenty of explanation elsewhere, or they may have felt that the code was not sufficiently complex to require examples. It might be true that it seems obvious what a function does, but that makes assumptions about the users of your code that might not hold."
+    "objectID": "posts/socialmediagen/index.html#how-it-works",
+    "href": "posts/socialmediagen/index.html#how-it-works",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "How It Works",
+    "text": "How It Works\nThe app is simple:\n\nEnter the GitHub Markdown file link (or other text source).\nSet your preferences—hashtags, emojis, tone, and how many posts to generate.\nClick generate, and it spits out a bunch of posts.\nCopy and paste into your social media scheduler.\n\nUnder the hood, it builds a prompt using the user’s inputs and calls the Gemini API. The response is formatted into platform-appropriate posts, making it much easier to schedule across different social networks.\n\n\n\nPreview of the app"
   },
   {
-    "objectID": "posts/r-examples/index.html#what-good-looks-like-generally",
-    "href": "posts/r-examples/index.html#what-good-looks-like-generally",
-    "title": "R package documentation - what makes a good example?",
-    "section": "What good looks like generally",
-    "text": "What good looks like generally\nWhen reading through examples, one thing that struck me is that when I’m looking at Python docs in Jupyter Notebook (press shift + tab), I also see the output of running the examples.\n\nSimilarly, both examples and outputs are shown in the official docs for some libraries, for example, pandas.\n\nI think this is a helpful feature - less effort is required to see how a function works.\nIn R function documentation, runnable code is often included, but in most cases needs to be manually run by the reader to see the output. I’m torn as to whether this is good or not. On the one hand, it encourages you to run the code and get a more tangible feel for what it does and saves valuable space in the Viewer window in RStudio. On the other hand, it adds an extra manual step to your workflow and lengthens the time until that precious “quick win” of enlightenment when exploring a new function.\nYou get a lot closer to this on the website rdrr.io, which indexes R package documentation and allows examples to be run inline. However, examples are run one after the other without the original code being displayed. So in the case of multiple examples, you have to match up the output to which example it is from.\n\n\n\n(from https://rdrr.io/cran/dplyr/man/case_when.html)\n\n\nSome packages include output as comments within their examples. For instance, the tidyselect package; here’s an example from tidyselect::all_of:\n\n\n\n(from https://rdrr.io/cran/tidyselect/man/all_of.html)\n\n\nAll that said, while the ability to see the output of examples is a nice-to-have, I don’t think it’s essential to good function documentation. With any piece of documentation, it’s necessary to consider the purpose; at a minimum, examples exist to tell the reader how to use a function, and you don’t need to see the output to do that.\nSince I first wrote this, I found out that it is possible to easily run examples from help files by selecting them and then hitting Ctrl+Enter, the same as running code in the Source pane.\n\nAnother thing I wasn’t aware of - pkgdown - commonly used to automatically render docs for packages run examples and displays the output underneath. Check out the example below from the Arrow pkgdown site.\n\nIn conclusion, good examples make functions easier to work with and help readers of your documentation gain a deeper understanding of how a function works. While any examples are better than no examples, you can give your users the best chance of success when using your code with careful thought about the content of your documentation.\nHuge thanks to everyone who responded to my Twitter thread, and to my fantastic colleague Joris Van den Bossche for reading the first draft of this, and our conversations about how things are done in R and Python."
+    "objectID": "posts/socialmediagen/index.html#deployment-considerations",
+    "href": "posts/socialmediagen/index.html#deployment-considerations",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "Deployment Considerations",
+    "text": "Deployment Considerations\nRight now, the app runs locally, and users need to enter their own Gemini API key as an evironment variable. This prevents abuse of a shared key, but it also makes the app a bit more DIY. I’m considering deploying it on Posit Connect Cloud or a similar service in the future. The trick will be allowing users to bring their own API keys while keeping things secure.\nAnother thought: supporting multiple AI models so users can plug in API keys for different services like OpenAI’s ChatGPT or Anthropic’s Claude."
   },
   {
-    "objectID": "projects/phd/index.html",
-    "href": "projects/phd/index.html",
-    "title": "PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis",
-    "section": "",
-    "text": "Download here: PDF, 2.1MB\nThis thesis focuses on deductive reasoning and how the belief bias effect can be reduced or ameliorated.\nBelief bias is a phenomenon whereby the evaluation of the logical validity of an argument is skewed by the degree to which the reasoner believes the conclusion. There has been little research examining ways of reducing such bias and whether there is some sort of effective intervention which makes people reason more on the basis of logic. Traditional analyses of this data has focussed on simple measures of accuracy, typically deducting the number of incorrect answers from the number of correct answers to give an accuracy score. However, recent theoretical developments have shown that this approach fails to separate reasoning biases and response biases. A reasoning bias, is one which affects individuals’ ability to discriminate between valid and invalid arguments, whereas a response bias is simply the individual’s tendency to give a particular answer, independent of reasoning. A Signal Detection Theory (SDT) approach is used to calculate measures of reasoning accuracy and response bias. These measures are then analysed using mixed effects models.\nChapter 1 gives a general introduction to the topic, and outlines the content of subsequent chapters. In Chapter 2, I review the psychological literature around belief bias, the growth of the use of SDT models, and approaches to reducing bias. Chapter 3 covers the methodology, and includes a a thorough description of the calculation of the SDT measures, and an explanation of the mixed effects models I used to analyse these. Chapter 4 presents an experiment in which the effects of feedback on reducing belief bias is examined. In Chapter 5, the focus shifts in the direction of individual differences, and looks at the effect of different instructions given to participants, and Chapter 6 examines the effects of both feedback and specific training. Chapter 7 provides a general discussion of the implications of the previous three chapters."
+    "objectID": "posts/socialmediagen/index.html#future-ideas",
+    "href": "posts/socialmediagen/index.html#future-ideas",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "Future Ideas",
+    "text": "Future Ideas\nSome things I’d love to add:\n\nMore refined prompts tailored to different platforms (e.g., longer for LinkedIn, punchier for Bluesky).\nSuggested images to go with posts."
   },
   {
-    "objectID": "projects/firstcontributions/index.html",
-    "href": "projects/firstcontributions/index.html",
-    "title": "First Contributions (in R) Repo",
-    "section": "",
-    "text": "A GitHub repository helping people make their first open source PR. The repo is a chopped-up, trimmed-down, and customised-for-RStudio version of the amazing first contributions repo designed to act as a live tutorial for people making their first open source pull request. Kindly taken over by Forwards who now manage it."
+    "objectID": "posts/socialmediagen/index.html#try-it-yourself",
+    "href": "posts/socialmediagen/index.html#try-it-yourself",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "Try It Yourself!",
+    "text": "Try It Yourself!\nWant to give it a go? You can find the repo here: https://github.com/thisisnic/socialmediagen"
   },
   {
-    "objectID": "talks/positconf2023/index.html",
-    "href": "talks/positconf2023/index.html",
-    "title": "Big Data in R with Arrow",
-    "section": "",
-    "text": "A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023 and 2024.\nCourse homepage"
-  },
-  {
-    "objectID": "talks/positconf2023/index.html#overview",
-    "href": "talks/positconf2023/index.html#overview",
-    "title": "Big Data in R with Arrow",
-    "section": "Overview",
-    "text": "Overview\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
-  },
-  {
-    "objectID": "talks/londonr/index.html",
-    "href": "talks/londonr/index.html",
-    "title": "Ten Steps To Becoming A Tidyverse Contributor",
-    "section": "",
-    "text": "A talk about getting involved in open source!\nSlides here"
-  },
-  {
-    "objectID": "talks/nyhackr/index.html",
-    "href": "talks/nyhackr/index.html",
-    "title": "Efficiently Engineering Bigger Data with Arrow",
-    "section": "",
-    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
-  },
-  {
-    "objectID": "projects.html",
-    "href": "projects.html",
-    "title": "Projects",
-    "section": "",
-    "text": "Scaling Up With R and Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFirst Contributions (in R) Repo\n\n\n\n\n\n\nNic Crane\n\n\nNov 28, 2018\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhD Thesis - Debiasing Reasoning: A Signal Detection Analysis\n\n\n\n\n\n\nNic Crane\n\n\nJul 22, 2016\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Nic Crane, PhD",
-    "section": "",
-    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast. I am part of the team who maintain the arrow R package and co-author of Scaling Up with R and Arrow."
-  },
-  {
-    "objectID": "talks/rstudioconf2022/index.html",
-    "href": "talks/rstudioconf2022/index.html",
-    "title": "What they forgot to teach you about becoming an open source contributor",
-    "section": "",
-    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
-  },
-  {
-    "objectID": "talks/positconf2024/index.html",
-    "href": "talks/positconf2024/index.html",
-    "title": "Big Data in R with Arrow",
-    "section": "",
-    "text": "A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023 and 2024.\nCourse homepage"
-  },
-  {
-    "objectID": "talks/positconf2024/index.html#overview",
-    "href": "talks/positconf2024/index.html#overview",
-    "title": "Big Data in R with Arrow",
-    "section": "Overview",
-    "text": "Overview\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
-  },
-  {
-    "objectID": "talks/rstudioconf2019/index.html",
-    "href": "talks/rstudioconf2019/index.html",
-    "title": "The future’s Shiny: Pioneering genomic medicine in R",
-    "section": "",
-    "text": "Shiny's expanding capabilities are rapidly transforming how it is used in an enterprise. This talk details the creation of a large-scale application, supporting hundreds of concurrent users, making use of the future and promises packages. The 100,000 genomes project is an ambitious exercise that follows on from the Human Genome Project - aiming to put the UK at the forefront of genomic medicine, with the NHS as the first health service in the world to offer precision medicine to patients with rare diseases and cancer. Data is at the heart of this project; not only the outputs of the genomic sequencing, but vast amounts of metadata used to track progress against the 100,000 genome target and the status and path of each case through the sample tracking pipeline. In order to make this data readily available to stakeholders, Shiny was used to create an application containing multiple interactive dashboards. A scaled-up version of the app is being rolled out in early 2019 to a much larger audience to support the National Genomics Informatics Service, with the challenge of creating a complex app capable of supporting so many users without grinding to a halt. In this talk, I will explain why Shiny was the obvious technology choice for this task, and discuss the design decisions which enabled this project’s success."
-  },
-  {
-    "objectID": "talks.html",
-    "href": "talks.html",
-    "title": "Talks and Workshops",
-    "section": "",
-    "text": "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail\n\n\n\n\n\n\nNic Crane\n\n\nAug 17, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBig Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 12, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "projects/book/index.html",
-    "href": "projects/book/index.html",
-    "title": "Scaling Up With R and Arrow",
-    "section": "",
-    "text": "Published online for free at arrowrbook.com\nA book I co-authored with Jonathan Keane and Neal Richardson about working with larger-than-memory datasets in R with Arrow. The paper version will be published later this year."
+    "objectID": "posts/socialmediagen/index.html#wrapping-up",
+    "href": "posts/socialmediagen/index.html#wrapping-up",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "Wrapping Up",
+    "text": "Wrapping Up\nThis was a fun little side project that turned out to be actually useful - I’m going to be using it to promote this blog post!\nI’d love to hear if you have any ideas for improvements—hit me up if you try it out!"
   },
   {
     "objectID": "posts/rwatcher/index.html",
@@ -215,6 +138,125 @@
     "title": "Monitoring R Package Updates with Github Actions",
     "section": "Conclusion",
     "text": "Conclusion\nI really enjoyed working on this and learning more about GitHub Actions. This has proved to be a useful tool, though there are a few improvements that could be made:\n\nsome packages update their changelog more frequently than others and so some of the updates I get feel a bit spammy. I could fix this by running my CRON job on a weekly rather than daily schedule.\nI don’t use this as much as I anticipated because some changes are really minor, and I tend to skim them and not pay too much attention. Again, a different CRON frequency could probably help here.\nI’m more interested in some packages than others. {dplyr}, {lubridate}, and {stringr} are the most important, whereas others are just a “nice to have” here. I could separate these out into different jobs, and run them on different schedules.\n\nAnyway, I’d love to hear your thoughts - how do you keep up to date with changes in R packages? Do you have any suggestions for improvements to this workflow? Let me know! Get in touch via Mastodon or LinkedIn."
+  },
+  {
+    "objectID": "projects/book/index.html",
+    "href": "projects/book/index.html",
+    "title": "Scaling Up With R and Arrow",
+    "section": "",
+    "text": "Published online for free at arrowrbook.com\nA book I co-authored with Jonathan Keane and Neal Richardson about working with larger-than-memory datasets in R with Arrow. The paper version will be published later this year."
+  },
+  {
+    "objectID": "talks.html",
+    "href": "talks.html",
+    "title": "Talks and Workshops",
+    "section": "",
+    "text": "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail\n\n\n\n\n\n\nNic Crane\n\n\nAug 17, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nBig Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 12, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "talks/londonr/index.html",
+    "href": "talks/londonr/index.html",
+    "title": "Ten Steps To Becoming A Tidyverse Contributor",
+    "section": "",
+    "text": "A talk about getting involved in open source!\nSlides here"
+  },
+  {
+    "objectID": "talks/positconf2024_2/index.html",
+    "href": "talks/positconf2024_2/index.html",
+    "title": "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail",
+    "section": "",
+    "text": "A talk on Arrow that Alenka Frim and I wrote and presented at posit::conf 2024.\nhttps://docs.google.com/presentation/d/1ViXduR7CNrz_9QFDk5snAlD3tFJpJs156-UEBxCHiks/edit?usp=sharing"
+  },
+  {
+    "objectID": "talks/rstudioconf2022/index.html",
+    "href": "talks/rstudioconf2022/index.html",
+    "title": "What they forgot to teach you about becoming an open source contributor",
+    "section": "",
+    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Nic Crane, PhD",
+    "section": "",
+    "text": "Hi, I’m Nic! I’m a data scientist, software engineer, and R enthusiast. I am part of the team who maintain the arrow R package and co-author of Scaling Up with R and Arrow."
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "Projects",
+    "section": "",
+    "text": "Scaling Up With R and Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 14, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFirst Contributions (in R) Repo\n\n\n\n\n\n\nNic Crane\n\n\nNov 28, 2018\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nPhD Thesis - Debiasing Reasoning: A Signal Detection Analysis\n\n\n\n\n\n\nNic Crane\n\n\nJul 22, 2016\n\n\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "talks/nyhackr/index.html",
+    "href": "talks/nyhackr/index.html",
+    "title": "Efficiently Engineering Bigger Data with Arrow",
+    "section": "",
+    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
+  },
+  {
+    "objectID": "talks/positconf2024/index.html",
+    "href": "talks/positconf2024/index.html",
+    "title": "Big Data in R with Arrow",
+    "section": "",
+    "text": "A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023 and 2024.\nCourse homepage"
+  },
+  {
+    "objectID": "talks/positconf2024/index.html#overview",
+    "href": "talks/positconf2024/index.html#overview",
+    "title": "Big Data in R with Arrow",
+    "section": "Overview",
+    "text": "Overview\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
+  },
+  {
+    "objectID": "talks/rstudioconf2019/index.html",
+    "href": "talks/rstudioconf2019/index.html",
+    "title": "The future’s Shiny: Pioneering genomic medicine in R",
+    "section": "",
+    "text": "Shiny's expanding capabilities are rapidly transforming how it is used in an enterprise. This talk details the creation of a large-scale application, supporting hundreds of concurrent users, making use of the future and promises packages. The 100,000 genomes project is an ambitious exercise that follows on from the Human Genome Project - aiming to put the UK at the forefront of genomic medicine, with the NHS as the first health service in the world to offer precision medicine to patients with rare diseases and cancer. Data is at the heart of this project; not only the outputs of the genomic sequencing, but vast amounts of metadata used to track progress against the 100,000 genome target and the status and path of each case through the sample tracking pipeline. In order to make this data readily available to stakeholders, Shiny was used to create an application containing multiple interactive dashboards. A scaled-up version of the app is being rolled out in early 2019 to a much larger audience to support the National Genomics Informatics Service, with the challenge of creating a complex app capable of supporting so many users without grinding to a halt. In this talk, I will explain why Shiny was the obvious technology choice for this task, and discuss the design decisions which enabled this project’s success."
+  },
+  {
+    "objectID": "projects/firstcontributions/index.html",
+    "href": "projects/firstcontributions/index.html",
+    "title": "First Contributions (in R) Repo",
+    "section": "",
+    "text": "A GitHub repository helping people make their first open source PR. The repo is a chopped-up, trimmed-down, and customised-for-RStudio version of the amazing first contributions repo designed to act as a live tutorial for people making their first open source pull request. Kindly taken over by Forwards who now manage it."
+  },
+  {
+    "objectID": "projects/phd/index.html",
+    "href": "projects/phd/index.html",
+    "title": "PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis",
+    "section": "",
+    "text": "Download here: PDF, 2.1MB\nThis thesis focuses on deductive reasoning and how the belief bias effect can be reduced or ameliorated.\nBelief bias is a phenomenon whereby the evaluation of the logical validity of an argument is skewed by the degree to which the reasoner believes the conclusion. There has been little research examining ways of reducing such bias and whether there is some sort of effective intervention which makes people reason more on the basis of logic. Traditional analyses of this data has focussed on simple measures of accuracy, typically deducting the number of incorrect answers from the number of correct answers to give an accuracy score. However, recent theoretical developments have shown that this approach fails to separate reasoning biases and response biases. A reasoning bias, is one which affects individuals’ ability to discriminate between valid and invalid arguments, whereas a response bias is simply the individual’s tendency to give a particular answer, independent of reasoning. A Signal Detection Theory (SDT) approach is used to calculate measures of reasoning accuracy and response bias. These measures are then analysed using mixed effects models.\nChapter 1 gives a general introduction to the topic, and outlines the content of subsequent chapters. In Chapter 2, I review the psychological literature around belief bias, the growth of the use of SDT models, and approaches to reducing bias. Chapter 3 covers the methodology, and includes a a thorough description of the calculation of the SDT measures, and an explanation of the mixed effects models I used to analyse these. Chapter 4 presents an experiment in which the effects of feedback on reducing belief bias is examined. In Chapter 5, the focus shifts in the direction of individual differences, and looks at the effect of different instructions given to participants, and Chapter 6 examines the effects of both feedback and specific training. Chapter 7 provides a general discussion of the implications of the previous three chapters."
+  },
+  {
+    "objectID": "posts/r-examples/index.html",
+    "href": "posts/r-examples/index.html",
+    "title": "R package documentation - what makes a good example?",
+    "section": "",
+    "text": "I’m currently working on adding to the documentation of the arrow R package, and I’ve started thinking about the qualities of good examples. Specifically, I’m referring to the examples included as part of function documentation. In my experience, the best way for me to achieve rapid familiarity with an R function I haven’t worked with before, or understand how to use a function about which I already understand the basics, is by having example code that I can run. In the book ‘R Packages’, Hadley Wickham remarks that examples are “a very important part of the documentation because many people look at the examples first” and rOpenSci recommend that each of a package’s exported functions should be accompanied by examples.\nIn this blog post, I will explore the things that I believe make for good function examples in documentation, focussing mainly on R."
+  },
+  {
+    "objectID": "posts/r-examples/index.html#what-good-looks-like-in-r",
+    "href": "posts/r-examples/index.html#what-good-looks-like-in-r",
+    "title": "R package documentation - what makes a good example?",
+    "section": "What good looks like in R",
+    "text": "What good looks like in R\nI asked people on Twitter for their opinions of good R package documentation in general, and Jonathan Sinclair highlighted the ‘examples’ section from dplyr::case_when, the beginning of which is shown below.\n\n\n\n(image from: https://rdrr.io/cran/dplyr/man/case_when.html)\n\n\nI think Jonathan is spot on in his assessment. To paraphrase, the highlights for him are:\n\nthere is next to no prose or intro\nthere are plenty of comments, as needed, to explain the examples\nthere is a variety of different examples\nthere are examples of what not to do.\n\nThis kind of documentation appeals to my skim-reading self. If I’m trying to accomplish a task, sometimes I just want to run some code and see what happens to get an intuitive feel for what a function does. While I am fully prepared to slow down and read the rest of the documentation, a “quick win” motivates me to invest the additional effort. It tells me that the developers of this code have prioritised making things easy to understand and that the time I am investing will pay off.\nI’ve been skimming through the documentation of some tidyverse and related packages - as I consider many of these to be well documented and easy to read. Here are some things I’ve observed which I think one can do to make function examples look great:\n\ninclude the most basic usage of a function\nuse very simple toy datasets or standard in-built datasets\ndemonstrate non-obvious behaviours of a function\ndemonstrate different parameter values/combinations where relevant\ndemonstrate any unusual parameters\ndemonstrate on different objects if appropriate\nsometimes go beyond the use of an individual function to include common mini-workflows\ngroup documentation and examples for similar functions together\ninclude examples that may lead to unexpected results\ninclude comments to explain examples\nno examples for deprecated functions to discourage their use\nno unpredictable external dependencies - rvest::html_text manually creates HTML to demonstrate capabilities rather than scraping an external site\nsometimes showing the output when it adds to the example (e.g. tidyselect::starts_with() and many other examples from that package)\nexamples should be correct and run without error (unless intended to show erroneous output)"
+  },
+  {
+    "objectID": "posts/r-examples/index.html#what-bad-looks-like-in-r",
+    "href": "posts/r-examples/index.html#what-bad-looks-like-in-r",
+    "title": "R package documentation - what makes a good example?",
+    "section": "What bad looks like in R",
+    "text": "What bad looks like in R\nI am not intending to “name and shame” any package authors who haven’t included examples for their functions. It may have been overlooked, there may be plenty of explanation elsewhere, or they may have felt that the code was not sufficiently complex to require examples. It might be true that it seems obvious what a function does, but that makes assumptions about the users of your code that might not hold."
+  },
+  {
+    "objectID": "posts/r-examples/index.html#what-good-looks-like-generally",
+    "href": "posts/r-examples/index.html#what-good-looks-like-generally",
+    "title": "R package documentation - what makes a good example?",
+    "section": "What good looks like generally",
+    "text": "What good looks like generally\nWhen reading through examples, one thing that struck me is that when I’m looking at Python docs in Jupyter Notebook (press shift + tab), I also see the output of running the examples.\n\nSimilarly, both examples and outputs are shown in the official docs for some libraries, for example, pandas.\n\nI think this is a helpful feature - less effort is required to see how a function works.\nIn R function documentation, runnable code is often included, but in most cases needs to be manually run by the reader to see the output. I’m torn as to whether this is good or not. On the one hand, it encourages you to run the code and get a more tangible feel for what it does and saves valuable space in the Viewer window in RStudio. On the other hand, it adds an extra manual step to your workflow and lengthens the time until that precious “quick win” of enlightenment when exploring a new function.\nYou get a lot closer to this on the website rdrr.io, which indexes R package documentation and allows examples to be run inline. However, examples are run one after the other without the original code being displayed. So in the case of multiple examples, you have to match up the output to which example it is from.\n\n\n\n(from https://rdrr.io/cran/dplyr/man/case_when.html)\n\n\nSome packages include output as comments within their examples. For instance, the tidyselect package; here’s an example from tidyselect::all_of:\n\n\n\n(from https://rdrr.io/cran/tidyselect/man/all_of.html)\n\n\nAll that said, while the ability to see the output of examples is a nice-to-have, I don’t think it’s essential to good function documentation. With any piece of documentation, it’s necessary to consider the purpose; at a minimum, examples exist to tell the reader how to use a function, and you don’t need to see the output to do that.\nSince I first wrote this, I found out that it is possible to easily run examples from help files by selecting them and then hitting Ctrl+Enter, the same as running code in the Source pane.\n\nAnother thing I wasn’t aware of - pkgdown - commonly used to automatically render docs for packages run examples and displays the output underneath. Check out the example below from the Arrow pkgdown site.\n\nIn conclusion, good examples make functions easier to work with and help readers of your documentation gain a deeper understanding of how a function works. While any examples are better than no examples, you can give your users the best chance of success when using your code with careful thought about the content of your documentation.\nHuge thanks to everyone who responded to my Twitter thread, and to my fantastic colleague Joris Van den Bossche for reading the first draft of this, and our conversations about how things are done in R and Python."
   },
   {
     "objectID": "posts/goats/index.html",
@@ -320,61 +362,5 @@
     "title": "Recurse Center Return Statement",
     "section": "Conclusion",
     "text": "Conclusion\nI can honestly describe the 3 months I spent at Recurse Center as the best solid 3 month period of my life. I learned a huge amount about, not only programming, but my own motivation. I made some amazing friends - my fellow RC participants and the faculty there are some of the coolest people I’ve ever met - and will be staying involved in the community in the longer term."
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html",
-    "href": "posts/socialmediagen/index.html",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "",
-    "text": "Writing blog posts is fun, but the next step, getting people to actually read them, can be trickier. I wanted to promote a recent blog post I co-authored for R-Ladies, but coming up with multiple social media posts felt like a bit of a chore.Instead of doing it it manually, I decided to automate the process by building a Shiny app that generates social media content using large language models (LLMs). It was a fun little project, and could even be useful for others too!"
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#the-solution-a-shiny-app-powered-by-ai",
-    "href": "posts/socialmediagen/index.html#the-solution-a-shiny-app-powered-by-ai",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "The Solution: A Shiny App Powered by AI",
-    "text": "The Solution: A Shiny App Powered by AI\nThe app does the following:\n\nTakes a GitHub Markdown link as input.\nLets users specify hashtags, the number of posts to generate, and whether or not to use emojis.\nAllows selection of tone (e.g., serious, playful, informative).\nCalls Google’s Gemini API via the ellmer package to generate social media posts promotinhg the blog post.\n\n\nWhy ellmer and the Gemini API?\nThe ellmer package was released last year, and is a delightfully straightforward way to directly call LLMs from R. Google’s Gemini API, in particular, offers a generous free tier - up to 15 requests per minute, which was more than enough for my needs."
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#how-it-works",
-    "href": "posts/socialmediagen/index.html#how-it-works",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "How It Works",
-    "text": "How It Works\nThe app is simple:\n\nEnter the GitHub Markdown file link (or other text source).\nSet your preferences—hashtags, emojis, tone, and how many posts to generate.\nClick generate, and it spits out a bunch of posts.\nCopy and paste into your social media scheduler.\n\nUnder the hood, it builds a prompt using the user’s inputs and calls the Gemini API. The response is formatted into platform-appropriate posts, making it much easier to schedule across different social networks.\n\n\n\nPreview of the app"
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#deployment-considerations",
-    "href": "posts/socialmediagen/index.html#deployment-considerations",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "Deployment Considerations",
-    "text": "Deployment Considerations\nRight now, the app runs locally, and users need to enter their own Gemini API key as an evironment variable. This prevents abuse of a shared key, but it also makes the app a bit more DIY. I’m considering deploying it on Posit Connect Cloud or a similar service in the future. The trick will be allowing users to bring their own API keys while keeping things secure.\nAnother thought: supporting multiple AI models so users can plug in API keys for different services like OpenAI’s ChatGPT or Anthropic’s Claude."
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#future-ideas",
-    "href": "posts/socialmediagen/index.html#future-ideas",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "Future Ideas",
-    "text": "Future Ideas\nSome things I’d love to add:\n\nMore refined prompts tailored to different platforms (e.g., longer for LinkedIn, punchier for Bluesky).\nSuggested images to go with posts."
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#try-it-yourself",
-    "href": "posts/socialmediagen/index.html#try-it-yourself",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "Try It Yourself!",
-    "text": "Try It Yourself!\nWant to give it a go? You can find the repo here: https://github.com/thisisnic/socialmediagen"
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#wrapping-up",
-    "href": "posts/socialmediagen/index.html#wrapping-up",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "Wrapping Up",
-    "text": "Wrapping Up\nThis was a fun little side project that turned out to be actually useful - I’m going to be using it to promote this blog post!\nI’d love to hear if you have any ideas for improvements—hit me up if you try it out!"
-  },
-  {
-    "objectID": "talks/positconf2024_2/index.html",
-    "href": "talks/positconf2024_2/index.html",
-    "title": "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail",
-    "section": "",
-    "text": "A talk on Arrow that Alenka Frim and I wrote and presented at posit::conf 2024.\nhttps://docs.google.com/presentation/d/1ViXduR7CNrz_9QFDk5snAlD3tFJpJs156-UEBxCHiks/edit?usp=sharing"
   }
 ]
