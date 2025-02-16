@@ -4,7 +4,7 @@
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "Generating social media posts to promote blog posts with {shiny} and {ellmer}\n\n\n\n\n\n\nR\n\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 14, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nRecurse Center Return Statement\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 12, 2024\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoring R Package Updates with Github Actions\n\n\n\n\n\n\nR\n\n\nGitHub Actions\n\n\n\n\n\n\n\n\n\nDec 28, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nExplaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’\n\n\n\n\n\n\nR\n\n\nC\n\n\n\n\n\n\n\n\n\nDec 23, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nReflections on 2023\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nDec 21, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nDebugging\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 4, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nThree Goats in a Raincoat\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 3, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\nNo matching items"
+    "text": "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}\n\n\n\n\n\n\nR\n\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 17, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nGenerating social media posts to promote blog posts with {shiny} and {ellmer}\n\n\n\n\n\n\nR\n\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 14, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nRecurse Center Return Statement\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 12, 2024\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoring R Package Updates with Github Actions\n\n\n\n\n\n\nR\n\n\nGitHub Actions\n\n\n\n\n\n\n\n\n\nDec 28, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nExplaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’\n\n\n\n\n\n\nR\n\n\nC\n\n\n\n\n\n\n\n\n\nDec 23, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nReflections on 2023\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nDec 21, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nDebugging\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 4, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nThree Goats in a Raincoat\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 3, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/debugging/index.html",
@@ -362,5 +362,103 @@
     "title": "Recurse Center Return Statement",
     "section": "Conclusion",
     "text": "Conclusion\nI can honestly describe the 3 months I spent at Recurse Center as the best solid 3 month period of my life. I learned a huge amount about, not only programming, but my own motivation. I made some amazing friends - my fellow RC participants and the faculty there are some of the coolest people I’ve ever met - and will be staying involved in the community in the longer term."
+  },
+  {
+    "objectID": "posts/socalmediagen2/index.html",
+    "href": "posts/socalmediagen2/index.html",
+    "title": "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}",
+    "section": "",
+    "text": "I recently posted about a repo I created containing a Shiny app which allows users to generate social media posts to promote blog posts, using {shiny} and {ellmer}.\nIf you haven’t used it before, {ellmer} is an R package which allows you to call LLMs directly from R.\nI’ll admit right now that, although I’d already been using the LLM prompt used in that project for a while, I threw together the app and associated code in a couple of hours to give me something to write about. People seemed receptive to the blog post, but I wasn’t happy with the code, and so I decided to tidy it up a bit.\nIn this post, I’m going to discuss the changes I made to get from a few messy scripts to a deployable R package that is much easier to maintain."
+  },
+  {
+    "objectID": "posts/socalmediagen2/index.html#step-1-convert-the-scripts-into-an-r-package",
+    "href": "posts/socalmediagen2/index.html#step-1-convert-the-scripts-into-an-r-package",
+    "title": "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}",
+    "section": "Step 1: Convert the scripts into an R package",
+    "text": "Step 1: Convert the scripts into an R package\nI’m a big fan of writing code as R packages wherever possible; it provides instant structure and reminds me to do important fundamentals such as documenting functions, and writing modular pieces instead of long scripts.\nI moved the app code into ./R/app.R and separated out the other functions into a file ./R/prompts.R.\nI also moved the CSS for the app into the package’s inst dir and created a subdirectory in inst to store my prompts.\n\n\n\nContents of the inst dir"
+  },
+  {
+    "objectID": "posts/socalmediagen2/index.html#step-2-saving-the-prompts-in-their-own-file",
+    "href": "posts/socalmediagen2/index.html#step-2-saving-the-prompts-in-their-own-file",
+    "title": "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}",
+    "section": "Step 2: Saving the prompts in their own file",
+    "text": "Step 2: Saving the prompts in their own file\nNext, was where to save the prompts. Originally these were saved as variables, but in the ellmer vignette on prompt design, it’s recommended that these are saved in ./inst/prompts/ with one file per prompt.\nThe ellmer vignette recommends saving prompts as markdown files as they’re both human-readable and LLM-readable, and so I saved my main prompt as shown below:\nCreate me social media posts for each of these platforms: {{platforms}}, to promote the blog post below.\n\n* create {{n}} posts per platform\n* use a {{tone}} tone\n* use hashtags: {{hashtags}}\n* use emojis? {{emojis}}\n\n# Blog post contents\n\n{{post_contents}}\nYou’ll notice the use of placeholders in the prompt. This is because {ellmer} has a helpful function which can read the prompt and inject in variable values. So the last line of my get_prompt() function looks like this:\nellmer::interpolate_file(\n    system.file(\"prompts\", \"prompt-main.md\", package = \"socialmediagen\"),\n    platforms = paste(platforms, collapse = \", \"),\n    n = n,\n    tone = tone,\n    hashtags = hashtags,\n    emojis = emojis,\n    post_contents = post_contents\n)"
+  },
+  {
+    "objectID": "posts/socalmediagen2/index.html#step-3-creating-platform-specific-prompts",
+    "href": "posts/socalmediagen2/index.html#step-3-creating-platform-specific-prompts",
+    "title": "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}",
+    "section": "Step 3: Creating platform-specific prompts",
+    "text": "Step 3: Creating platform-specific prompts\nI realised that best-practices for social media posts vary from platform to platform, and I wanted to experiment with having different prompts depending on which platforms were selected by the user.\nI first added the following to my main prompt:\n# Platform-specific advice\n\nUse the following advice to customise the output for individual platforms:\n\n{{platform_specific_advice}}\nI then created additional prompts tailored to each platform, for example, my LinkedIn prompt looks like this:\nLinkedIn:\n* Keep posts between 1,300 and 2,000 characters. \n* Use short sentences: Posts with sentences under 12 words perform better. \n* ask questions: Encourage comments by asking questions that prompt discussion. \n* give specific instructions: Ask readers to like your post or take another action. \n* use a compelling headline: Grab attention with your first line. \n* use 3 hashtags\nI then saved all of these into the inst/prompts directory.\n\n\n\nContents of the prompt dir\n\n\nI then created a super-simple function to retrieve the relevant prompt:\n#' Retrieve post-writing advice unique to specific platforms\n#'\n#' @param platforms Which platforms to get advice for\nget_platform_specific_advice &lt;- function(platforms){\n  prompt_files &lt;- paste0(\"prompt-\", tolower(platforms), \".md\")\n  file_paths &lt;- system.file(\"prompts\", prompt_files, package = \"socialmediagen\")\n\n  contents &lt;- lapply(file_paths, readLines)\n  paste(unlist(contents), collapse = \"\\n\")\n}\nFinally, I updated my get_prompt() function to incorporate these changes:\n#' Construct LLM prompt\n#'\n#' Construct a LLM prompt based on user input\n#'\n#' @param blog_link URL of source material\n#' @param platforms Social media platform to create prompts for\n#' @param n Number of prompts to create for each platform\n#' @param emojis Use emojis in post?\n#' @param tone Desired tone of the post\n#' @param hashtags Hashtags to include in the post\n#' @importFrom ellmer interpolate_file\nget_prompt &lt;- function(blog_link, platforms, n, emojis, tone, hashtags) {\n  # retrieve post contents from GitHub\n  post_contents &lt;- fetch_github_markdown(blog_link)\n\n  platform_specific_advice &lt;- get_platform_specific_advice(platforms)\n\n  # combine components\n  ellmer::interpolate_file(\n    system.file(\"prompts\", \"prompt-main.md\", package = \"socialmediagen\"),\n    platforms = paste(platforms, collapse = \", \"),\n    n = n,\n    tone = tone,\n    hashtags = hashtags,\n    emojis = emojis,\n    post_contents = post_contents,\n    platform_specific_advice = platform_specific_advice\n  )\n}"
+  },
+  {
+    "objectID": "posts/socalmediagen2/index.html#the-resulting-app",
+    "href": "posts/socalmediagen2/index.html#the-resulting-app",
+    "title": "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}",
+    "section": "The resulting app",
+    "text": "The resulting app\nMy app now is able to create platform-specific content and is much better organised than it was before. I think that updating the prompt was useful - check out the example below of the content generated before and after. The LinkedIn post now it has a strong call-to-action and asks the user a question.\n\nBefore\n\n📢 Calling all data enthusiasts! 📢\n\nThinking about speaking at Posit Conf 2025 but feeling a bit 😬 about the video abstract? Don't sweat it! This year the abstract just needs to be a short video!\n\nWe've compiled some top tips from past speakers to help you nail that one-minute pitch! 🚀\n\n➡️ Learn how to structure your video, what tech to use, and how to inject some of YOUR personality into it! (Humor and creativity are welcome!)\n\nPlus, we're offering feedback on drafts! 📝\n\n[Link to Blog Post]\n\n#rstats\n\n\nAfter\n\n**Headline:** Nervous About Your Posit Conf Video Abstract? 😩 Don't Be!\n\nThinking of speaking at #PositConf2025 but dreading the video abstract? You're not alone! It's just one minute to shine ✨.\n\nWe've got tips from past speakers Rachael Dempsey, Shannon Pileggi, and Nic Crane to help you nail it! From tech options (easy peasy phone cam to fancy OBS Studio) to structuring your pitch, we've got you covered.\n\n**Blog Post Highlights:**\n\n*   Simple tech options\n*   Easy structure for your video\n*   How to get feedback\n\nReady to record? Check out our tips and let your brilliance shine. 💡\n[Link to blog post]\n\nWhat's your biggest video recording fear? Share in the comments! 👇\n\n#rstats #rladies #positconf"
+  },
+  {
+    "objectID": "posts/raginr/index.html",
+    "href": "posts/raginr/index.html",
+    "title": "Retrieval Augmented Generation in R",
+    "section": "",
+    "text": "I was recently working on a project involving retrieval augmented generation (RAG). RAG is a technique used to supplement material already known by an LLM with extra information to enhance the results. You could view it as an AI-powered approach to document search. The problem I was trying to solve was one of lots of documentation stored in different sources - a mix of markdown files, html pages, and other sources. The solution involved creating a RAG model where users asked questions, and RAG would help find the answers they needed.\nIn this blog post, I’ll talk about what RAG is and how it works, an R package I built to help me, and what I learned.\nBefore we get into the technical details though, let’s look at a concrete example to give us something more tangible to work with.\nLet’s take the Stack Overflow R questions dataset as an example. It’s available from Kaggle and can be downloaded by running the following command in a terminal:"
+  },
+  {
+    "objectID": "posts/raginr/index.html#what-is-retrieval-augmented-generation-rag",
+    "href": "posts/raginr/index.html#what-is-retrieval-augmented-generation-rag",
+    "title": "Retrieval Augmented Generation in R",
+    "section": "What is Retrieval-Augmented Generation (RAG)?",
+    "text": "What is Retrieval-Augmented Generation (RAG)?\nDefine RAG in simple terms.\nExplain how it enhances language models (LMs) by querying external knowledge sources (e.g., vector databases).\nProvide a diagram illustrating how RAG works.\nCompare RAG to a standard LM workflow to highlight the added value."
+  },
+  {
+    "objectID": "posts/raginr/index.html#why-build-an-r-package-for-rag",
+    "href": "posts/raginr/index.html#why-build-an-r-package-for-rag",
+    "title": "Retrieval Augmented Generation in R",
+    "section": "Why Build an R Package for RAG?",
+    "text": "Why Build an R Package for RAG?\nDescribe the existing Python ecosystem for RAG and how R users typically interact with it (e.g., using reticulate).\nExplain the motivation behind creating the quadrant R package instead of relying solely on Python.\nDiscuss the advantages of a native R API for RAG workflows."
+  },
+  {
+    "objectID": "posts/raginr/index.html#designing-the-quadrant-r-package",
+    "href": "posts/raginr/index.html#designing-the-quadrant-r-package",
+    "title": "Retrieval Augmented Generation in R",
+    "section": "Designing the quadrant R Package",
+    "text": "Designing the quadrant R Package\nWalk through the design process of the package.\nExplain key design decisions, such as wrapping the Python module while maintaining an R-friendly API.\nDiscuss challenges, such as incomplete implementation and trade-offs in deciding which features to support.\nReflect on parallels with previous work on Apache Arrow."
+  },
+  {
+    "objectID": "posts/raginr/index.html#implementing-rag-in-r",
+    "href": "posts/raginr/index.html#implementing-rag-in-r",
+    "title": "Retrieval Augmented Generation in R",
+    "section": "Implementing RAG in R",
+    "text": "Implementing RAG in R\nOutline the core steps needed to implement RAG in R using the quadrant package.\nMention any instances where you had to modify Python code to fix issues.\nCompare design choices with other wrapper packages in R."
+  },
+  {
+    "objectID": "posts/raginr/index.html#example-using-rag-with-a-sample-dataset",
+    "href": "posts/raginr/index.html#example-using-rag-with-a-sample-dataset",
+    "title": "Retrieval Augmented Generation in R",
+    "section": "Example: Using RAG with a Sample Dataset",
+    "text": "Example: Using RAG with a Sample Dataset\nIntroduce a real-world example using an appropriate dataset.\nDemonstrate how to query a vector database in R using quadrant.\nShow code snippets that illustrate how RAG retrieves relevant context for language models."
+  },
+  {
+    "objectID": "posts/raginr/index.html#connecting-with-elmer-and-expanding-the-workflow",
+    "href": "posts/raginr/index.html#connecting-with-elmer-and-expanding-the-workflow",
+    "title": "Retrieval Augmented Generation in R",
+    "section": "Connecting with Elmer and Expanding the Workflow",
+    "text": "Connecting with Elmer and Expanding the Workflow\nExplain how to integrate RAG into Elmer for further applications.\nDiscuss potential future directions: what’s missing, what could be improved, and what might be interesting to explore next."
+  },
+  {
+    "objectID": "posts/raginr/index.html#conclusion-next-steps",
+    "href": "posts/raginr/index.html#conclusion-next-steps",
+    "title": "Retrieval Augmented Generation in R",
+    "section": "Conclusion & Next Steps",
+    "text": "Conclusion & Next Steps\nSummarize key takeaways from the project.\nReflect on whether there’s enough community interest to further develop the package.\nEncourage readers to try it out and provide feedback."
+  },
+  {
+    "objectID": "posts/socalmediagen2/index.html#reflecting-on-llm-based-apps",
+    "href": "posts/socalmediagen2/index.html#reflecting-on-llm-based-apps",
+    "title": "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}",
+    "section": "Reflecting on LLM-based apps",
+    "text": "Reflecting on LLM-based apps\nI enjoyed building this example, and on some levels, it doesn’t do anything particularly radical. The same results could be achieved by using the same prompts in a browser session and manually filling in the parameters. However, what I do like about this is that I have a specific place to store my prompts - in a GitHub repo - where I can iterate on them and track changes over time.\nI also like that I now have a deployable artifact that I can share with others - I had mentioned to other members of the R-Ladies Global Team that I had been using LLMs to generate social media posts for promoting our news and blog posts, and this means I can easily share the link to the repo with the app, instead of having to share a prompt. Creating this as a distinct project encourages collaboration, whether that’s on which parameters we want to include in the app, or improving the quality of the prompts."
   }
 ]

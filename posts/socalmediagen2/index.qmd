@@ -1,0 +1,191 @@
+---
+title: "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}"
+author: "Nic Crane"
+date: "2025-02-17"
+categories: [R, AI]
+image: "ellmershiny.png"
+---
+
+I recently [posted about a repo I created containing a Shiny app which allows users to generate social media posts to promote blog posts, using {shiny} and {ellmer}](https://niccrane.com/posts/socialmediagen/).
+
+If you haven't used it before, {ellmer} is an R package which allows you to call LLMs directly from R.
+
+I'll admit right now that, although I'd already been using the LLM prompt used in that project for a while, I threw together the app and associated code in a couple of hours to give me something to write about.  People seemed receptive to the blog post, but I wasn't happy with the code, and so I decided to tidy it up a bit.
+
+In this post, I'm going to discuss the changes I made to get from a few messy scripts to a deployable R package that is much easier to maintain.
+
+## Step 1: Convert the scripts into an R package
+
+I'm a big fan of writing code as R packages wherever possible; it provides instant structure and reminds me to do important fundamentals such as documenting functions, and writing modular pieces instead of long scripts.
+
+I moved the app code into `./R/app.R` and separated out the other functions into a file `./R/prompts.R`.
+
+I also moved the CSS for the app into the package's `inst` dir and created a subdirectory in `inst` to store my prompts.
+
+![Contents of the inst dir](./inst_dir.png)
+
+## Step 2: Saving the prompts in their own file
+
+Next, was where to save the prompts. Originally these were saved as variables, but in the [ellmer vignette on prompt design](https://ellmer.tidyverse.org/articles/prompt-design.html#best-practices), it's recommended that these are saved in `./inst/prompts/` with one file per prompt.
+
+The ellmer vignette recommends saving prompts as markdown files as they're both human-readable and LLM-readable, and so I saved my main prompt as shown below:
+
+```
+Create me social media posts for each of these platforms: {{platforms}}, to promote the blog post below.
+
+* create {{n}} posts per platform
+* use a {{tone}} tone
+* use hashtags: {{hashtags}}
+* use emojis? {{emojis}}
+
+# Blog post contents
+
+{{post_contents}}
+```
+
+You'll notice the use of placeholders in the prompt.  This is because {ellmer} has a helpful function which can read the prompt and inject in variable values.  So the last line of my `get_prompt()` function looks like this:
+
+```r
+ellmer::interpolate_file(
+    system.file("prompts", "prompt-main.md", package = "socialmediagen"),
+    platforms = paste(platforms, collapse = ", "),
+    n = n,
+    tone = tone,
+    hashtags = hashtags,
+    emojis = emojis,
+    post_contents = post_contents
+)
+```
+
+## Step 3: Creating platform-specific prompts
+
+I realised that best-practices for social media posts vary from platform to platform, and I wanted to experiment with having different prompts depending on which platforms were selected by the user.
+
+I first added the following to my main prompt:
+
+```
+# Platform-specific advice
+
+Use the following advice to customise the output for individual platforms:
+
+{{platform_specific_advice}}
+```
+
+I then created additional prompts tailored to each platform, for example, my LinkedIn prompt looks like this:
+
+```
+LinkedIn:
+* Keep posts between 1,300 and 2,000 characters. 
+* Use short sentences: Posts with sentences under 12 words perform better. 
+* ask questions: Encourage comments by asking questions that prompt discussion. 
+* give specific instructions: Ask readers to like your post or take another action. 
+* use a compelling headline: Grab attention with your first line. 
+* use 3 hashtags
+```
+
+I then saved all of these into the `inst/prompts` directory.
+
+![Contents of the prompt dir](./prompt_dir.png)
+
+I then created a super-simple function to retrieve the relevant prompt:
+
+```r
+#' Retrieve post-writing advice unique to specific platforms
+#'
+#' @param platforms Which platforms to get advice for
+get_platform_specific_advice <- function(platforms){
+  prompt_files <- paste0("prompt-", tolower(platforms), ".md")
+  file_paths <- system.file("prompts", prompt_files, package = "socialmediagen")
+
+  contents <- lapply(file_paths, readLines)
+  paste(unlist(contents), collapse = "\n")
+}
+```
+
+Finally, I updated my `get_prompt()` function to incorporate these changes:
+
+```r
+#' Construct LLM prompt
+#'
+#' Construct a LLM prompt based on user input
+#'
+#' @param blog_link URL of source material
+#' @param platforms Social media platform to create prompts for
+#' @param n Number of prompts to create for each platform
+#' @param emojis Use emojis in post?
+#' @param tone Desired tone of the post
+#' @param hashtags Hashtags to include in the post
+#' @importFrom ellmer interpolate_file
+get_prompt <- function(blog_link, platforms, n, emojis, tone, hashtags) {
+  # retrieve post contents from GitHub
+  post_contents <- fetch_github_markdown(blog_link)
+
+  platform_specific_advice <- get_platform_specific_advice(platforms)
+
+  # combine components
+  ellmer::interpolate_file(
+    system.file("prompts", "prompt-main.md", package = "socialmediagen"),
+    platforms = paste(platforms, collapse = ", "),
+    n = n,
+    tone = tone,
+    hashtags = hashtags,
+    emojis = emojis,
+    post_contents = post_contents,
+    platform_specific_advice = platform_specific_advice
+  )
+}
+```
+
+## The resulting app
+
+My app now is able to create platform-specific content and is much better organised than it was before.  I think that updating the prompt was useful - check out the example below of the content generated before and after.  The LinkedIn post now it has a strong call-to-action and asks the user a question.
+
+### Before
+
+```
+
+📢 Calling all data enthusiasts! 📢
+
+Thinking about speaking at Posit Conf 2025 but feeling a bit 😬 about the video abstract? Don't sweat it! This year the abstract just needs to be a short video!
+
+We've compiled some top tips from past speakers to help you nail that one-minute pitch! 🚀
+
+➡️ Learn how to structure your video, what tech to use, and how to inject some of YOUR personality into it! (Humor and creativity are welcome!)
+
+Plus, we're offering feedback on drafts! 📝
+
+[Link to Blog Post]
+
+#rstats
+```
+
+### After
+
+```
+
+**Headline:** Nervous About Your Posit Conf Video Abstract? 😩 Don't Be!
+
+Thinking of speaking at #PositConf2025 but dreading the video abstract? You're not alone! It's just one minute to shine ✨.
+
+We've got tips from past speakers Rachael Dempsey, Shannon Pileggi, and Nic Crane to help you nail it! From tech options (easy peasy phone cam to fancy OBS Studio) to structuring your pitch, we've got you covered.
+
+**Blog Post Highlights:**
+
+*   Simple tech options
+*   Easy structure for your video
+*   How to get feedback
+
+Ready to record? Check out our tips and let your brilliance shine. 💡
+[Link to blog post]
+
+What's your biggest video recording fear? Share in the comments! 👇
+
+#rstats #rladies #positconf
+
+```
+
+## Reflecting on LLM-based apps
+
+I enjoyed building this example, and on some levels, it doesn't do anything particularly radical.  The same results could be achieved by using the same prompts in a browser session and manually filling in the parameters.  However, what I do like about this is that I have a specific place to store my prompts - in a GitHub repo - where I can iterate on them and track changes over time.  
+
+I also like that I now have a deployable artifact that I can share with others - I had mentioned to other members of the R-Ladies Global Team that I had been using LLMs to generate social media posts for promoting our news and blog posts, and this means I can easily share the link to the repo with the app, instead of having to share a prompt.  Creating this as a distinct project encourages collaboration, whether that's on which parameters we want to include in the app, or improving the quality of the prompts.

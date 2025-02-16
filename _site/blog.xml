@@ -10,7 +10,335 @@
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Nic Crane&#39;s Blog</description>
 <generator>quarto-1.5.53</generator>
-<lastBuildDate>Fri, 14 Feb 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 17 Feb 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Iterating on an app to create social media posts generating package using {shiny} and {ellmer}</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/socalmediagen2/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>I recently <a href="https://niccrane.com/posts/socialmediagen/">posted about a repo I created containing a Shiny app which allows users to generate social media posts to promote blog posts, using {shiny} and {ellmer}</a>.</p>
+<p>If you haven’t used it before, {ellmer} is an R package which allows you to call LLMs directly from R.</p>
+<p>I’ll admit right now that, although I’d already been using the LLM prompt used in that project for a while, I threw together the app and associated code in a couple of hours to give me something to write about. People seemed receptive to the blog post, but I wasn’t happy with the code, and so I decided to tidy it up a bit.</p>
+<p>In this post, I’m going to discuss the changes I made to get from a few messy scripts to a deployable R package that is much easier to maintain.</p>
+<section id="step-1-convert-the-scripts-into-an-r-package" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-convert-the-scripts-into-an-r-package">Step 1: Convert the scripts into an R package</h2>
+<p>I’m a big fan of writing code as R packages wherever possible; it provides instant structure and reminds me to do important fundamentals such as documenting functions, and writing modular pieces instead of long scripts.</p>
+<p>I moved the app code into <code>./R/app.R</code> and separated out the other functions into a file <code>./R/prompts.R</code>.</p>
+<p>I also moved the CSS for the app into the package’s <code>inst</code> dir and created a subdirectory in <code>inst</code> to store my prompts.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/socalmediagen2/inst_dir.png" class="img-fluid figure-img"></p>
+<figcaption>Contents of the inst dir</figcaption>
+</figure>
+</div>
+</section>
+<section id="step-2-saving-the-prompts-in-their-own-file" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-saving-the-prompts-in-their-own-file">Step 2: Saving the prompts in their own file</h2>
+<p>Next, was where to save the prompts. Originally these were saved as variables, but in the <a href="https://ellmer.tidyverse.org/articles/prompt-design.html#best-practices">ellmer vignette on prompt design</a>, it’s recommended that these are saved in <code>./inst/prompts/</code> with one file per prompt.</p>
+<p>The ellmer vignette recommends saving prompts as markdown files as they’re both human-readable and LLM-readable, and so I saved my main prompt as shown below:</p>
+<pre><code>Create me social media posts for each of these platforms: {{platforms}}, to promote the blog post below.
+
+* create {{n}} posts per platform
+* use a {{tone}} tone
+* use hashtags: {{hashtags}}
+* use emojis? {{emojis}}
+
+# Blog post contents
+
+{{post_contents}}</code></pre>
+<p>You’ll notice the use of placeholders in the prompt. This is because {ellmer} has a helpful function which can read the prompt and inject in variable values. So the last line of my <code>get_prompt()</code> function looks like this:</p>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">ellmer<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">interpolate_file</span>(</span>
+<span id="cb2-2">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">system.file</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"prompts"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"prompt-main.md"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">package =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"socialmediagen"</span>),</span>
+<span id="cb2-3">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">platforms =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste</span>(platforms, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>),</span>
+<span id="cb2-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> n,</span>
+<span id="cb2-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">tone =</span> tone,</span>
+<span id="cb2-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">hashtags =</span> hashtags,</span>
+<span id="cb2-7">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">emojis =</span> emojis,</span>
+<span id="cb2-8">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">post_contents =</span> post_contents</span>
+<span id="cb2-9">)</span></code></pre></div>
+</section>
+<section id="step-3-creating-platform-specific-prompts" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-creating-platform-specific-prompts">Step 3: Creating platform-specific prompts</h2>
+<p>I realised that best-practices for social media posts vary from platform to platform, and I wanted to experiment with having different prompts depending on which platforms were selected by the user.</p>
+<p>I first added the following to my main prompt:</p>
+<pre><code># Platform-specific advice
+
+Use the following advice to customise the output for individual platforms:
+
+{{platform_specific_advice}}</code></pre>
+<p>I then created additional prompts tailored to each platform, for example, my LinkedIn prompt looks like this:</p>
+<pre><code>LinkedIn:
+* Keep posts between 1,300 and 2,000 characters. 
+* Use short sentences: Posts with sentences under 12 words perform better. 
+* ask questions: Encourage comments by asking questions that prompt discussion. 
+* give specific instructions: Ask readers to like your post or take another action. 
+* use a compelling headline: Grab attention with your first line. 
+* use 3 hashtags</code></pre>
+<p>I then saved all of these into the <code>inst/prompts</code> directory.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/socalmediagen2/prompt_dir.png" class="img-fluid figure-img"></p>
+<figcaption>Contents of the prompt dir</figcaption>
+</figure>
+</div>
+<p>I then created a super-simple function to retrieve the relevant prompt:</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' Retrieve post-writing advice unique to specific platforms</span></span>
+<span id="cb5-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'</span></span>
+<span id="cb5-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param platforms Which platforms to get advice for</span></span>
+<span id="cb5-4">get_platform_specific_advice <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(platforms){</span>
+<span id="cb5-5">  prompt_files <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste0</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"prompt-"</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tolower</span>(platforms), <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">".md"</span>)</span>
+<span id="cb5-6">  file_paths <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">system.file</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"prompts"</span>, prompt_files, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">package =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"socialmediagen"</span>)</span>
+<span id="cb5-7"></span>
+<span id="cb5-8">  contents <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(file_paths, readLines)</span>
+<span id="cb5-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">unlist</span>(contents), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb5-10">}</span></code></pre></div>
+<p>Finally, I updated my <code>get_prompt()</code> function to incorporate these changes:</p>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' Construct LLM prompt</span></span>
+<span id="cb6-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'</span></span>
+<span id="cb6-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' Construct a LLM prompt based on user input</span></span>
+<span id="cb6-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#'</span></span>
+<span id="cb6-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param blog_link URL of source material</span></span>
+<span id="cb6-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param platforms Social media platform to create prompts for</span></span>
+<span id="cb6-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param n Number of prompts to create for each platform</span></span>
+<span id="cb6-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param emojis Use emojis in post?</span></span>
+<span id="cb6-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param tone Desired tone of the post</span></span>
+<span id="cb6-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @param hashtags Hashtags to include in the post</span></span>
+<span id="cb6-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#' @importFrom ellmer interpolate_file</span></span>
+<span id="cb6-12">get_prompt <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(blog_link, platforms, n, emojis, tone, hashtags) {</span>
+<span id="cb6-13">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># retrieve post contents from GitHub</span></span>
+<span id="cb6-14">  post_contents <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">fetch_github_markdown</span>(blog_link)</span>
+<span id="cb6-15"></span>
+<span id="cb6-16">  platform_specific_advice <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">get_platform_specific_advice</span>(platforms)</span>
+<span id="cb6-17"></span>
+<span id="cb6-18">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># combine components</span></span>
+<span id="cb6-19">  ellmer<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">interpolate_file</span>(</span>
+<span id="cb6-20">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">system.file</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"prompts"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"prompt-main.md"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">package =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"socialmediagen"</span>),</span>
+<span id="cb6-21">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">platforms =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste</span>(platforms, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">", "</span>),</span>
+<span id="cb6-22">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n =</span> n,</span>
+<span id="cb6-23">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">tone =</span> tone,</span>
+<span id="cb6-24">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">hashtags =</span> hashtags,</span>
+<span id="cb6-25">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">emojis =</span> emojis,</span>
+<span id="cb6-26">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">post_contents =</span> post_contents,</span>
+<span id="cb6-27">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">platform_specific_advice =</span> platform_specific_advice</span>
+<span id="cb6-28">  )</span>
+<span id="cb6-29">}</span></code></pre></div>
+</section>
+<section id="the-resulting-app" class="level2">
+<h2 class="anchored" data-anchor-id="the-resulting-app">The resulting app</h2>
+<p>My app now is able to create platform-specific content and is much better organised than it was before. I think that updating the prompt was useful - check out the example below of the content generated before and after. The LinkedIn post now it has a strong call-to-action and asks the user a question.</p>
+<section id="before" class="level3">
+<h3 class="anchored" data-anchor-id="before">Before</h3>
+<pre><code>
+📢 Calling all data enthusiasts! 📢
+
+Thinking about speaking at Posit Conf 2025 but feeling a bit 😬 about the video abstract? Don't sweat it! This year the abstract just needs to be a short video!
+
+We've compiled some top tips from past speakers to help you nail that one-minute pitch! 🚀
+
+➡️ Learn how to structure your video, what tech to use, and how to inject some of YOUR personality into it! (Humor and creativity are welcome!)
+
+Plus, we're offering feedback on drafts! 📝
+
+[Link to Blog Post]
+
+#rstats</code></pre>
+</section>
+<section id="after" class="level3">
+<h3 class="anchored" data-anchor-id="after">After</h3>
+<pre><code>
+**Headline:** Nervous About Your Posit Conf Video Abstract? 😩 Don't Be!
+
+Thinking of speaking at #PositConf2025 but dreading the video abstract? You're not alone! It's just one minute to shine ✨.
+
+We've got tips from past speakers Rachael Dempsey, Shannon Pileggi, and Nic Crane to help you nail it! From tech options (easy peasy phone cam to fancy OBS Studio) to structuring your pitch, we've got you covered.
+
+**Blog Post Highlights:**
+
+*   Simple tech options
+*   Easy structure for your video
+*   How to get feedback
+
+Ready to record? Check out our tips and let your brilliance shine. 💡
+[Link to blog post]
+
+What's your biggest video recording fear? Share in the comments! 👇
+
+#rstats #rladies #positconf
+</code></pre>
+</section>
+</section>
+<section id="reflecting-on-llm-based-apps" class="level2">
+<h2 class="anchored" data-anchor-id="reflecting-on-llm-based-apps">Reflecting on LLM-based apps</h2>
+<p>I enjoyed building this example, and on some levels, it doesn’t do anything particularly radical. The same results could be achieved by using the same prompts in a browser session and manually filling in the parameters. However, what I do like about this is that I have a specific place to store my prompts - in a GitHub repo - where I can iterate on them and track changes over time.</p>
+<p>I also like that I now have a deployable artifact that I can share with others - I had mentioned to other members of the R-Ladies Global Team that I had been using LLMs to generate social media posts for promoting our news and blog posts, and this means I can easily share the link to the repo with the app, instead of having to share a prompt. Creating this as a distinct project encourages collaboration, whether that’s on which parameters we want to include in the app, or improving the quality of the prompts.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>AI</category>
+  <guid>https://niccrane.com/posts/socalmediagen2/</guid>
+  <pubDate>Mon, 17 Feb 2025 00:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/socalmediagen2/ellmershiny.png" medium="image" type="image/png" height="172" width="144"/>
+</item>
 <item>
   <title>Generating social media posts to promote blog posts with {shiny} and {ellmer}</title>
   <dc:creator>Nic Crane</dc:creator>
