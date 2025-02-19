@@ -17,6 +17,7 @@ website:
       - blog.qmd
       - icon: rss
         href: blog.xml
+  google-analytics: "G-SJ58WZL69W"
 format:
   html:
     theme: sandstone
