@@ -4,11 +4,13 @@ project:
 website:
   title: "Nic Crane"
   site-url: https://niccrane.com
-  description: "Nic Crane's Blog"
+  description: "Nic Crane"
   navbar:
     right:
       - text: About
         file: index.qmd
+      - text: Contact Me
+        file: contact.qmd
       - text: Talks & Workshops
         file: talks.qmd
       - projects.qmd
