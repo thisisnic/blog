@@ -4,7 +4,7 @@
     "href": "blog.html",
     "title": "Blog",
     "section": "",
-    "text": "Iterating on an app to create social media posts generating package using {shiny} and {ellmer}\n\n\n\n\n\n\nR\n\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 17, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nGenerating social media posts to promote blog posts with {shiny} and {ellmer}\n\n\n\n\n\n\nR\n\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 14, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nRecurse Center Return Statement\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 12, 2024\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoring R Package Updates with Github Actions\n\n\n\n\n\n\nR\n\n\nGitHub Actions\n\n\n\n\n\n\n\n\n\nDec 28, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nExplaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’\n\n\n\n\n\n\nR\n\n\nC\n\n\n\n\n\n\n\n\n\nDec 23, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nReflections on 2023\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nDec 21, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nDebugging\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 4, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nThree Goats in a Raincoat\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 3, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\nNo matching items"
+    "text": "Exploring AI-Powered Shiny App Development with Cline and Positron\n\n\n\n\n\n\nR\n\n\nAI\n\n\n\n\n\n\n\n\n\nMar 17, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nIterating on an app to create social media posts generating package using {shiny} and {ellmer}\n\n\n\n\n\n\nR\n\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 17, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nGenerating social media posts to promote blog posts with {shiny} and {ellmer}\n\n\n\n\n\n\nR\n\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 14, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nRecurse Center Return Statement\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 12, 2024\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoring R Package Updates with Github Actions\n\n\n\n\n\n\nR\n\n\nGitHub Actions\n\n\n\n\n\n\n\n\n\nDec 28, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nExplaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’\n\n\n\n\n\n\nR\n\n\nC\n\n\n\n\n\n\n\n\n\nDec 23, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nReflections on 2023\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nDec 21, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nDebugging\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 4, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nThree Goats in a Raincoat\n\n\n\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 3, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\n\n\n\nR\n\n\nPython\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/debugging/index.html",
@@ -411,5 +411,89 @@
     "title": "Recurse Center Return Statement",
     "section": "Conclusion",
     "text": "Conclusion\nI can honestly describe the 3 months I spent at Recurse Center as the best solid 3 month period of my life. I learned a huge amount about, not only programming, but my own motivation. I made some amazing friends - my fellow RC participants and the faculty there are some of the coolest people I’ve ever met - and will be staying involved in the community in the longer term."
+  },
+  {
+    "objectID": "posts/clineshiny/index.html",
+    "href": "posts/clineshiny/index.html",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "",
+    "text": "As a fun bit of prep for Appsilon’s upcoming AI-Powered Shiny Hackathon on March 22, 2025, I decided to do a practice run using Cline, an AI coding assistant. My goal was to see how AI can help or hinder the development of a Shiny application.\nI decided to see where I could get in an hour today, and this blog post discusses my experience, highlighting the capabilities, quirks, and costs of using AI for R and Shiny app development."
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#the-hackathon-challenge",
+    "href": "posts/clineshiny/index.html#the-hackathon-challenge",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "📌 The Hackathon Challenge",
+    "text": "📌 The Hackathon Challenge\nThe hackathon is judged on:\n\nHow well the app meets the challenge objectives\nAdditional features built\nUI design and user experience\nCode clarity and maintainability\n\nThe details of the hackathon will be revealed on the day, so I decided to try to come up with a small task which may have some things in common - creating a Shiny app which visualises and analyses a dataset."
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#data-acquisition-nyc-open-data",
+    "href": "posts/clineshiny/index.html#data-acquisition-nyc-open-data",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "📂 Data Acquisition: NYC Open Data",
+    "text": "📂 Data Acquisition: NYC Open Data\nI decided to take a look at NYC Open Data and within that, my partner and I agreed that the restaurant health inspection dataset looks the most interesting.\nNYC Open Data provides APIs and browser-based tools for exploring datasets. Instead of using APIs, I opted to download the datasets manually for simplicity.\n\nInspection Results Dataset (120MB CSV)\nData Dictionary (Excel file)\nAdditional Documentation (Word file)\n\nAt this point, I didn’t check the documentation—I wanted to see how much Cline could figure out on its own."
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#enter-cline-ai-coding-assistant",
+    "href": "posts/clineshiny/index.html#enter-cline-ai-coding-assistant",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🛠️ Enter Cline: AI Coding Assistant",
+    "text": "🛠️ Enter Cline: AI Coding Assistant\nCline is an AI-powered coding tool that integrates into VS Code and Positron. It autonomously creates and edits files, executes commands, and interacts with code, all while asking for user approval at each step.\n\n🔹 Key Features of Cline:\n\nPlan Mode: Outlines a roadmap before execution\nAct Mode: Runs code when switched to execution mode\nTransparent Cost Tracking: Displays API usage and expenses\n\nI started with a broad prompt:\n\n‘Using all of the resources in the data directory, take a look at the data, and come up with some ideas for interesting analyses, such as “which restaurants have the worst health scores but remain very popular” - focus on what is available in the data and what is unexpected and humorous’\n\nCline responded by:\n\nListing the available files and guessing their contents\nAsking for permission to read each file\nSuccessfully reading the Word doc\nTrying (and failing) to read the Excel file\n\n\n\n\nCline File Summary"
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#data-exploration-and-analysis",
+    "href": "posts/clineshiny/index.html#data-exploration-and-analysis",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🔍 Data Exploration and Analysis",
+    "text": "🔍 Data Exploration and Analysis\nCline wanted to open the full 120MB dataset but since the file was large, my partner mentioned that there might be costs associated with sending data to the AI. I mentioned this to Cline, and so it opted instead to sample the first few rows.\nAfter some failed attempts with PowerShell, I nudged it toward using R instead, which worked much better.\n\n\n\nPowerShell Issue\n\n\nI really like how the responses are in a human-readable format while planning actions to take, so that I could see the equivalent of its line of thought. It had proposed analyses such as:\n\nIdentifying popular restaurants with poor health scores\nAnalysing violation trends across neighborhoods\nExamining seasonal variations in health violations\n\nSome ideas sounded interesting, but others were a bit off. This reflected the trend I’d seen in chatGPT where unless prompted to do otherwise, a large number of ideas are returned; some more useful than others.\nI pressed it on some of them, at which point it was able to propose alternatives. There was still a great deal of input needed from me to decide which idea would be the most sensible to go with.\n\n\n\nInspection Proxy Popularity Question"
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#building-the-shiny-app",
+    "href": "posts/clineshiny/index.html#building-the-shiny-app",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🎨 Building the Shiny App",
+    "text": "🎨 Building the Shiny App\nWith the analysis ideas outlined, I instructed Cline to build a Shiny app to visualise the insights.\n\n\n\nInitial R Code Approach\n\n\n\n🔹 What Cline Generated:\n\nA UI with slider inputs\nBar charts using the viridis color palette\nIcons for different metrics\n\nIssue #1:\n\nCline overused Plotly, adding unnecessary complexity.\nI switched most plots back to ggplot2 for clarity.\n\nIssue #2:\n\nSome colors were misleading—viridis was applied without meaning, making bars look color-coded incorrectly.\n\nIssue #3:\nThe app was all in one huge file - so I asked Cline to make it more modular, again, remaining vague to see what it did."
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#refactoring-and-modularization",
+    "href": "posts/clineshiny/index.html#refactoring-and-modularization",
+    "title": "Positron, cline, and Shiny - practice run for AI hackathon",
+    "section": "",
+    "text": "To improve maintainability, I asked Cline to:\n\nBreak the code into modules instead of a single file\nUse the Golem framework, a structured approach for Shiny development\n\nCline successfully:\n✅ Created a new Golem project directory\n✅ Structured the app as an R package\n✅ Included a DESCRIPTION file\nHowever, I had to manually fix some file paths and re-run devtools to make everything work.\n\n\n\nRefactoring with Golem"
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#the-cost-of-ai-assistance",
+    "href": "posts/clineshiny/index.html#the-cost-of-ai-assistance",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "💰 The Cost of AI Assistance",
+    "text": "💰 The Cost of AI Assistance\nCline provides a breakdown of API costs per request. After one hour of work, I had spent:\n💰 $3 total\nInterestingly, some human-like responses cost more than code generation! For example, a single conceptual AI response cost $0.17, more than some entire code snippets.\n\n\n\nCost Breakdown"
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#final-thoughts-ais-role-in-shiny-development",
+    "href": "posts/clineshiny/index.html#final-thoughts-ais-role-in-shiny-development",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🏁 Final Thoughts: AI’s Role in Shiny Development",
+    "text": "🏁 Final Thoughts: AI’s Role in Shiny Development\nThis experiment showed me a few important things:\n\nVague prompts get mixed results\nAI is better at writing code than about making decisions about data science and how best to represent data\nCosts can add up quickly and being strategic about which aspects to use Cline for feels like the best way forward\n\nThis made me really reflect on the role of AI here. On an app development team, would you rather have 1 person who does it all, or a team of people with different specialisations? I think the latter would work better, for the hackathon itself, I’m going to experiment with a few different approaches such as:\n\nSetting up the app structure myself in advance, and getting Cline to fill in the gaps based on what’s already there\nGPT product manager - putting together a prompt around constructing really well-defined requirements, and using that to help me tightly define what is being created before passing those requirements onto an AI like Cline to create them\ndesigning any plots myself - there may be ways to improve on what was generated here today, but representing data in a human-understandable form might just be best done by humans\n\nI’m looking forward to Saturday’s hackathon - good luck to everyone else participating and I’m super excited to see what comes out of it! 🚀"
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#next-steps-ai-as-a-product-manager",
+    "href": "posts/clineshiny/index.html#next-steps-ai-as-a-product-manager",
+    "title": "Positron, cline, and Shiny - practice run for AI hackathon",
+    "section": "",
+    "text": "For the hackathon, I plan to experiment with:\n\nUsing one AI model as a product manager, guiding another AI model acting as a developer.\nAsking Cline to validate prompts before execution.\nKeeping tight control over expenses.\n\n\n\n✅ Yes—for scaffolding, automation, and repetitive coding\n❌ No—for critical analysis, strategic decision-making, and UX design\n💡 Final Takeaway:\n&gt; AI is an assistant, not a replacement for human expertise.\nGood luck to everyone participating in the hackathon! 🚀\n\nWhat are your thoughts on using AI for coding? Let’s discuss in the comments!"
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#the-app-itself",
+    "href": "posts/clineshiny/index.html#the-app-itself",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "📊 The App Itself",
+    "text": "📊 The App Itself\nThe main page of the app itself can be seen below. It looks pretty decent, right?\n Except for that it kinda wasn’t! This overview page was fine, but the individual subpages were suffering from all sorts of issues, from truncated output in DT outputs, to it being unclear what some plots were trying to show. With some time and effort I could have unpicked it, but at this point I was wondering if it would have been quicker to code from scratch."
+  },
+  {
+    "objectID": "posts/clineshiny/index.html#refactoring-and-modularisation",
+    "href": "posts/clineshiny/index.html#refactoring-and-modularisation",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🏗️ Refactoring and Modularisation",
+    "text": "🏗️ Refactoring and Modularisation\nAt this point Cline split the app into ui.R, server.R and a few other supporting files, though not as modular as I’d have liked. I tried again, this time seeing if it would use the {golem} framework - with much more success.\nCline successfully:\n✅ Created a new Golem project directory\n✅ Structured the app as an R package\n✅ Included a DESCRIPTION file\nHowever, I had to manually fix some file paths to make everything work.\n\n\n\nRefactoring with Golem"
   }
 ]

@@ -9,8 +9,183 @@
 <link>https://niccrane.com/blog.html</link>
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Nic Crane</description>
-<generator>quarto-1.5.53</generator>
-<lastBuildDate>Mon, 17 Feb 2025 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.5.57</generator>
+<lastBuildDate>Mon, 17 Mar 2025 04:00:00 GMT</lastBuildDate>
+<item>
+  <title>Exploring AI-Powered Shiny App Development with Cline and Positron</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/clineshiny/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>As a fun bit of prep for <a href="https://www.appsilon.com/post/tiny-shiny-hackathon">Appsilon’s upcoming AI-Powered Shiny Hackathon on March 22, 2025</a>, I decided to do a practice run using Cline, an AI coding assistant. My goal was to see how AI can help or hinder the development of a Shiny application.</p>
+<p>I decided to see where I could get in an hour today, and this blog post discusses my experience, highlighting the capabilities, quirks, and costs of using AI for R and Shiny app development.</p>
+<section id="the-hackathon-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="the-hackathon-challenge">📌 The Hackathon Challenge</h2>
+<p>The hackathon is judged on:</p>
+<ul>
+<li>How well the app meets the challenge objectives</li>
+<li>Additional features built</li>
+<li>UI design and user experience</li>
+<li>Code clarity and maintainability</li>
+</ul>
+<p>The details of the hackathon will be revealed on the day, so I decided to try to come up with a small task which may have some things in common - creating a Shiny app which visualises and analyses a dataset.</p>
+</section>
+<section id="data-acquisition-nyc-open-data" class="level2">
+<h2 class="anchored" data-anchor-id="data-acquisition-nyc-open-data">📂 Data Acquisition: NYC Open Data</h2>
+<p>I decided to take a look at NYC Open Data and within that, my partner and I agreed that the restaurant health inspection dataset looks the most interesting.</p>
+<p>NYC Open Data provides APIs and browser-based tools for exploring datasets. Instead of using APIs, I opted to download the datasets manually for simplicity.</p>
+<ul>
+<li>Inspection Results Dataset (120MB CSV)</li>
+<li>Data Dictionary (Excel file)</li>
+<li>Additional Documentation (Word file)</li>
+</ul>
+<p>At this point, I didn’t check the documentation—I wanted to see how much Cline could figure out on its own.</p>
+</section>
+<section id="enter-cline-ai-coding-assistant" class="level2">
+<h2 class="anchored" data-anchor-id="enter-cline-ai-coding-assistant">🛠️ Enter Cline: AI Coding Assistant</h2>
+<p>Cline is an AI-powered coding tool that integrates into VS Code and Positron. It autonomously creates and edits files, executes commands, and interacts with code, all while asking for user approval at each step.</p>
+<section id="key-features-of-cline" class="level3">
+<h3 class="anchored" data-anchor-id="key-features-of-cline">🔹 Key Features of Cline:</h3>
+<ul>
+<li>Plan Mode: Outlines a roadmap before execution</li>
+<li>Act Mode: Runs code when switched to execution mode</li>
+<li>Transparent Cost Tracking: Displays API usage and expenses</li>
+</ul>
+<p>I started with a broad prompt:</p>
+<blockquote class="blockquote">
+<p>‘Using all of the resources in the data directory, take a look at the data, and come up with some ideas for interesting analyses, such as “which restaurants have the worst health scores but remain very popular” - focus on what is available in the data and what is unexpected and humorous’</p>
+</blockquote>
+<p>Cline responded by:</p>
+<ol type="1">
+<li>Listing the available files and guessing their contents</li>
+<li>Asking for permission to read each file</li>
+<li>Successfully reading the Word doc</li>
+<li>Trying (and failing) to read the Excel file</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/clineshiny/cline_chat_1.png" class="img-fluid figure-img"></p>
+<figcaption>Cline File Summary</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="data-exploration-and-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="data-exploration-and-analysis">🔍 Data Exploration and Analysis</h2>
+<p>Cline wanted to open the full 120MB dataset but since the file was large, my partner mentioned that there might be costs associated with sending data to the AI. I mentioned this to Cline, and so it opted instead to sample the first few rows.</p>
+<p>After some failed attempts with PowerShell, I nudged it toward using R instead, which worked much better.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/clineshiny/cline_chat_5.png" class="img-fluid figure-img"></p>
+<figcaption>PowerShell Issue</figcaption>
+</figure>
+</div>
+<p>I really like how the responses are in a human-readable format while planning actions to take, so that I could see the equivalent of its line of thought. It had proposed analyses such as:</p>
+<ul>
+<li>Identifying popular restaurants with poor health scores</li>
+<li>Analysing violation trends across neighborhoods</li>
+<li>Examining seasonal variations in health violations</li>
+</ul>
+<p>Some ideas sounded interesting, but others were a bit off. This reflected the trend I’d seen in chatGPT where unless prompted to do otherwise, a large number of ideas are returned; some more useful than others.</p>
+<p>I pressed it on some of them, at which point it was able to propose alternatives. There was still a great deal of input needed from me to decide which idea would be the most sensible to go with.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/clineshiny/cline_chat_7.png" class="img-fluid figure-img"></p>
+<figcaption>Inspection Proxy Popularity Question</figcaption>
+</figure>
+</div>
+</section>
+<section id="building-the-shiny-app" class="level2">
+<h2 class="anchored" data-anchor-id="building-the-shiny-app">🎨 Building the Shiny App</h2>
+<p>With the analysis ideas outlined, I instructed Cline to build a Shiny app to visualise the insights.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/clineshiny/cline_chat_12.png" class="img-fluid figure-img"></p>
+<figcaption>Initial R Code Approach</figcaption>
+</figure>
+</div>
+<section id="what-cline-generated" class="level3">
+<h3 class="anchored" data-anchor-id="what-cline-generated">🔹 What Cline Generated:</h3>
+<ul>
+<li>A UI with slider inputs</li>
+<li>Bar charts using the viridis color palette</li>
+<li>Icons for different metrics</li>
+</ul>
+<p>Issue #1:</p>
+<ul>
+<li>Cline overused Plotly, adding unnecessary complexity.</li>
+<li>I switched most plots back to ggplot2 for clarity.</li>
+</ul>
+<p>Issue #2:</p>
+<ul>
+<li>Some colors were misleading—viridis was applied without meaning, making bars look color-coded incorrectly.</li>
+</ul>
+<p>Issue #3:</p>
+<p>The app was all in one huge file - so I asked Cline to make it more modular, again, remaining vague to see what it did.</p>
+</section>
+</section>
+<section id="the-app-itself" class="level2">
+<h2 class="anchored" data-anchor-id="the-app-itself">📊 The App Itself</h2>
+<p>The main page of the app itself can be seen below. It looks pretty decent, right?</p>
+<p><img src="https://niccrane.com/posts/clineshiny/final_app_screenshot.png" class="img-fluid" alt="The app itself"> Except for that it kinda wasn’t! This overview page was fine, but the individual subpages were suffering from all sorts of issues, from truncated output in DT outputs, to it being unclear what some plots were trying to show. With some time and effort I could have unpicked it, but at this point I was wondering if it would have been quicker to code from scratch.</p>
+</section>
+<section id="refactoring-and-modularisation" class="level2">
+<h2 class="anchored" data-anchor-id="refactoring-and-modularisation">🏗️ Refactoring and Modularisation</h2>
+<p>At this point Cline split the app into <code>ui.R</code>, <code>server.R</code> and a few other supporting files, though not as modular as I’d have liked. I tried again, this time seeing if it would use the {golem} framework - with much more success.</p>
+<p>Cline successfully:</p>
+<p>✅ Created a new Golem project directory</p>
+<p>✅ Structured the app as an R package</p>
+<p>✅ Included a DESCRIPTION file</p>
+<p>However, I had to manually fix some file paths to make everything work.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/clineshiny/cline_chat_15.png" class="img-fluid figure-img"></p>
+<figcaption>Refactoring with Golem</figcaption>
+</figure>
+</div>
+</section>
+<section id="the-cost-of-ai-assistance" class="level2">
+<h2 class="anchored" data-anchor-id="the-cost-of-ai-assistance">💰 The Cost of AI Assistance</h2>
+<p>Cline provides a breakdown of API costs per request. After one hour of work, I had spent:</p>
+<p>💰 $3 total</p>
+<p>Interestingly, some human-like responses cost more than code generation! For example, a single conceptual AI response cost $0.17, more than some entire code snippets.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/clineshiny/cline_total_resources.png" class="img-fluid figure-img"></p>
+<figcaption>Cost Breakdown</figcaption>
+</figure>
+</div>
+</section>
+<section id="final-thoughts-ais-role-in-shiny-development" class="level2">
+<h2 class="anchored" data-anchor-id="final-thoughts-ais-role-in-shiny-development">🏁 Final Thoughts: AI’s Role in Shiny Development</h2>
+<p>This experiment showed me a few important things:</p>
+<ol type="1">
+<li><p>Vague prompts get mixed results</p></li>
+<li><p>AI is better at writing code than about making decisions about data science and how best to represent data</p></li>
+<li><p>Costs can add up quickly and being strategic about which aspects to use Cline for feels like the best way forward</p></li>
+</ol>
+<p>This made me really reflect on the role of AI here. On an app development team, would you rather have 1 person who does it all, or a team of people with different specialisations? I think the latter would work better, for the hackathon itself, I’m going to experiment with a few different approaches such as:</p>
+<ul>
+<li><p>Setting up the app structure myself in advance, and getting Cline to fill in the gaps based on what’s already there</p></li>
+<li><p>GPT product manager - putting together a prompt around constructing really well-defined requirements, and using that to help me tightly define what is being created before passing those requirements onto an AI like Cline to create them</p></li>
+<li><p>designing any plots myself - there may be ways to improve on what was generated here today, but representing data in a human-understandable form might just be best done by humans</p></li>
+</ul>
+<p>I’m looking forward to Saturday’s hackathon - good luck to everyone else participating and I’m super excited to see what comes out of it! 🚀</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>AI</category>
+  <guid>https://niccrane.com/posts/clineshiny/</guid>
+  <pubDate>Mon, 17 Mar 2025 04:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/clineshiny/final_app_screenshot.png" medium="image" type="image/png" height="75" width="144"/>
+</item>
 <item>
   <title>Iterating on an app to create social media posts generating package using {shiny} and {ellmer}</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -336,7 +511,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socalmediagen2/</guid>
-  <pubDate>Mon, 17 Feb 2025 00:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 Feb 2025 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socalmediagen2/ellmershiny.png" medium="image" type="image/png" height="172" width="144"/>
 </item>
 <item>
@@ -410,7 +585,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socialmediagen/</guid>
-  <pubDate>Fri, 14 Feb 2025 00:00:00 GMT</pubDate>
+  <pubDate>Fri, 14 Feb 2025 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socialmediagen/preview.png" medium="image" type="image/png" height="98" width="144"/>
 </item>
 <item>
@@ -539,7 +714,7 @@ What's your biggest video recording fear? Share in the comments! 👇
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/rc/</guid>
-  <pubDate>Sat, 11 May 2024 23:00:00 GMT</pubDate>
+  <pubDate>Sun, 12 May 2024 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rc/rc.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -692,7 +867,7 @@ on:
   <category>R</category>
   <category>GitHub Actions</category>
   <guid>https://niccrane.com/posts/rwatcher/</guid>
-  <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Thu, 28 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rwatcher/job.png" medium="image" type="image/png" height="117" width="144"/>
 </item>
 <item>
@@ -895,7 +1070,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>R</category>
   <category>C</category>
   <guid>https://niccrane.com/posts/c_deepr/</guid>
-  <pubDate>Sat, 23 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Sat, 23 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/c_deepr/deepr.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -952,7 +1127,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/2023wrapup/</guid>
-  <pubDate>Thu, 21 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Thu, 21 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/2023wrapup/2023.png" medium="image" type="image/png" height="66" width="144"/>
 </item>
 <item>
@@ -980,7 +1155,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/debugging/</guid>
-  <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
+  <pubDate>Wed, 04 Oct 2023 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -1034,7 +1209,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/goats/</guid>
-  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 03 Oct 2023 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -1125,7 +1300,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>R</category>
   <category>Python</category>
   <guid>https://niccrane.com/posts/r-examples/</guid>
-  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 </channel>

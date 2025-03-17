@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nic Crane">
-<meta name="dcterms.date" content="2016-07-22">
+<meta name="dcterms.date" content="2025-03-17">
 
-<title>PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis – Nic Crane</title>
+<title>Exploring AI-Powered Shiny App Development with Cline and Positron – Nic Crane</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -85,7 +85,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -132,50 +132,206 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Exploring AI-Powered Shiny App Development with Cline and Positron</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">AI</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nic Crane </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">March 17, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis</h1>
+
+
+
+
+<p>As a fun bit of prep for <a href="https://www.appsilon.com/post/tiny-shiny-hackathon">Appsilon’s upcoming AI-Powered Shiny Hackathon on March 22, 2025</a>, I decided to do a practice run using Cline, an AI coding assistant. My goal was to see how AI can help or hinder the development of a Shiny application.</p>
+<p>I decided to see where I could get in an hour today, and this blog post discusses my experience, highlighting the capabilities, quirks, and costs of using AI for R and Shiny app development.</p>
+<section id="the-hackathon-challenge" class="level2">
+<h2 class="anchored" data-anchor-id="the-hackathon-challenge">📌 The Hackathon Challenge</h2>
+<p>The hackathon is judged on:</p>
+<ul>
+<li>How well the app meets the challenge objectives</li>
+<li>Additional features built</li>
+<li>UI design and user experience</li>
+<li>Code clarity and maintainability</li>
+</ul>
+<p>The details of the hackathon will be revealed on the day, so I decided to try to come up with a small task which may have some things in common - creating a Shiny app which visualises and analyses a dataset.</p>
+</section>
+<section id="data-acquisition-nyc-open-data" class="level2">
+<h2 class="anchored" data-anchor-id="data-acquisition-nyc-open-data">📂 Data Acquisition: NYC Open Data</h2>
+<p>I decided to take a look at NYC Open Data and within that, my partner and I agreed that the restaurant health inspection dataset looks the most interesting.</p>
+<p>NYC Open Data provides APIs and browser-based tools for exploring datasets. Instead of using APIs, I opted to download the datasets manually for simplicity.</p>
+<ul>
+<li>Inspection Results Dataset (120MB CSV)</li>
+<li>Data Dictionary (Excel file)</li>
+<li>Additional Documentation (Word file)</li>
+</ul>
+<p>At this point, I didn’t check the documentation—I wanted to see how much Cline could figure out on its own.</p>
+</section>
+<section id="enter-cline-ai-coding-assistant" class="level2">
+<h2 class="anchored" data-anchor-id="enter-cline-ai-coding-assistant">🛠️ Enter Cline: AI Coding Assistant</h2>
+<p>Cline is an AI-powered coding tool that integrates into VS Code and Positron. It autonomously creates and edits files, executes commands, and interacts with code, all while asking for user approval at each step.</p>
+<section id="key-features-of-cline" class="level3">
+<h3 class="anchored" data-anchor-id="key-features-of-cline">🔹 Key Features of Cline:</h3>
+<ul>
+<li>Plan Mode: Outlines a roadmap before execution</li>
+<li>Act Mode: Runs code when switched to execution mode</li>
+<li>Transparent Cost Tracking: Displays API usage and expenses</li>
+</ul>
+<p>I started with a broad prompt:</p>
+<blockquote class="blockquote">
+<p>‘Using all of the resources in the data directory, take a look at the data, and come up with some ideas for interesting analyses, such as “which restaurants have the worst health scores but remain very popular” - focus on what is available in the data and what is unexpected and humorous’</p>
+</blockquote>
+<p>Cline responded by:</p>
+<ol type="1">
+<li>Listing the available files and guessing their contents</li>
+<li>Asking for permission to read each file</li>
+<li>Successfully reading the Word doc</li>
+<li>Trying (and failing) to read the Excel file</li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="cline_chat_1.png" class="img-fluid figure-img"></p>
+<figcaption>Cline File Summary</figcaption>
+</figure>
 </div>
+</section>
+</section>
+<section id="data-exploration-and-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="data-exploration-and-analysis">🔍 Data Exploration and Analysis</h2>
+<p>Cline wanted to open the full 120MB dataset but since the file was large, my partner mentioned that there might be costs associated with sending data to the AI. I mentioned this to Cline, and so it opted instead to sample the first few rows.</p>
+<p>After some failed attempts with PowerShell, I nudged it toward using R instead, which worked much better.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="cline_chat_5.png" class="img-fluid figure-img"></p>
+<figcaption>PowerShell Issue</figcaption>
+</figure>
+</div>
+<p>I really like how the responses are in a human-readable format while planning actions to take, so that I could see the equivalent of its line of thought. It had proposed analyses such as:</p>
+<ul>
+<li>Identifying popular restaurants with poor health scores</li>
+<li>Analysing violation trends across neighborhoods</li>
+<li>Examining seasonal variations in health violations</li>
+</ul>
+<p>Some ideas sounded interesting, but others were a bit off. This reflected the trend I’d seen in chatGPT where unless prompted to do otherwise, a large number of ideas are returned; some more useful than others.</p>
+<p>I pressed it on some of them, at which point it was able to propose alternatives. There was still a great deal of input needed from me to decide which idea would be the most sensible to go with.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="cline_chat_7.png" class="img-fluid figure-img"></p>
+<figcaption>Inspection Proxy Popularity Question</figcaption>
+</figure>
+</div>
+</section>
+<section id="building-the-shiny-app" class="level2">
+<h2 class="anchored" data-anchor-id="building-the-shiny-app">🎨 Building the Shiny App</h2>
+<p>With the analysis ideas outlined, I instructed Cline to build a Shiny app to visualise the insights.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="cline_chat_12.png" class="img-fluid figure-img"></p>
+<figcaption>Initial R Code Approach</figcaption>
+</figure>
+</div>
+<section id="what-cline-generated" class="level3">
+<h3 class="anchored" data-anchor-id="what-cline-generated">🔹 What Cline Generated:</h3>
+<ul>
+<li>A UI with slider inputs</li>
+<li>Bar charts using the viridis color palette</li>
+<li>Icons for different metrics</li>
+</ul>
+<p>Issue #1:</p>
+<ul>
+<li>Cline overused Plotly, adding unnecessary complexity.</li>
+<li>I switched most plots back to ggplot2 for clarity.</li>
+</ul>
+<p>Issue #2:</p>
+<ul>
+<li>Some colors were misleading—viridis was applied without meaning, making bars look color-coded incorrectly.</li>
+</ul>
+<p>Issue #3:</p>
+<p>The app was all in one huge file - so I asked Cline to make it more modular, again, remaining vague to see what it did.</p>
+</section>
+</section>
+<section id="the-app-itself" class="level2">
+<h2 class="anchored" data-anchor-id="the-app-itself">📊 The App Itself</h2>
+<p>The main page of the app itself can be seen below. It looks pretty decent, right?</p>
+<p><img src="final_app_screenshot.png" class="img-fluid" alt="The app itself"> Except for that it kinda wasn’t! This overview page was fine, but the individual subpages were suffering from all sorts of issues, from truncated output in DT outputs, to it being unclear what some plots were trying to show. With some time and effort I could have unpicked it, but at this point I was wondering if it would have been quicker to code from scratch.</p>
+</section>
+<section id="refactoring-and-modularisation" class="level2">
+<h2 class="anchored" data-anchor-id="refactoring-and-modularisation">🏗️ Refactoring and Modularisation</h2>
+<p>At this point Cline split the app into <code>ui.R</code>, <code>server.R</code> and a few other supporting files, though not as modular as I’d have liked. I tried again, this time seeing if it would use the {golem} framework - with much more success.</p>
+<p>Cline successfully:</p>
+<p>✅ Created a new Golem project directory</p>
+<p>✅ Structured the app as an R package</p>
+<p>✅ Included a DESCRIPTION file</p>
+<p>However, I had to manually fix some file paths to make everything work.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="cline_chat_15.png" class="img-fluid figure-img"></p>
+<figcaption>Refactoring with Golem</figcaption>
+</figure>
+</div>
+</section>
+<section id="the-cost-of-ai-assistance" class="level2">
+<h2 class="anchored" data-anchor-id="the-cost-of-ai-assistance">💰 The Cost of AI Assistance</h2>
+<p>Cline provides a breakdown of API costs per request. After one hour of work, I had spent:</p>
+<p>💰 $3 total</p>
+<p>Interestingly, some human-like responses cost more than code generation! For example, a single conceptual AI response cost $0.17, more than some entire code snippets.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="cline_total_resources.png" class="img-fluid figure-img"></p>
+<figcaption>Cost Breakdown</figcaption>
+</figure>
+</div>
+</section>
+<section id="final-thoughts-ais-role-in-shiny-development" class="level2">
+<h2 class="anchored" data-anchor-id="final-thoughts-ais-role-in-shiny-development">🏁 Final Thoughts: AI’s Role in Shiny Development</h2>
+<p>This experiment showed me a few important things:</p>
+<ol type="1">
+<li><p>Vague prompts get mixed results</p></li>
+<li><p>AI is better at writing code than about making decisions about data science and how best to represent data</p></li>
+<li><p>Costs can add up quickly and being strategic about which aspects to use Cline for feels like the best way forward</p></li>
+</ol>
+<p>This made me really reflect on the role of AI here. On an app development team, would you rather have 1 person who does it all, or a team of people with different specialisations? I think the latter would work better, for the hackathon itself, I’m going to experiment with a few different approaches such as:</p>
+<ul>
+<li><p>Setting up the app structure myself in advance, and getting Cline to fill in the gaps based on what’s already there</p></li>
+<li><p>GPT product manager - putting together a prompt around constructing really well-defined requirements, and using that to help me tightly define what is being created before passing those requirements onto an AI like Cline to create them</p></li>
+<li><p>designing any plots myself - there may be ways to improve on what was generated here today, but representing data in a human-understandable form might just be best done by humans</p></li>
+</ul>
+<p>I’m looking forward to Saturday’s hackathon - good luck to everyone else participating and I’m super excited to see what comes out of it! 🚀</p>
 
 
-
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nic Crane </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">July 22, 2016</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
-
-
-</header>
-
-
-<p><a href="./thesis.pdf">Download here: PDF, 2.1MB</a></p>
-<p>This thesis focuses on deductive reasoning and how the belief bias effect can be reduced or ameliorated.</p>
-<p>Belief bias is a phenomenon whereby the evaluation of the logical validity of an argument is skewed by the degree to which the reasoner believes the conclusion. There has been little research examining ways of reducing such bias and whether there is some sort of effective intervention which makes people reason more on the basis of logic. Traditional analyses of this data has focussed on simple measures of accuracy, typically deducting the number of incorrect answers from the number of correct answers to give an accuracy score. However, recent theoretical developments have shown that this approach fails to separate reasoning biases and response biases. A reasoning bias, is one which affects individuals’ ability to discriminate between valid and invalid arguments, whereas a response bias is simply the individual’s tendency to give a particular answer, independent of reasoning. A Signal Detection Theory (SDT) approach is used to calculate measures of reasoning accuracy and response bias. These measures are then analysed using mixed effects models.</p>
-<p>Chapter 1 gives a general introduction to the topic, and outlines the content of subsequent chapters. In Chapter 2, I review the psychological literature around belief bias, the growth of the use of SDT models, and approaches to reducing bias. Chapter 3 covers the methodology, and includes a a thorough description of the calculation of the SDT measures, and an explanation of the mixed effects models I used to analyse these. Chapter 4 presents an experiment in which the effects of feedback on reducing belief bias is examined. In Chapter 5, the focus shifts in the direction of individual differences, and looks at the effect of different instructions given to participants, and Chapter 6 examines the effects of both feedback and specific training. Chapter 7 provides a general discussion of the implications of the previous three chapters.</p>
-
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
