@@ -2,6 +2,7 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/llms_for_learning/index.html",
       "/posts/clineshiny/index.html",
       "/posts/socalmediagen2/index.html",
       "/posts/socialmediagen/index.html",

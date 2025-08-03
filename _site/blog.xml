@@ -9,8 +9,817 @@
 <link>https://niccrane.com/blog.html</link>
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description>Nic Crane</description>
-<generator>quarto-1.5.57</generator>
-<lastBuildDate>Mon, 17 Mar 2025 04:00:00 GMT</lastBuildDate>
+<generator>quarto-1.7.31</generator>
+<lastBuildDate>Sat, 02 Aug 2025 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>Using ChatGPT as a Code Tutor: A One-Hour Learning Experiment</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/llms_for_learning/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>There’s a lot of advice out there at the moment about using LLMs for code generation, but something I’ve been curious about is using LLMs for learning around code.</p>
+<p>In this blog post I’m going to talk about using an LLM, specifically, ChatGPT to extend my own knowledge in R.</p>
+<section id="context---adding-a-feature-to-daisyuiwidget" class="level2">
+<h2 class="anchored" data-anchor-id="context---adding-a-feature-to-daisyuiwidget">Context - adding a feature to daisyuiwidget</h2>
+<p>I’m currently collaborating with Charlotte Hadley on an R package called daisyuiwidget. It an htmlwidgets package.</p>
+<section id="htmlwidgets" class="level3">
+<h3 class="anchored" data-anchor-id="htmlwidgets">htmlwidgets</h3>
+<p>Charlie and I both really lovely htmlwidgets packages which are used to wrap JavaScript libraries and work with them from R. They can be used in HTML outputs like Quarto documents and Shiny apps.</p>
+<p>One example of a htmlwidgets package is DT, which can be used to create interactive tables. You can see an example below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(DT)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">packages <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data.frame</span>(</span>
+<span id="cb1-4">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">package =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"htmlwidgets"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"leaflet"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"plotly"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"DT"</span>),</span>
+<span id="cb1-5">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">first_release =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as.Date</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2014-12-09"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2015-06-24"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2015-11-17"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"2015-06-09"</span>)</span>
+<span id="cb1-6">    )</span>
+<span id="cb1-7">)</span>
+<span id="cb1-8"></span>
+<span id="cb1-9">DT<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">datatable</span>(packages)</span></code></pre></div>
+<div class="cell-output-display">
+<div class="datatables html-widget html-fill-item" id="htmlwidget-ce38d02229db071f1176" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-ce38d02229db071f1176">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["htmlwidgets","leaflet","plotly","DT"],["2014-12-09","2015-06-24","2015-11-17","2015-06-09"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>package<\/th>\n      <th>first_release<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"package","targets":1},{"name":"first_release","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+</div>
+</div>
+<p>One of the excellent features about packages like DT is that they can go beyond just displaying outputs. If you include a DT table in a Shiny app and have enabled “row selection”, then the JavaScript code for the table can pass the index of the user’s selected row back to R. This then can be used in other components of the app, for example, displaying information relevant to the user’s selection.</p>
+</section>
+<section id="daisyuiwidget" class="level3">
+<h3 class="anchored" data-anchor-id="daisyuiwidget">daisyuiwidget</h3>
+<p>The goal with daisyuiwidget is to create a new htmlwidgets package, using LLMs - we’ll be talking more about this in our joint presentation at Shiny in Production later on this year.</p>
+<p>We decided to create a wrapper for the daisyUI library which has a feature where it can be used to create <a href="https://daisyui.com/components/timeline/?lang=en">timelines</a> like the one below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/llms_for_learning/daisyuitimeline.png" class="img-fluid quarto-figure quarto-figure-center figure-img"></p>
+</figure>
+</div>
+<p>The project was at the point where the package successfully created a timeline from a data.frame input. The <a href="https://github.com/thisisnic/daisyuiwidget/issues/8">next task</a> for me to do was implement the functionality for timeline event selection, with the goal that when a user clicks on an event in the timeline, an input variable in R is updated, which then can be hooked up to other bits of Shiny reactivity.</p>
+<p>This is what I’ll be discussing below - how I got ChatGPT to help with this, but with helping me learn how to do it myself, and not just getting the LLM to write the code.</p>
+</section>
+</section>
+<section id="aside---the-stretch-zone" class="level2">
+<h2 class="anchored" data-anchor-id="aside---the-stretch-zone">Aside - the stretch zone</h2>
+<p>I’m going to be talking at Posit Conf about increasing productivity with LLMs and a central part of my talk is the idea that LLMs are most useful when working on tasks just outside of your <a href="https://en.wikipedia.org/wiki/Comfort_zone">comfort zone, sometimes described as your stretch zone</a>.</p>
+<p>I’m defining the “stretch zone” in this context as something that isn’t within your current knowledge, but doesn’t seem so challenging that you have doubts about whether you can find a solution.</p>
+<p>This task seemed like a great fit for this in terms of my past experience:</p>
+<p>✅ Extensive Shiny app development experience</p>
+<p>✅ Experience using row selection in DT-based apps to update other components</p>
+<p>✅ Some JavaScript experience</p>
+<p>❌ Very limited experience of how to implement htmlwidgets package from scratch</p>
+<p>❌ Never implemented Shiny reactivity for UI components before</p>
+</section>
+<section id="learning-with-llms" class="level2">
+<h2 class="anchored" data-anchor-id="learning-with-llms">Learning with LLMs</h2>
+<p>I’d been reading a paper by Dr Xi Lin about the idea of using LLMs in self-directed learning.</p>
+<blockquote class="blockquote">
+<p>Lin, X. (2023). Exploring the Role of ChatGPT as a Facilitator for Motivating Self-Directed Learning Among Adult Learners. Adult Learning, https://doi.org/10.1177/10451595231184928</p>
+</blockquote>
+<p>Dr Lin discusses a self-directed learning framework proposed by Kim et al (2014) with the following aspects:</p>
+<ol type="1">
+<li>Establishing Learning Goals</li>
+<li>Locate and Access Resources</li>
+<li>Adopt and Execute Learning Activities</li>
+<li>Monitor and Evaluate Performance</li>
+<li>Reassess Learning Strategies</li>
+</ol>
+<p>This framework can be used with ChatGPT to help support adult learners, and Dr Lin goes on to walk through a hypothetical example where an adult learner is using ChatGPT in each of those steps and discusses the kind of help that could be given.</p>
+<p>I wanted to try some of this out, and so I created summaries of each of the steps along with Dr Lin’s suggestions of how an LLM might implement them, and used them as prompts in a learning session with ChatGPT. I focused solely on steps 1 to 3 as the learning goal was an individual task rather than an ongoing programme.</p>
+</section>
+<section id="step-1---establish-learning-goals" class="level2">
+<h2 class="anchored" data-anchor-id="step-1---establish-learning-goals">Step 1 - Establish Learning Goals</h2>
+<p><strong>Duration: 7 minutes</strong></p>
+<p>I wrote a little context about what I was trying to achieve, and pasted that and my summary of step 1, into ChatGPT.</p>
+<p>ChatGPT asked me five questions:</p>
+<ul>
+<li>what my goals were</li>
+<li>my past experience</li>
+<li>exactly what it was that I was trying to achieve</li>
+<li>my preferred end state</li>
+<li>how long I wanted to spend working on this</li>
+</ul>
+<p>It took my answers and generated a primary learning goal with supporting objectives.</p>
+<blockquote class="blockquote">
+<p><strong>Primary Learning Goal:</strong></p>
+<p>Within the next few hours, I want to understand and implement the necessary code to make my existing <code>htmlwidget</code> timeline respond to user interaction in a Shiny app—specifically, capturing a selected event and updating a variable on the server side.</p>
+<p><strong>Supporting Objectives:</strong></p>
+<ul>
+<li>Identify how event selection can be captured in JavaScript and passed to Shiny via <code>Shiny.setInputValue()</code>.</li>
+<li>Modify the widget’s JS code to emit a Shiny input when a user selects an event.</li>
+<li>Test and verify that the input value is received in Shiny and reflects the expected event ID or index.</li>
+<li>Write a minimal working Shiny app that uses the widget and displays the selected event value.</li>
+</ul>
+</blockquote>
+<p>I feel that the value I got here from incorporating ChatGPT was <em>clarity</em>. The resulting learning goal was more precise than my original stated aim, and the supporting objectives made for concrete steps to aim for in pursuit of the overall goal.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Expand to view full conversation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>I am looking at how I can get LLMs to help me with a coding task as an intelligent tutor and not just solve the problem for me. My first step is establishing a learning goal or goals. Using the brief below, ask me questions one at a time to help me work out a small set of goals in this exercise.</p>
+<p>Establish learning goals</p>
+<p>When establishing goals for self-directed learning, it’s most important for learners to set SMART goals: Specific, Measurable, Achievable, Relevant, and Time-bound. This approach helps adult learners identify clear learning objectives and stay focused on achieving them.</p>
+<p>Goals should be personalized and align with the learner’s interests, motivations, and expected learning outcomes. It’s crucial to break down broader objectives into smaller, manageable tasks to make them more achievable.</p>
+<p>Additionally, learners should consider how their goals relate to their personal and professional contexts, ensuring relevance. Setting a realistic timeline for accomplishing these goals is also essential.</p>
+<p>While learners can use tools like ChatGPT to assist in goal-setting, it’s important to remember that the quality of recommendations depends on the information provided by the learner. Therefore, clear communication of interests, motivations, and expectations is crucial when using such tools.</p>
+</div>
+<div class="chatgpt-llm">
+<p>Let’s start by grounding this in why you’re doing it.</p>
+<p>Question 1: What’s your motivation for using LLMs as a tutor rather than a problem-solver—what do you hope to gain from this approach (e.g., deeper understanding, confidence, skill retention, etc.)?</p>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>I want to understand how I can take an R package which creates a htmlwidget and adds the correct code so that I can use it in a shiny app and update a variable based on what the user has selected. I want to learn how to do this as I think it’s a useful skill to have. I don’t want an LLM to do it as I won’t know if the code is correct or not and would only have surface level understanding and so would be hard ti repeat the skill in future.</p>
+</div>
+<div class="chatgpt-llm">
+<p><strong>Question 2:</strong></p>
+<p>Where are you starting from? For example:</p>
+<ul>
+<li>Have you ever written your own <code>htmlwidget</code> package from scratch</li>
+<li>Do you already have a specific widget/package in mind?</li>
+<li>Have you previously connected any JS-based input to Shiny reactivity?</li>
+</ul>
+<p>(Just answer what’s true for you—this is to calibrate the scope of your learning goal.)</p>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>I have never written an htmlwidget package from scratch although I do have one I’ve written with an LLM that I’d like to add this functionality to. It creates the widget but doesn’t have the shiny functionality yet. I’ve not done much of this connectivity before, though have worked with packages that implement it themselves.</p>
+</div>
+<div class="chatgpt-llm">
+<p>That gives us a baseline. You’ve got a partial <code>htmlwidget</code> and prior exposure to packages that do this right, but you haven’t yet wired up JS-to-R reactivity yourself.</p>
+<p><strong>Question 3:</strong></p>
+<p>What exactly do you want the user to <em>select</em> in your widget, and what kind of R-side variable or behavior do you want to <em>update</em> in response? (Try to be concrete—e.g., “user clicks on a bar in a chart, I want to update a <code>reactiveVal()</code> in the server with the bar’s label.”)</p>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>So the widget display a timeline of events and I want the user to select an event, and some variable updates. I’ve seen similar functionality in the DT package where the user clicks on a row in a table, and some variable tracks which row is selected and the data from that row. I can’t remember exactly what data it tracks, it could just be the row number and then the user can write a function to extract the data from an underlying data.frame; this is fine too.</p>
+</div>
+<div class="chatgpt-llm">
+<p>Perfect—this is concrete enough.</p>
+<p>You want to let the user select an <em>event</em> from a timeline displayed via your <code>htmlwidget</code>, and capture that selection in the Shiny server logic—ideally as an index or ID you can work with to retrieve more data.</p>
+<p><strong>Question 4:</strong></p>
+<p>What’s your ideal end state for this learning exercise? For example:</p>
+<ul>
+<li>Do you want to be able to reproduce this pattern in other widgets you make?</li>
+<li>Are you aiming to read or modify similar functionality in other packages?</li>
+<li>Or is this just about getting <em>this one</em> widget working?</li>
+</ul>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>It’s about getting this one working, although I would like to be able to do it again if I ever make another htmlwidgets package.</p>
+</div>
+<div class="chatgpt-llm">
+<p>Got it. So the primary goal is getting this specific widget working, and a secondary goal is gaining enough understanding to repeat the pattern if needed.</p>
+<p><strong>Question 5:</strong></p>
+<p>What’s your time horizon? Do you want to finish this within a day, a week, or are you treating it as an open-ended background task?</p>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>I’d like to finish this within a few hours and not overcomplicate it</p>
+</div>
+<div class="chatgpt-llm">
+<p>Good. A short, focused goal with an emphasis on practical understanding.</p>
+<p>Here’s a draft of your SMART-aligned learning goals based on what you’ve said:</p>
+<hr>
+<p><strong>Primary Learning Goal:</strong></p>
+<p>Within the next few hours, I want to understand and implement the necessary code to make my existing <code>htmlwidget</code> timeline respond to user interaction in a Shiny app—specifically, capturing a selected event and updating a variable on the server side.</p>
+<p><strong>Supporting Objectives:</strong></p>
+<ul>
+<li>Identify how event selection can be captured in JavaScript and passed to Shiny via <code>Shiny.setInputValue()</code>.</li>
+<li>Modify the widget’s JS code to emit a Shiny input when a user selects an event.</li>
+<li>Test and verify that the input value is received in Shiny and reflects the expected event ID or index.</li>
+<li>Write a minimal working Shiny app that uses the widget and displays the selected event value.</li>
+</ul>
+<hr>
+<p>Do you want to adjust or narrow any part of that before we move to designing how the LLM will help you stay in tutor mode for this?</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-2---locate-and-access-resources" class="level2">
+<h2 class="anchored" data-anchor-id="step-2---locate-and-access-resources">Step 2 - Locate and Access Resources</h2>
+<p><strong>Duration: 11 minutes</strong></p>
+<p>The second stage was identifying resources for learning.</p>
+<p>It started smoothly - ChatGPT asked me if I preferred to learn by reading, watching, or doing, and when I replied “doing” it assured me that it would find code-first resources with working examples - great!</p>
+<p>It gave me some options about kinds of examples I was interested in, and asked which htmlwidgets packages I was more familiar with so we could use those as examples to look at. At this point it suggested some initial links, but 2 out of the 3 didn’t actually work.</p>
+<p>When I complained about this, it gave me some code examples to try out, which I pushed back on, stating I wanted resources to learn from and not ChatGPT-generated code,</p>
+<p>At this point, it gave me a list of resources, divided into categories and a summary of what it had provided. The links supplied here did all work this time, but there was too much information, and a real risk of overwhelm.</p>
+<p>I began to skim through a few articles, before I remembered that the aim of this step was only to identify resources, and not to deep dive into them quite yet, and so instead I moved onto the next step.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Expand to view full conversation
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>Now the next thing I need to do it find learning resources. Here are the notes I have.</p>
+<ol start="2" type="1">
+<li>Locate and access resources</li>
+</ol>
+<p>When it comes to locating and accessing resources for self-directed learning, the most important things to know are:</p>
+<p>Adult learners often struggle with finding available resources, particularly interactive and multimedia materials. This challenge can be a significant barrier to effective self-directed learning.</p>
+<p>Learners should proactively identify a variety of resources beyond those provided by instructors. These can include online articles, videos, multimedia resources, books, journals, publications, blogs, and social media groups related to their learning objectives.</p>
+<p>Tools like ChatGPT can assist in recommending relevant external resources based on personalized learning plans. However, learners should be cautious and verify the information provided by such tools.</p>
+<p>It’s crucial to develop skills in searching for and accessing information, as insufficient technical skills can hinder this process. Improving these skills is an important part of self-directed learning.</p>
+</div>
+<div class="chatgpt-llm">
+<p>Let’s approach this systematically.</p>
+<p><strong>Question 1:</strong></p>
+<p>Do you learn better by reading, watching, or doing?</p>
+<p>(That’ll help decide whether to focus on docs, code examples, videos, interactive tutorials, etc.)</p>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>I learn best by doing</p>
+</div>
+<div class="chatgpt-llm">
+<p>Great—so you’ll want code-first resources, ideally with small working examples you can tinker with.</p>
+<p><strong>Question 2:</strong></p>
+<p>What kind of prior art do you want to learn from? For example:</p>
+<ul>
+<li>Existing <code>htmlwidgets</code> that support Shiny inputs (like <code>DT</code>, <code>leaflet</code>, <code>plotly</code>)?</li>
+<li>General tutorials on writing <code>htmlwidgets</code>?</li>
+<li>Tutorials or examples specifically about integrating JS events with Shiny via <code>Shiny.setInputValue()</code>?</li>
+<li>Or are you mostly looking for real widget repos to read and adapt?</li>
+</ul>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>Items 1 and 3 on your list look good!</p>
+</div>
+<div class="chatgpt-llm">
+<p>Good. Then your resource categories are:</p>
+<ol type="1">
+<li><strong>Real htmlwidget packages with Shiny input support</strong> — to reverse-engineer and adapt</li>
+<li><strong>Targeted examples or tutorials on using <code>Shiny.setInputValue()</code> inside htmlwidgets</strong></li>
+</ol>
+<p>Let’s start with category 1.</p>
+<p><strong>Question 3:</strong></p>
+<p>Pick one or two widgets you’ve used or are familiar with—ideally ones where clicking/selecting something in the widget updates a Shiny input. (e.g., <code>DT::datatable</code>, <code>plotly::plotlyOutput</code>). Which ones should we dissect?</p>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>I’m mostly familar with those two you mention, more so DT then plotly tho</p>
+</div>
+<div class="chatgpt-llm">
+<p>Perfect. <code>DT</code> is a solid choice—it’s well-documented, simple enough to follow, and has clean Shiny integration.</p>
+<p>Here’s what I suggest for <strong>Category 1 (Prior art):</strong></p>
+<ul>
+<li><strong>Primary resource</strong>:
+<ul>
+<li><a href="https://github.com/rstudio/DT"><code>DT</code></a> GitHub repo – especially <code>inst/htmlwidgets/datatables.js</code> and how it calls <code>Shiny.setInputValue()</code> when rows are selected.</li>
+<li>Focus on how selection is captured (usually via a JS event listener) and how that’s passed back to Shiny.</li>
+</ul></li>
+<li><strong>Backup/contrast resource</strong>:
+<ul>
+<li><a href="https://github.com/ropensci/plotly"><code>plotly</code></a> – check <code>srcjs/</code> for how it emits click or hover events to Shiny. Slightly more complex but good for broader perspective.</li>
+</ul></li>
+</ul>
+<p>Now for <strong>Category 3 (Targeted examples of <code>Shiny.setInputValue()</code>):</strong></p>
+<ul>
+<li>*Mini-tutorials / blogs / gists**:
+<ul>
+<li><a href="https://shiny.posit.co/r/articles/build/js-send/">Winston Chang’s guide on JS &lt;-&gt; Shiny</a> – clear and concise</li>
+<li><a href="https://deanattali.com/blog/htmlwidgets-tips/#sending-values-from-javascript-to-shiny">Dean Attali: Custom inputs</a> – practical advice</li>
+<li><a href="https://github.com/ramnathv/htmlwidgets/blob/master/inst/examples/006-shiny-input/output/barchart.js">RStudio’s official htmlwidgets Shiny integration doc</a> – short, focused example</li>
+</ul></li>
+</ul>
+<p>Want me to fetch code excerpts or links for any of those right now? Or would you rather search through them yourself and come back with questions?</p>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>The Dean Attali post looks great and all, but the other two guides links don’t work.</p>
+</div>
+<div class="chatgpt-llm">
+<p>You’re leaning into <strong>learning by doing</strong>, which means you need hands‑on code examples where you can modify and test. That’s the right approach.</p>
+<p>Here are solid, working resources for your two resource types:</p>
+<hr>
+<section id="real-htmlwidget-packages-with-shiny-input-support-reverse-engineering" class="level2">
+<h2 class="anchored" data-anchor-id="real-htmlwidget-packages-with-shiny-input-support-reverse-engineering">🧩 1. Real htmlwidget packages with Shiny input support – reverse engineering</h2>
+<ul>
+<li><p><strong>Dean Attali’s “htmlwidgets tips”</strong> post explains how <code>timevis</code> uses JavaScript to detect item selection and sends it to Shiny:</p>
+<pre><code>timeline.on('select', properties =&gt; {
+  Shiny.onInputChange(elementId + "_selected", properties.items);
+});</code></pre>
+<p>This snippet, wrapped in a check for <code>HTMLWidgets.shinyMode</code>, ensures that Shiny receives the selected IDs via the widget’s container ID (<a href="https://book.javascript-for-r.com/widgets-first?utm_source=chatgpt.com" title="Chapter 5 Your First Widget - JavaScript for R">JavaScript for R</a>, <a href="https://deanattali.com/blog/htmlwidgets-tips/?utm_source=chatgpt.com" title="How to write a useful htmlwidgets in R: tips and walk- ...">Dean Attali</a>).</p>
+<hr></li>
+</ul>
+</section>
+<section id="tutorialsexamples-of-using-shiny.setinputvalue-or-.oninputchange" class="level2">
+<h2 class="anchored" data-anchor-id="tutorialsexamples-of-using-shiny.setinputvalue-or-.oninputchange">🎯 2. Tutorials/examples of using <code>Shiny.setInputValue()</code> or <code>.onInputChange()</code></h2>
+<ul>
+<li><p><strong>Communicating with Shiny via JavaScript</strong> (Posit article) covers sending values directly from JS to R using <code>Shiny.setInputValue(id, value);</code>. It’s the modern and preferred method (older <code>Shiny.onInputChange()</code> is an alias, but can still work) (<a href="https://shiny.posit.co/r/articles/build/communicating-with-js/?utm_source=chatgpt.com" title="Communicating with Shiny via JavaScript - Posit">Shiny</a>).</p></li>
+<li><p><strong>RyouReady blog post</strong> offers a minimal example showing an HTML <code>div</code> with an onclick handler that sends a random number to R via <code>Shiny.onInputChange("mydata", number)</code> and displays it reactively server-side (<a href="https://ryouready.wordpress.com/2013/11/20/sending-data-from-client-to-server-and-back-using-shiny/?utm_source=chatgpt.com" title="Sending data from client to server and back using shiny">“R” you ready?</a>).</p>
+<hr></li>
+</ul>
+<section id="quick-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="quick-comparison">✅ Quick Comparison</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+<col style="width: 14%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td>Resource</td>
+<td></td>
+<td>Why it helps</td>
+<td></td>
+<td>Focus on</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td>Dean Attali (“htmlwidgets tips”)</td>
+<td></td>
+<td>Real widget code invoking JS event + input change</td>
+<td></td>
+<td><code>timeline.on('select', ...)</code> and chaining to Shiny</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td>Posit “Communicating with JS”</td>
+<td></td>
+<td>Modern API and rationale</td>
+<td></td>
+<td><code>Shiny.setInputValue(...)</code> inside a listener</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td></td>
+<td>RyouReady blog</td>
+<td></td>
+<td>Minimal standalone JS ↔︎ R demo</td>
+<td></td>
+<td>Using <code>Shiny.onInputChange</code> in UI and reading <code>input$mydata</code> in server</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<hr>
+</section>
+<section id="suggested-next-step" class="level3">
+<h3 class="anchored" data-anchor-id="suggested-next-step">📌 Suggested next step</h3>
+<p>Pick one real widget example (like <em>timevis</em> or similar) and one minimal demo. Then:</p>
+<ol type="1">
+<li><p>Review the JS code where selection events are handled and <code>Shiny.setInputValue()</code> (or <code>.onInputChange()</code>) is called.</p></li>
+<li><p>Modify your widget JS similarly—hook into user’s event selection and send the event ID (or index) via <code>Shiny.setInputValue()</code>.</p></li>
+<li><p>Add reactive code in your server to observe <code>input$&lt;widgetId&gt;_selected</code> and log or display it.</p></li>
+<li><p>Build a minimal working Shiny app with your widget and observe whether it captures user clicks.</p></li>
+<li><p>Want me to pull that specific “page code” from the <code>timevis</code> repo or the Attali post so you can step through it?</p></li>
+</ol>
+</section>
+</section>
+</div>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>Wait, can you find me more resources? I don’t want to learn from your summaries</p>
+</div>
+<div class="chatgpt-llm">
+<p>Here’s a curated list of solid, hands‑on resources to go beyond summaries and dive into real working code you can adapt:</p>
+<hr>
+<section id="real-htmlwidget-packages-with-shiny-input-support" class="level3">
+<h3 class="anchored" data-anchor-id="real-htmlwidget-packages-with-shiny-input-support">🔧 Real htmlwidget packages with Shiny input support</h3>
+<ul>
+<li><p><strong>Dean Attali — “How to write a useful htmlwidgets in R: tips and walk‑through a real example”</strong><br>
+</p>
+<p>Deals directly with <em>timevis</em> and how it handles events: it includes a live example of passing selections back to Shiny via JavaScript callbacks <a href="https://deanattali.com/blog/htmlwidgets-tips/?utm_source=chatgpt.com" alt="https://deanattali.com/blog/htmlwidgets-tips/?utm_source=chatgpt.com"><u>CRAN+8Dean Attali+8Stack Overflow+8</u></a><a href="https://r4ds.github.io/bookclub-epgs/javascript---shiny-communication.html?utm_source=chatgpt.com" alt="https://r4ds.github.io/bookclub-epgs/javascript---shiny-communication.html?utm_source=chatgpt.com"><u>Shiny+2r4ds.github.io+2engineering-shiny.org+2</u></a>.</p></li>
+<li><p><strong>“Widgets with Shiny” ‑ JavaScript for R book (Chapter 17)</strong><br>
+</p>
+<p>Covers patterns for embedding event handlers in widget JS and using <code>Shiny.setInputValue()</code> in the context of htmlwidgets <a href="https://book.javascript-for-r.com/shiny-widgets?utm_source=chatgpt.com" alt="https://book.javascript-for-r.com/shiny-widgets?utm_source=chatgpt.com"><u>JavaScript for R</u></a><a href="https://engineering-shiny.org/using-javascript.html?utm_source=chatgpt.com" alt="https://engineering-shiny.org/using-javascript.html?utm_source=chatgpt.com"><u>datanovia+3engineering-shiny.org+3Stack Overflow+3</u></a>.</p></li>
+</ul>
+<hr>
+</section>
+<section id="tutorials-and-minimal-examples-on-shiny.setinputvalue" class="level3">
+<h3 class="anchored" data-anchor-id="tutorials-and-minimal-examples-on-shiny.setinputvalue">🧠 Tutorials and minimal examples on <code>Shiny.setInputValue()</code></h3>
+<ul>
+<li><p><strong>Posit article — “Communicating with Shiny via JavaScript”</strong><br>
+</p>
+<p>Concise and modern: shows core usage of <code>Shiny.setInputValue(id, value)</code> and the optional <code>{priority: "event"}</code> flag to treat values as events <a href="https://shiny.posit.co/r/articles/build/communicating-with-js/?utm_source=chatgpt.com" alt="https://shiny.posit.co/r/articles/build/communicating-with-js/?utm_source=chatgpt.com"><u>rstudio.github.io+7Shiny+7r4ds.github.io+7</u></a>.</p></li>
+<li><p><strong>“How to build a JavaScript‑based widget” by Posit</strong><br>
+</p>
+<p>Builds an example widget using D3/C3 and includes code on client‑server communication with Shiny (including <code>setInputValue</code>) <a href="https://shiny.posit.co/r/articles/build/js-build-widget/?utm_source=chatgpt.com" alt="https://shiny.posit.co/r/articles/build/js-build-widget/?utm_source=chatgpt.com"><u>Shiny+1JavaScript for R+1</u></a>.</p></li>
+<li><p><strong>R for Data Science Bookclub: “JavaScript ↔︎ Shiny Communication”</strong><br>
+</p>
+<p>Offers compact code snippets showing how to send data back using <code>Shiny.setInputValue</code> and receive it in R with reactive observers <a href="https://r4ds.github.io/bookclub-epgs/javascript---shiny-communication.html?utm_source=chatgpt.com" alt="https://r4ds.github.io/bookclub-epgs/javascript---shiny-communication.html?utm_source=chatgpt.com"><u>htmlwidgets.org+15r4ds.github.io+15datanovia+15</u></a>.</p></li>
+</ul>
+<hr>
+</section>
+<section id="javascript-integration-custom-input-patterns" class="level3">
+<h3 class="anchored" data-anchor-id="javascript-integration-custom-input-patterns">📚 JavaScript integration &amp; custom input patterns</h3>
+<ul>
+<li><p><strong>Datanovia article — “JavaScript Integration and Custom Functionality: Extend Shiny Beyond R”</strong> (May 2025)<br>
+</p>
+<p>A recent and comprehensive guide to advanced interaction patterns, custom bindings, and message passing between JS and Shiny <a href="https://www.datanovia.com/learn/tools/shiny-apps/advanced-concepts/javascript-integration.html?utm_source=chatgpt.com" alt="https://www.datanovia.com/learn/tools/shiny-apps/advanced-concepts/javascript-integration.html?utm_source=chatgpt.com"><u>JavaScript for R+2datanovia+2CRAN+2</u></a>.</p></li>
+</ul>
+<hr>
+</section>
+<section id="stackoverflow-minimal-snippets" class="level3">
+<h3 class="anchored" data-anchor-id="stackoverflow-minimal-snippets">🧪 StackOverflow &amp; minimal snippets</h3>
+<ul>
+<li><p><strong>SO Example — Reactable row click setting input value in Shiny modules</strong><br>
+</p>
+<p>Shows how <code>onClick</code> handlers call <code>Shiny.setInputValue()</code> to pass selected row data into R, along with observeEvent responses <a href="https://stackoverflow.com/questions/77287387/how-to-trigger-a-modalwindow-with-a-click-event-using-shiny-setinputvalue-inside?utm_source=chatgpt.com" alt="https://stackoverflow.com/questions/77287387/how-to-trigger-a-modalwindow-with-a-click-event-using-shiny-setinputvalue-inside?utm_source=chatgpt.com"><u>Stack Overflow+1engineering-shiny.org+1</u></a>.</p></li>
+<li><p><strong>SO thread — Reading selection from radialNetworkR htmlwidget in Shiny</strong><br>
+</p>
+<p>Illustrates a real-world case where someone needed to capture user selection in a custom widget, and references using Tip 7a from Dean’s blog for guidance <a href="https://stackoverflow.com/questions/54281288/reading-selection-from-html-widget-in-r-shiny?utm_source=chatgpt.com" alt="https://stackoverflow.com/questions/54281288/reading-selection-from-html-widget-in-r-shiny?utm_source=chatgpt.com"><u>search.r-project.org+10Stack Overflow+10nielsenmark.us+10</u></a>.</p></li>
+</ul>
+<hr>
+</section>
+<section id="summary-table" class="level3">
+<h3 class="anchored" data-anchor-id="summary-table">📋 Summary Table</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Resource</th>
+<th>Use Case</th>
+<th>What you’ll get</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Dean Attali (timevis code)</td>
+<td>Real-world widget code</td>
+<td>Understand how JS event to Shiny input is implemented</td>
+</tr>
+<tr class="even">
+<td>Posit JS‑Shiny tutorial</td>
+<td>Core API</td>
+<td>Clean examples of <code>Shiny.setInputValue()</code> usage</td>
+</tr>
+<tr class="odd">
+<td>JS for R book (Chapter 17)</td>
+<td>In‑widget integration</td>
+<td>Full example of wiring JS and htmlwidgets with Shiny</td>
+</tr>
+<tr class="even">
+<td>Datanovia (May 2025)</td>
+<td>Advanced patterns</td>
+<td>Modern perspectives on custom input and messaging</td>
+</tr>
+<tr class="odd">
+<td>SO posts (Reactable, radialNetworkR)</td>
+<td>Minimal demos</td>
+<td>Concrete handlers showing event → R logic</td>
+</tr>
+</tbody>
+</table>
+</section>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="step-3---adopt-and-execute-learning-activties" class="level2">
+<h2 class="anchored" data-anchor-id="step-3---adopt-and-execute-learning-activties">Step 3 - Adopt and Execute Learning Activties</h2>
+<p><strong>Duration: 36 minutes</strong></p>
+<p>The third and final step was the most useful by far!</p>
+<p>Once again, I pasted in the guide to this step, and ChatGPT created a plan for me containing four items:</p>
+<ol type="1">
+<li>Reverse-engineer one working widget</li>
+<li>Build minimal standalone Shiny demo</li>
+<li>Add minimal event tracking to your widget</li>
+<li>Wire the widget into a basic Shiny app</li>
+</ol>
+<p>This was actually pretty impressive; each step contained a goal, the steps required to achieve it, suggestions for how an LLM could help, and a timebox of how long to spend on each activity.</p>
+<p>Here’s the first activity suggested:</p>
+<blockquote class="blockquote">
+<h3 id="reverse-engineer-one-working-widget" class="anchored"><strong>🔍 1. Reverse-engineer one working widget</strong></h3>
+<p><strong>Goal:</strong> Understand how an existing widget (e.g.&nbsp;<code>DT</code>) captures selection and sends it to Shiny.</p>
+<p><strong>Activity:</strong></p>
+<ul>
+<li><p>Open the <a href="https://github.com/rstudio/DT">DT GitHub</a> repo.</p></li>
+<li><p>Locate where <code>Shiny.setInputValue()</code> is used in the JS files (<code>inst/htmlwidgets/datatables.js</code>).</p></li>
+<li><p>Make brief notes:</p>
+<ul>
+<li>What JS event triggers the update?</li>
+<li>How is the input ID constructed?</li>
+<li>What data is passed to Shiny?</li>
+</ul></li>
+</ul>
+<p><strong>LLM Role:</strong></p>
+<ul>
+<li>Ask ChatGPT to walk you through unfamiliar lines or patterns (e.g.&nbsp;“What’s this event handler doing?” or “What does this argument to <code>setInputValue</code> mean?”).</li>
+</ul>
+<p><strong>Timebox:</strong> 20–30 minutes.</p>
+</blockquote>
+<p>I walked through each activity, setting a timer on my phone. I found that I completed each in less than the allotted time. I skipped the last activtity, as I only required 1-3 to complete the task.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Expand to view learning plan
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>OK, my next step is below</p>
+<ol start="3" type="1">
+<li>Adopt and Execute Learning Activties</li>
+</ol>
+<p>Adopting and executing learning activities is a crucial task in self-directed learning. This step involves developing a specific plan of action that aligns with established goals and available resources.</p>
+<p>Learners should create tailored plans that consider their preferred learning styles and available time for learning. This personalization helps ensure the learning activities are effective and manageable.</p>
+<p>Time-management techniques, such as spaced repetition and active recall, are important to incorporate into the learning plan. These strategies can help learners stay on track and optimize their learning process.</p>
+<p>Learning activities should be diverse and match the learner’s preferred style. This might include visual aids, podcasts, reading materials, or hands-on activities, depending on whether the learner is visual, auditory, reading/writing, or kinesthetic.</p>
+<p>Supplementing core learning activities with additional resources, such as online workshops, can enhance the learning experience and provide different perspectives on the subject matter.</p>
+</div>
+<section id="execution-plan-llm-assisted-learning-without-code-outsourcing" class="level2 chatgpt-llm">
+<h2 class="anchored" data-anchor-id="execution-plan-llm-assisted-learning-without-code-outsourcing">🛠️ Execution Plan: LLM-Assisted Learning Without Code Outsourcing</h2>
+<section id="estimated-total-time-23-hours" class="level3">
+<h3 class="anchored" data-anchor-id="estimated-total-time-23-hours">⏱️ Estimated Total Time: ~2–3 hours</h3>
+<hr>
+</section>
+<section id="reverse-engineer-one-working-widget-1" class="level3">
+<h3 class="anchored" data-anchor-id="reverse-engineer-one-working-widget-1"><strong>🔍 1. Reverse-engineer one working widget</strong></h3>
+<p><strong>Goal:</strong> Understand how an existing widget (e.g.&nbsp;<code>DT</code>) captures selection and sends it to Shiny.</p>
+<p><strong>Activity:</strong></p>
+<ul>
+<li><p>Open the <a href="https://github.com/rstudio/DT">DT GitHub</a> repo.</p></li>
+<li><p>Locate where <code>Shiny.setInputValue()</code> is used in the JS files (<code>inst/htmlwidgets/datatables.js</code>).</p></li>
+<li><p>Make brief notes:</p>
+<ul>
+<li>What JS event triggers the update?</li>
+<li>How is the input ID constructed?</li>
+<li>What data is passed to Shiny?</li>
+</ul></li>
+</ul>
+<p><strong>LLM Role:</strong></p>
+<ul>
+<li>Ask ChatGPT to walk you through unfamiliar lines or patterns (e.g.&nbsp;“What’s this event handler doing?” or “What does this argument to <code>setInputValue</code> mean?”).</li>
+</ul>
+<p><strong>Timebox:</strong> 20–30 minutes.</p>
+<hr>
+</section>
+<section id="build-minimal-standalone-shiny-demo" class="level3">
+<h3 class="anchored" data-anchor-id="build-minimal-standalone-shiny-demo"><strong>🧪 2. Build minimal standalone Shiny demo</strong></h3>
+<p><strong>Goal:</strong> Create a toy Shiny app where JS sends a value to R.</p>
+<p><strong>Activity:</strong></p>
+<ul>
+<li>Use this <a href="https://shiny.posit.co/r/articles/build/communicating-with-js/">Posit guide</a> or <a href="https://ryouready.wordpress.com/2013/11/20/sending-data-from-client-to-server-and-back-using-shiny/">RyouReady’s example</a> to build a plain HTML <code>div</code> or button that triggers <code>Shiny.setInputValue()</code> in a browser console or inline JS.</li>
+</ul>
+<p><strong>LLM Role:</strong></p>
+<ul>
+<li>Ask it to review the minimal app you’ve built and explain/debug if input isn’t showing up server-side.</li>
+</ul>
+<p><strong>Timebox:</strong> 20 minutes.</p>
+<hr>
+</section>
+<section id="add-minimal-event-tracking-to-your-widget" class="level3">
+<h3 class="anchored" data-anchor-id="add-minimal-event-tracking-to-your-widget"><strong>🧱 3. Add minimal event tracking to your widget</strong></h3>
+<p><strong>Goal:</strong> Modify your widget to track one user interaction and send something to Shiny.</p>
+<p><strong>Activity:</strong></p>
+<ul>
+<li>In your widget’s JS binding, add an event listener (e.g.&nbsp;click/select).</li>
+<li>Send a dummy value to Shiny using <code>Shiny.setInputValue()</code>.</li>
+<li>Observe input in <code>input$yourwidget_selected</code> or similar.</li>
+</ul>
+<p><strong>LLM Role:</strong></p>
+<ul>
+<li>Ask for feedback on the specific event binding you’re trying (“Why isn’t this firing?” or “What selector do I use to bind the click?”).</li>
+</ul>
+<p><strong>Timebox:</strong> 45–60 minutes.</p>
+<hr>
+</section>
+<section id="wire-the-widget-into-a-basic-shiny-app" class="level3">
+<h3 class="anchored" data-anchor-id="wire-the-widget-into-a-basic-shiny-app"><strong>🧪 4. Wire the widget into a basic Shiny app</strong></h3>
+<p><strong>Goal:</strong> End-to-end test: selection in your timeline → reactive output in Shiny.</p>
+<p><strong>Activity:</strong></p>
+<ul>
+<li>Write a basic Shiny app using your widget.</li>
+<li>Use <code>reactivePrint()</code>, <code>observeEvent()</code>, or <code>renderText()</code> to display the selected item.</li>
+</ul>
+<p><strong>LLM Role:</strong></p>
+<ul>
+<li>Ask it to sanity check your Shiny app logic or spot input ID mismatches.</li>
+</ul>
+<p><strong>Timebox:</strong> 30 minutes.</p>
+<hr>
+</section>
+<section id="optional-space-repetition-12-days-later" class="level3">
+<h3 class="anchored" data-anchor-id="optional-space-repetition-12-days-later">Optional: <strong>🔁 Space repetition (1–2 days later)</strong></h3>
+<p>Come back and:</p>
+<ul>
+<li>Rebuild the Shiny example from scratch.</li>
+<li>Add a new input (e.g.&nbsp;multiple selection).</li>
+<li>Explain the flow (JS → R) out loud or in a notebook.</li>
+</ul>
+<hr>
+</section>
+<section id="how-i-can-help" class="level3">
+<h3 class="anchored" data-anchor-id="how-i-can-help">✅ How I can help</h3>
+<p>You run the show. Use me like a senior dev standing over your shoulder:</p>
+<ul>
+<li>“Explain this line of JS.”</li>
+<li>“This event handler isn’t firing—what’s wrong?”</li>
+<li>“What’s the right selector for this DOM node?”</li>
+<li>“Can you sanity-check this widget binding?”</li>
+<li>“What’s the minimal Shiny app I can use to test this?”</li>
+</ul>
+<hr>
+<p>Want a markdown checklist version of this plan to copy into your notes?</p>
+</section>
+</section>
+</div>
+</div>
+</div>
+<p>There was a lot of interaction between me and ChatGPT here, and I’m not going to paste it all, but essentially, during the time I used it to:</p>
+<ul>
+<li>explain some JavaScript code I didn’t understand by walking me through it line-by-line</li>
+<li>get clarity on how to implement some of its suggestions by asking exactly what it meant</li>
+<li>multiple rounds of debugging code I had wrote which didn’t work</li>
+<li>helping me work out exactly where the change was needed in my own code</li>
+</ul>
+<p>In the last example, ChatGPT didn’t just tell me where to put the code, but walked through the important concepts to reason through the answer. It then asked me questions so that <em>I</em> could work out where in the code the change needed to go. Here’s a snippet from that interaction.</p>
+<blockquote class="blockquote">
+<h3 id="so-where-do-you-want-interactivity" class="anchored">🤔 So… where do you <em>want</em> interactivity?</h3>
+<p>Let me ask you this:</p>
+<blockquote class="blockquote">
+<p>Out of everything that’s being created here, what part of the DOM would the user actually <em>click</em> on if they were selecting a timeline event?</p>
+</blockquote>
+<p>Once we know that, we can talk about <em>how</em> and <em>where</em> to attach the event handler.</p>
+</blockquote>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<blockquote class="blockquote">
+<p>I think they’d click on the timeline-box element</p>
+</blockquote>
+</div>
+<blockquote class="blockquote">
+<p>Exactly—that’s the actionable node.</p>
+<p>That means you’ll want to attach a JS event handler (e.g.&nbsp;<code>.onclick</code> or <code>.addEventListener('click', ...)</code>) to each <code>.timeline-box</code> as it’s created.</p>
+<p>Now a follow-up:</p>
+<blockquote class="blockquote">
+<p>When you’re looping over x.events, what info do you need to send back to Shiny when a .timeline-box is clicked? (Think: what identifier, value, or payload do you want to capture?)</p>
+</blockquote>
+</blockquote>
+<p>We carried on the back and forth like this for a while, with ChatGPT asking me questions to guide me towards the solution. If I got an answer wrong, it replied with an encouraging tone and explained why I was incorrect, and the specific piece of knowledge I was missing.</p>
+<p>Eventually, we go to the end of our interaction.</p>
+<div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
+<p>It’s working!!</p>
+</div>
+<div class="chatgpt-llm">
+<blockquote class="blockquote">
+<p>Excellent. That means your widget is now:</p>
+<ul>
+<li>Rendering cleanly ✅</li>
+<li>Sending input to Shiny ✅</li>
+<li>Updating on click ✅</li>
+</ul>
+<p>You’ve now got the full JS → R feedback loop working in your custom <code>htmlwidget</code>.</p>
+<hr>
+<p>If you want to improve it later, next steps could include:</p>
+<ul>
+<li>Making the selected element visually highlighted (add/remove a CSS class)</li>
+<li>Sending richer data to Shiny (e.g.&nbsp;event ID, label, timestamp)</li>
+<li>Supporting multiple selection or deselection</li>
+<li>Writing a unit test or snapshot test for the widget rendering</li>
+</ul>
+</blockquote>
+<blockquote class="blockquote">
+<p>But honestly—you’ve just crossed the hardest barrier. Nice work.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Anything else you want to do with it right now?</p>
+</blockquote>
+</div>
+<p>It sounds like a lot, but this whole experience took around <strong>1 hour from end to end</strong> which I found pretty impressive.</p>
+</section>
+<section id="the-final-output" class="level2">
+<h2 class="anchored" data-anchor-id="the-final-output">The final output</h2>
+<p>Here is the final PR: <a href="https://github.com/thisisnic/daisyuiwidget/pull/11" class="uri">https://github.com/thisisnic/daisyuiwidget/pull/11</a>. It’s not particularly complicated, but in the hour it took to write, I learned about some of the internals of the DT package, created a standalone example of sending information between JavaScript and R, and then implemented this in the package.</p>
+</section>
+<section id="takeaways-from-a-structured-llm-learning-session" class="level2">
+<h2 class="anchored" data-anchor-id="takeaways-from-a-structured-llm-learning-session">Takeaways from a structured LLM Learning session</h2>
+<p>What made this work wasn’t that ChatGPT giving me the right code but that it helped me ask the right questions. <strong>It acted like a more senior engineer, talking me through unfamiliar concepts, helping me debug my code, and nudging me towards the right mental model</strong>.</p>
+<section id="less-overhead-faster-feedback" class="level3">
+<h3 class="anchored" data-anchor-id="less-overhead-faster-feedback">Less overhead, faster feedback</h3>
+<p>It helped reduce context-switching and help me stay in flow. I didn’t need to spend time refining my overall goal, deciding what steps to take, and skim through partially relevant resources. By instead being able to focusing solely on writing the code, <strong>it prevented the cognitive fatigue of having to switch between “coding” and “planning” mindsets</strong>.</p>
+</section>
+<section id="still-my-own-work" class="level3">
+<h3 class="anchored" data-anchor-id="still-my-own-work">Still my own work</h3>
+<p>Could I have done it without the LLM? Yes, but it would have taken longer, and I would have learned less.</p>
+<p>Although I was using an LLM, <strong>I was an active participant in my own learning and so felt empowered as a learner</strong>. ChatGPT provided scaffolding and support but not all of the answers.</p>
+</section>
+<section id="what-id-change-next-time" class="level3">
+<h3 class="anchored" data-anchor-id="what-id-change-next-time">What I’d change next time</h3>
+<p>A reasonable next step to develop this idea further would be to refine the prompts for each stage - the prompts I included were just summaries of the snippets of the article, rather than specific instructions for ChatGPT. In small tasks like this, I’d treat information gathering as part of the task, and collapse steps 2 and 3.</p>
+<p>I found this process really rewarding to try out, and I’d encourage others to give it a go. Let me know how you get on if you do!</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>AI</category>
+  <guid>https://niccrane.com/posts/llms_for_learning/</guid>
+  <pubDate>Sat, 02 Aug 2025 23:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/llms_for_learning/tutor_img.png" medium="image" type="image/png" height="144" width="144"/>
+</item>
 <item>
   <title>Exploring AI-Powered Shiny App Development with Cline and Positron</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -183,7 +992,7 @@
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/clineshiny/</guid>
-  <pubDate>Mon, 17 Mar 2025 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 Mar 2025 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/clineshiny/final_app_screenshot.png" medium="image" type="image/png" height="75" width="144"/>
 </item>
 <item>
@@ -511,7 +1320,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socalmediagen2/</guid>
-  <pubDate>Mon, 17 Feb 2025 05:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 Feb 2025 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socalmediagen2/ellmershiny.png" medium="image" type="image/png" height="172" width="144"/>
 </item>
 <item>
@@ -585,7 +1394,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socialmediagen/</guid>
-  <pubDate>Fri, 14 Feb 2025 05:00:00 GMT</pubDate>
+  <pubDate>Fri, 14 Feb 2025 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socialmediagen/preview.png" medium="image" type="image/png" height="98" width="144"/>
 </item>
 <item>
@@ -714,7 +1523,7 @@ What's your biggest video recording fear? Share in the comments! 👇
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/rc/</guid>
-  <pubDate>Sun, 12 May 2024 04:00:00 GMT</pubDate>
+  <pubDate>Sat, 11 May 2024 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rc/rc.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -867,7 +1676,7 @@ on:
   <category>R</category>
   <category>GitHub Actions</category>
   <guid>https://niccrane.com/posts/rwatcher/</guid>
-  <pubDate>Thu, 28 Dec 2023 05:00:00 GMT</pubDate>
+  <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rwatcher/job.png" medium="image" type="image/png" height="117" width="144"/>
 </item>
 <item>
@@ -1070,7 +1879,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>R</category>
   <category>C</category>
   <guid>https://niccrane.com/posts/c_deepr/</guid>
-  <pubDate>Sat, 23 Dec 2023 05:00:00 GMT</pubDate>
+  <pubDate>Sat, 23 Dec 2023 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/c_deepr/deepr.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -1127,7 +1936,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/2023wrapup/</guid>
-  <pubDate>Thu, 21 Dec 2023 05:00:00 GMT</pubDate>
+  <pubDate>Thu, 21 Dec 2023 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/2023wrapup/2023.png" medium="image" type="image/png" height="66" width="144"/>
 </item>
 <item>
@@ -1155,7 +1964,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/debugging/</guid>
-  <pubDate>Wed, 04 Oct 2023 04:00:00 GMT</pubDate>
+  <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -1209,7 +2018,7 @@ font-style: inherit;">}</span></span></code></pre></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/goats/</guid>
-  <pubDate>Tue, 03 Oct 2023 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -1300,7 +2109,7 @@ font-style: inherit;">}</span></span></code></pre></div>
   <category>R</category>
   <category>Python</category>
   <guid>https://niccrane.com/posts/r-examples/</guid>
-  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 </channel>
