@@ -8,19 +8,21 @@ toc: true
 toc-depth: 2
 ---
 
-There's a lot of advice out there at the moment about using LLMs for code generation, but something I've been curious about is using LLMs for learning around code.
+There's a lot of advice out there at the moment about using LLMs for code generation, but something I've been curious about is using LLMs for learning *around* code.
+
+**Specifically, I don't want to rely on LLMs to generate the answers for me every time; I want LLMs to help me gain skills so that next time I can generate the right answer myself.**
 
 In this blog post I'm going to talk about using an LLM, specifically, ChatGPT to extend my own knowledge in R.
 
 ## Context - adding a feature to daisyuiwidget
 
-I'm currently collaborating with Charlotte Hadley on an R package called daisyuiwidget.  It an htmlwidgets package.
+I'm currently collaborating with Charlotte Hadley on an R package called [daisyuiwidget](https://github.com/thisisnic/daisyuiwidget/), which is a [htmlwidgets](https://www.htmlwidgets.org/) package.
 
 ### htmlwidgets
 
-Charlie and I both really lovely htmlwidgets packages which are used to wrap JavaScript libraries and work with them from R. They can be used in HTML outputs like Quarto documents and Shiny apps.
+Charlie and I both really love htmlwidgets, which are used to wrap JavaScript libraries and work with them from R. They can be used in HTML outputs like Quarto documents and Shiny apps.
 
-One example of a htmlwidgets package is DT, which can be used to create interactive tables. You can see an example below.
+One example of a htmlwidgets package is [DT](https://rstudio.github.io/DT/), which can be used to create interactive tables. You can see an example below.
 
 ```{r}
 library(DT)
@@ -38,7 +40,7 @@ One of the excellent features about packages like DT is that they can go beyond 
 
 ### daisyuiwidget
 
-The goal with daisyuiwidget is to create a new htmlwidgets package, using LLMs - we'll be talking more about this in our joint presentation at Shiny in Production later on this year.
+The goal with daisyuiwidget is to create a new htmlwidgets package, using LLMs - we'll be talking more about this in our joint presentation at [Shiny in Production](https://shiny-in-production.jumpingrivers.com/) later on this year.
 
 We decided to create a wrapper for the daisyUI library which has a feature where it can be used to create [timelines](https://daisyui.com/components/timeline/?lang=en) like the one below.
 
@@ -50,7 +52,7 @@ This is what I'll be discussing below - how I got ChatGPT to help with this, but
 
 ## Aside - the stretch zone
 
-I'm going to be talking at Posit Conf about increasing productivity with LLMs and a central part of my talk is the idea that LLMs are most useful when working on tasks just outside of your [comfort zone, sometimes described as your stretch zone](https://en.wikipedia.org/wiki/Comfort_zone).
+I'm going to be talking at [Posit Conf](https://posit.co/conference/) about increasing productivity with LLMs and a central thesis of my talk is the idea that LLMs are most useful when working on tasks just outside of your [comfort zone, sometimes described as your stretch zone](https://en.wikipedia.org/wiki/Comfort_zone).
 
 I'm defining the "stretch zone" in this context as something that isn't within your current knowledge, but doesn't seem so challenging that you have doubts about whether you can find a solution.
 
@@ -82,7 +84,7 @@ Dr Lin discusses a self-directed learning framework proposed by Kim et al (2014)
 
 This framework can be used with ChatGPT to help support adult learners, and Dr Lin goes on to walk through a hypothetical example where an adult learner is using ChatGPT in each of those steps and discusses the kind of help that could be given.
 
-I wanted to try some of this out, and so I created summaries of each of the steps along with Dr Lin's suggestions of how an LLM might implement them, and used them as prompts in a learning session with ChatGPT.  I focused solely on steps 1 to 3 as the learning goal was an individual task rather than an ongoing programme.
+I wanted to try some of this out, and so I created LLM summaries of each of the steps including Dr Lin's suggestions of how an LLM might implement them, and used these summaries as prompts in a learning session with ChatGPT.  I focused solely on steps 1 to 3 as the learning goal was an individual task rather than an ongoing programme.
 
 ## Step 1 - Establish Learning Goals
 
@@ -137,7 +139,7 @@ Question 1: What’s your motivation for using LLMs as a tutor rather than a pro
 :::
 
 ::: {.chatgpt-user style="background-color: #e8e8e8; padding: 5px; margin-left: 100px"}
-I want to understand how I can take an R package which creates a htmlwidget and adds the correct code so that I can use it in a shiny app and update a variable based on what the user has selected. I want to learn how to do this as I think it's a useful skill to have. I don't want an LLM to do it as I won't know if the code is correct or not and would only have surface level understanding and so would be hard ti repeat the skill in future.
+I want to understand how I can take an R package which creates a htmlwidget and adds the correct code so that I can use it in a shiny app and update a variable based on what the user has selected. I want to learn how to do this as I think it's a useful skill to have. I don't want an LLM to do it as I won't know if the code is correct or not and would only have surface level understanding and so would be hard to repeat the skill in future.
 :::
 
 ::: chatgpt-llm
@@ -302,7 +304,7 @@ Pick one or two widgets you’ve used or are familiar with—ideally ones where 
 :::
 
 ::: {.chatgpt-user style="background-color: #e8e8e8; padding: 5px; margin-left: 100px"}
-I'm mostly familar with those two you mention, more so DT then plotly tho
+I'm mostly familiar with those two you mention, more so DT then plotly tho
 :::
 
 ::: chatgpt-llm
@@ -498,7 +500,7 @@ Here's the first activity suggested:
 >
 > **Timebox:** 20–30 minutes.
 
-I walked through each activity, setting a timer on my phone. I found that I completed each in less than the allotted time. I skipped the last activtity, as I only required 1-3 to complete the task.
+I walked through each activity, setting a timer on my phone. I found that I completed each in less than the allotted time. I skipped the last activity, as I only required 1-3 to complete the task.
 
 ::::: {.callout-note collapse="true" icon="false"}
 ## Expand to view learning plan
@@ -506,7 +508,7 @@ I walked through each activity, setting a timer on my phone. I found that I comp
 ::: {.chatgpt-user style="background-color: #e8e8e8; padding: 5px; margin-left: 100px"}
 OK, my next step is below
 
-3.  Adopt and Execute Learning Activties
+3.  Adopt and Execute Learning Activities
 
 Adopting and executing learning activities is a crucial task in self-directed learning. This step involves developing a specific plan of action that aligns with established goals and available resources.
 
@@ -631,7 +633,7 @@ There was a lot of interaction between me and ChatGPT here, and I'm not going to
 
 -   explain some JavaScript code I didn't understand by walking me through it line-by-line
 -   get clarity on how to implement some of its suggestions by asking exactly what it meant
--   multiple rounds of debugging code I had wrote which didn't work
+-   multiple rounds of debugging code I had written which didn't work
 -   helping me work out exactly where the change was needed in my own code
 
 In the last example, ChatGPT didn't just tell me where to put the code, but walked through the important concepts to reason through the answer. It then asked me questions so that *I* could work out where in the code the change needed to go. Here's a snippet from that interaction.

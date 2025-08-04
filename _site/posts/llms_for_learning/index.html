@@ -236,15 +236,16 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 
 
 
-<p>There’s a lot of advice out there at the moment about using LLMs for code generation, but something I’ve been curious about is using LLMs for learning around code.</p>
+<p>There’s a lot of advice out there at the moment about using LLMs for code generation, but something I’ve been curious about is using LLMs for learning <em>around</em> code.</p>
+<p><strong>Specifically, I don’t want to rely on LLMs to generate the answers for me every time; I want LLMs to help me gain skills so that next time I can generate the right answer myself.</strong></p>
 <p>In this blog post I’m going to talk about using an LLM, specifically, ChatGPT to extend my own knowledge in R.</p>
 <section id="context---adding-a-feature-to-daisyuiwidget" class="level2">
 <h2 class="anchored" data-anchor-id="context---adding-a-feature-to-daisyuiwidget">Context - adding a feature to daisyuiwidget</h2>
-<p>I’m currently collaborating with Charlotte Hadley on an R package called daisyuiwidget. It an htmlwidgets package.</p>
+<p>I’m currently collaborating with Charlotte Hadley on an R package called <a href="https://github.com/thisisnic/daisyuiwidget/">daisyuiwidget</a>, which is a <a href="https://www.htmlwidgets.org/">htmlwidgets</a> package.</p>
 <section id="htmlwidgets" class="level3">
 <h3 class="anchored" data-anchor-id="htmlwidgets">htmlwidgets</h3>
-<p>Charlie and I both really lovely htmlwidgets packages which are used to wrap JavaScript libraries and work with them from R. They can be used in HTML outputs like Quarto documents and Shiny apps.</p>
-<p>One example of a htmlwidgets package is DT, which can be used to create interactive tables. You can see an example below.</p>
+<p>Charlie and I both really love htmlwidgets, which are used to wrap JavaScript libraries and work with them from R. They can be used in HTML outputs like Quarto documents and Shiny apps.</p>
+<p>One example of a htmlwidgets package is <a href="https://rstudio.github.io/DT/">DT</a>, which can be used to create interactive tables. You can see an example below.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(DT)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -256,15 +257,15 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>DT<span class="sc">::</span><span class="fu">datatable</span>(packages)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div class="datatables html-widget html-fill-item" id="htmlwidget-ce38d02229db071f1176" style="width:100%;height:auto;"></div>
-<script type="application/json" data-for="htmlwidget-ce38d02229db071f1176">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["htmlwidgets","leaflet","plotly","DT"],["2014-12-09","2015-06-24","2015-11-17","2015-06-09"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>package<\/th>\n      <th>first_release<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"package","targets":1},{"name":"first_release","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
+<div class="datatables html-widget html-fill-item" id="htmlwidget-45396683e44f8f7148ff" style="width:100%;height:auto;"></div>
+<script type="application/json" data-for="htmlwidget-45396683e44f8f7148ff">{"x":{"filter":"none","vertical":false,"data":[["1","2","3","4"],["htmlwidgets","leaflet","plotly","DT"],["2014-12-09","2015-06-24","2015-11-17","2015-06-09"]],"container":"<table class=\"display\">\n  <thead>\n    <tr>\n      <th> <\/th>\n      <th>package<\/th>\n      <th>first_release<\/th>\n    <\/tr>\n  <\/thead>\n<\/table>","options":{"columnDefs":[{"orderable":false,"targets":0},{"name":" ","targets":0},{"name":"package","targets":1},{"name":"first_release","targets":2}],"order":[],"autoWidth":false,"orderClasses":false}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <p>One of the excellent features about packages like DT is that they can go beyond just displaying outputs. If you include a DT table in a Shiny app and have enabled “row selection”, then the JavaScript code for the table can pass the index of the user’s selected row back to R. This then can be used in other components of the app, for example, displaying information relevant to the user’s selection.</p>
 </section>
 <section id="daisyuiwidget" class="level3">
 <h3 class="anchored" data-anchor-id="daisyuiwidget">daisyuiwidget</h3>
-<p>The goal with daisyuiwidget is to create a new htmlwidgets package, using LLMs - we’ll be talking more about this in our joint presentation at Shiny in Production later on this year.</p>
+<p>The goal with daisyuiwidget is to create a new htmlwidgets package, using LLMs - we’ll be talking more about this in our joint presentation at <a href="https://shiny-in-production.jumpingrivers.com/">Shiny in Production</a> later on this year.</p>
 <p>We decided to create a wrapper for the daisyUI library which has a feature where it can be used to create <a href="https://daisyui.com/components/timeline/?lang=en">timelines</a> like the one below.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -277,7 +278,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 </section>
 <section id="aside---the-stretch-zone" class="level2">
 <h2 class="anchored" data-anchor-id="aside---the-stretch-zone">Aside - the stretch zone</h2>
-<p>I’m going to be talking at Posit Conf about increasing productivity with LLMs and a central part of my talk is the idea that LLMs are most useful when working on tasks just outside of your <a href="https://en.wikipedia.org/wiki/Comfort_zone">comfort zone, sometimes described as your stretch zone</a>.</p>
+<p>I’m going to be talking at <a href="https://posit.co/conference/">Posit Conf</a> about increasing productivity with LLMs and a central thesis of my talk is the idea that LLMs are most useful when working on tasks just outside of your <a href="https://en.wikipedia.org/wiki/Comfort_zone">comfort zone, sometimes described as your stretch zone</a>.</p>
 <p>I’m defining the “stretch zone” in this context as something that isn’t within your current knowledge, but doesn’t seem so challenging that you have doubts about whether you can find a solution.</p>
 <p>This task seemed like a great fit for this in terms of my past experience:</p>
 <p>✅ Extensive Shiny app development experience</p>
@@ -301,7 +302,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <li>Reassess Learning Strategies</li>
 </ol>
 <p>This framework can be used with ChatGPT to help support adult learners, and Dr Lin goes on to walk through a hypothetical example where an adult learner is using ChatGPT in each of those steps and discusses the kind of help that could be given.</p>
-<p>I wanted to try some of this out, and so I created summaries of each of the steps along with Dr Lin’s suggestions of how an LLM might implement them, and used them as prompts in a learning session with ChatGPT. I focused solely on steps 1 to 3 as the learning goal was an individual task rather than an ongoing programme.</p>
+<p>I wanted to try some of this out, and so I created LLM summaries of each of the steps including Dr Lin’s suggestions of how an LLM might implement them, and used these summaries as prompts in a learning session with ChatGPT. I focused solely on steps 1 to 3 as the learning goal was an individual task rather than an ongoing programme.</p>
 </section>
 <section id="step-1---establish-learning-goals" class="level2">
 <h2 class="anchored" data-anchor-id="step-1---establish-learning-goals">Step 1 - Establish Learning Goals</h2>
@@ -353,7 +354,7 @@ Expand to view full conversation
 <p>Question 1: What’s your motivation for using LLMs as a tutor rather than a problem-solver—what do you hope to gain from this approach (e.g., deeper understanding, confidence, skill retention, etc.)?</p>
 </div>
 <div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
-<p>I want to understand how I can take an R package which creates a htmlwidget and adds the correct code so that I can use it in a shiny app and update a variable based on what the user has selected. I want to learn how to do this as I think it’s a useful skill to have. I don’t want an LLM to do it as I won’t know if the code is correct or not and would only have surface level understanding and so would be hard ti repeat the skill in future.</p>
+<p>I want to understand how I can take an R package which creates a htmlwidget and adds the correct code so that I can use it in a shiny app and update a variable based on what the user has selected. I want to learn how to do this as I think it’s a useful skill to have. I don’t want an LLM to do it as I won’t know if the code is correct or not and would only have surface level understanding and so would be hard to repeat the skill in future.</p>
 </div>
 <div class="chatgpt-llm">
 <p><strong>Question 2:</strong></p>
@@ -484,7 +485,7 @@ Expand to view full conversation
 <p>Pick one or two widgets you’ve used or are familiar with—ideally ones where clicking/selecting something in the widget updates a Shiny input. (e.g., <code>DT::datatable</code>, <code>plotly::plotlyOutput</code>). Which ones should we dissect?</p>
 </div>
 <div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
-<p>I’m mostly familar with those two you mention, more so DT then plotly tho</p>
+<p>I’m mostly familiar with those two you mention, more so DT then plotly tho</p>
 </div>
 <div class="chatgpt-llm">
 <p>Perfect. <code>DT</code> is a solid choice—it’s well-documented, simple enough to follow, and has clean Shiny integration.</p>
@@ -783,7 +784,7 @@ Expand to view full conversation
 </ul>
 <p><strong>Timebox:</strong> 20–30 minutes.</p>
 </blockquote>
-<p>I walked through each activity, setting a timer on my phone. I found that I completed each in less than the allotted time. I skipped the last activtity, as I only required 1-3 to complete the task.</p>
+<p>I walked through each activity, setting a timer on my phone. I found that I completed each in less than the allotted time. I skipped the last activity, as I only required 1-3 to complete the task.</p>
 <div class="callout callout-style-default callout-note no-icon callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -799,7 +800,7 @@ Expand to view learning plan
 <div class="chatgpt-user" style="background-color: #e8e8e8; padding: 5px; margin-left: 100px">
 <p>OK, my next step is below</p>
 <ol start="3" type="1">
-<li>Adopt and Execute Learning Activties</li>
+<li>Adopt and Execute Learning Activities</li>
 </ol>
 <p>Adopting and executing learning activities is a crucial task in self-directed learning. This step involves developing a specific plan of action that aligns with established goals and available resources.</p>
 <p>Learners should create tailored plans that consider their preferred learning styles and available time for learning. This personalization helps ensure the learning activities are effective and manageable.</p>
@@ -910,7 +911,7 @@ Expand to view learning plan
 <ul>
 <li>explain some JavaScript code I didn’t understand by walking me through it line-by-line</li>
 <li>get clarity on how to implement some of its suggestions by asking exactly what it meant</li>
-<li>multiple rounds of debugging code I had wrote which didn’t work</li>
+<li>multiple rounds of debugging code I had written which didn’t work</li>
 <li>helping me work out exactly where the change was needed in my own code</li>
 </ul>
 <p>In the last example, ChatGPT didn’t just tell me where to put the code, but walked through the important concepts to reason through the answer. It then asked me questions so that <em>I</em> could work out where in the code the change needed to go. Here’s a snippet from that interaction.</p>
