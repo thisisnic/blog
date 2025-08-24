@@ -2,19 +2,18 @@ project:
   type: website
 
 website:
-  title: "Nic Crane"
+  title: Dr Nic Crane
   site-url: https://niccrane.com
-  description: "Nic Crane"
   navbar:
     right:
       - text: About
         file: index.qmd
-      - text: Contact Me
-        file: contact.qmd
+      - text: Past Work
+        file: projects.qmd
       - text: Talks & Workshops
         file: talks.qmd
-      - projects.qmd
-      - blog.qmd
+      - text: Blog
+        file: blog.qmd
       - icon: rss
         href: blog.xml
   google-analytics: "G-SJ58WZL69W"

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nic Crane">
-<meta name="dcterms.date" content="2016-07-22">
+<meta name="dcterms.date" content="2023-12-23">
 
-<title>PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis – Nic Crane</title>
+<title>Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’ – Nic Crane</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,6 +21,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -109,12 +144,12 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span class="menu-text">Contact Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../talks.html"> 
-<span class="menu-text">Talks &amp; Workshops</span></a>
+    <a class="nav-link" href="../../projects.html"> 
+<span class="menu-text">Past Work</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects.html"> 
-<span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../talks.html"> 
+<span class="menu-text">Talks &amp; Workshops</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../blog.html"> 
@@ -142,8 +177,12 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">PhD Thesis - Debiasing Reasoning: A Signal Detection Analysis</h1>
-</div>
+<h1 class="title">Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+    <div class="quarto-category">C</div>
+  </div>
+  </div>
 
 
 
@@ -159,7 +198,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 22, 2016</p>
+      <p class="date">December 23, 2023</p>
     </div>
   </div>
   
@@ -171,12 +210,89 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 </header>
 
 
-<p><a href="./thesis.pdf">Download here: PDF, 2.1MB</a></p>
-<p>This thesis focuses on deductive reasoning and how the belief bias effect can be reduced or ameliorated.</p>
-<p>Belief bias is a phenomenon whereby the evaluation of the logical validity of an argument is skewed by the degree to which the reasoner believes the conclusion. There has been little research examining ways of reducing such bias and whether there is some sort of effective intervention which makes people reason more on the basis of logic. Traditional analyses of this data has focussed on simple measures of accuracy, typically deducting the number of incorrect answers from the number of correct answers to give an accuracy score. However, recent theoretical developments have shown that this approach fails to separate reasoning biases and response biases. A reasoning bias, is one which affects individuals’ ability to discriminate between valid and invalid arguments, whereas a response bias is simply the individual’s tendency to give a particular answer, independent of reasoning. A Signal Detection Theory (SDT) approach is used to calculate measures of reasoning accuracy and response bias. These measures are then analysed using mixed effects models.</p>
-<p>Chapter 1 gives a general introduction to the topic, and outlines the content of subsequent chapters. In Chapter 2, I review the psychological literature around belief bias, the growth of the use of SDT models, and approaches to reducing bias. Chapter 3 covers the methodology, and includes a a thorough description of the calculation of the SDT measures, and an explanation of the mixed effects models I used to analyse these. Chapter 4 presents an experiment in which the effects of feedback on reducing belief bias is examined. In Chapter 5, the focus shifts in the direction of individual differences, and looks at the effect of different instructions given to participants, and Chapter 6 examines the effects of both feedback and specific training. Chapter 7 provides a general discussion of the implications of the previous three chapters.</p>
+<p>One of my goals for next year is to get a deeper understanding of R’s C API. I’m making a start on this by reading <a href="https://deepr.gagolewski.com/chapter/310-compiled.html">Chapter 14 of Deep R Programming by Marek Gagolewski: “Interfacing compiled code”</a>. It’s a great resource, though the chapter preface states “we assume basic knowledge of the C language”. <del>I do not have this knowledge</del> My C knowledge is fairly limited, and so this blog post will pull out some of the details from that chapter, especially bits where I’ve had to go “wtf is that?!” or remind myself by googling. My current level of C knowledge at the moment is pretty minimal; the main things I know are:</p>
+<ul>
+<li>C is a compiled language (as opposed to an interpreted language) and C code needs compiling before it can be run</li>
+<li>A lot of R’s internals are based on C</li>
+<li>C is a statically-type language; this means that variable types are defined when the variable is created and cannot later change other than via explicit manual casting</li>
+</ul>
+<p>And that’s basically it! I imagine there are other bits I don’t realise I know which I’ve picked up from being an R package maintainer and dabbling in a few C++ tutorials, but I’ll try to explain everything as much as possible. OK, let’s do this!</p>
+<p>The book chapter provides an example package with a simple C function implemented, and walks us through the code step-by-step. Great!</p>
+<p>Section 14.1.1 starts off with an example of a C function defined in <code>src/cfunc.h</code>. I guess the first thing to note is the location of the file - in the package’s <code>src</code> directory. This is where any compiled code needs to go, typically C or C++ code, or even Fortran if you’re really going old-school.</p>
+<section id="header-files-and-source-files" class="level3">
+<h3 class="anchored" data-anchor-id="header-files-and-source-files">Header files and source files</h3>
+<p>Another thing to note here is the file name, which ends in <code>.h</code>. C code can be divided into header files (ending in <code>.h</code>) and source files (ending in <code>.c</code>). Header files contain the function declarations (including variable types) and other things like macros (named bits of code for the pre-processor to work with). They’re sometimes referred to as the interface - they contain information about functions’ inputs and outputs - including the argument names and types.</p>
+</section>
+<section id="once-only-includes" class="level3">
+<h3 class="anchored" data-anchor-id="once-only-includes">Once-only includes</h3>
+<p>The first couple of lines of code in the header file contain these lines:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifndef __CFUNS_H</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define __CFUNS_H</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>and the final line is</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>What’s happening here is that, often we can end up with projects containing multiple files, some of which source each other, and include them. We don’t want to end up with duplication of the headers which have been included, otherwise the compiler will raise an error, so we put them in an <code>#ifndef</code> wrapper, and give them a name. Basically, what we’re saying to the preprocessor here is that if this name hasn’t already been defined, defined it and include this code, but if it’s already defined then skip this.</p>
+</section>
+<section id="includes" class="level3">
+<h3 class="anchored" data-anchor-id="includes">Includes</h3>
+<p>The third line in <code>src/cfunc.h</code> is:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stddef.h&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This allows for the inclusion of a file from <a href="https://en.wikipedia.org/wiki/C_standard_library">the C standard library</a>, which has a few different variables included. The key one for us here is <code>size_t</code>, which is commonly used for iterating over items in arrays - we need this as we’ll be including a <code>for</code> loop in the definition of our function.</p>
+</section>
+<section id="the-preprocessor" class="level3">
+<h3 class="anchored" data-anchor-id="the-preprocessor">The preprocessor</h3>
+<p>Above I casually mentioned the C preprocessor a couple of times without defining it. A succinct and perhaps naive summary is that there are <a href="https://en.wikichip.org/wiki/c/phases_of_translation">multiple steps</a> in the compilation of C code. One of these phases is preprocessing and it involves things like processing any additional files we’ve said we wanted to include, and replacing macros with their definitions.</p>
+</section>
+<section id="declarations" class="level3">
+<h3 class="anchored" data-anchor-id="declarations">Declarations</h3>
+<p>So, the declaration for the function in the example looks like this</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> my_c_sum<span class="op">(</span><span class="dt">const</span> <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> <span class="dt">size_t</span> n<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>In words, this means that:</p>
+<ul>
+<li>it is a function which returns an object of type double</li>
+<li>the function name is <code>my_c_sum</code></li>
+<li>the first argument is called <code>x</code></li>
+<li><code>x</code> is a pointer to a variable of type double</li>
+<li><code>x</code> is a <code>const</code> variable, which means it won’t be modified in the body of the function</li>
+<li>the second argument is called <code>n</code></li>
+<li><code>n</code> is of type <code>size_t</code></li>
+</ul>
+<p>This concept of a pointer just means that <code>x</code> contains the memory address of the double that we pass in, rather than a copy of the values in it. This prevents us from copying the values unnecessarily.</p>
+</section>
+<section id="source-file" class="level3">
+<h3 class="anchored" data-anchor-id="source-file">Source file</h3>
+<p>Source files contain the body of the function, sometimes called the implementation.</p>
+<p>The code in the book chapter goes on to show the content of the file <code>src/cfuncs.c</code>. The first line of this file is:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"cfuns.h"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is including the header file we discussed above. The rest of the code in the source file contains the definition of <code>my_c_sum</code>:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* computes the sum of all elements in an array x of size n */</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> my_c_sum<span class="op">(</span><span class="dt">const</span> <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> <span class="dt">size_t</span> n<span class="op">)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> s <span class="op">=</span> <span class="fl">0.0</span><span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">size_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">/* this code does not treat potential missing values specially</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">           (they are kinds of NaNs); to fix this, add:</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">        if (ISNA(x[i])) return NA_REAL;  // #include &lt;R.h&gt;  */</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        s <span class="op">+=</span> x<span class="op">[</span>i<span class="op">];</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s<span class="op">;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The function signature here is identical to how it is defined in the header file. The <code>for</code> loop uses the <code>n</code> argument which was passed in to represent the size of the array to loop through. In numerous other languages we’d calculate the size of the array in the body of the function, but in C you cannot have an array of unknown size, and so it must be passed in as a parameter. I think this is to do with how the C compiler allocates memory; more modern C <em>does</em> have the concept of variable-length arrays.</p>
+<p>The chapter goes on to discuss further examples which then show how to include a wrapper which can be called by R. I won’t discuss this here, as the text there is all explained well, and the contents are more specific to R’s C API, and not specifically just C-related topics.</p>
+<p>Here’s a summary of the C-related topics mentioned here:</p>
+<ul>
+<li>header files and source files</li>
+<li>includes</li>
+<li>once-only includes</li>
+<li>the preprocessor</li>
+<li>variable-length arrays</li>
+<li><code>const</code> variables</li>
+<li>pointers</li>
+<li>statically-typed languages</li>
+<li>compiled and interpreted languages</li>
+</ul>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nic Crane">
-<meta name="dcterms.date" content="2023-12-23">
+<meta name="dcterms.date" content="2023-12-21">
 
-<title>Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’ – Nic Crane</title>
+<title>Reflections on 2023 – Nic Crane</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,41 +21,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -121,7 +86,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -144,12 +109,12 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span class="menu-text">Contact Me</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../talks.html"> 
-<span class="menu-text">Talks &amp; Workshops</span></a>
+    <a class="nav-link" href="../../projects.html"> 
+<span class="menu-text">Past Work</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects.html"> 
-<span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../talks.html"> 
+<span class="menu-text">Talks &amp; Workshops</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../../blog.html"> 
@@ -168,129 +133,84 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">R</div>
-                <div class="quarto-category">C</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Nic Crane </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">December 23, 2023</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Reflections on 2023</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">R</div>
+  </div>
+  </div>
 
 
 
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nic Crane </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">December 21, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
 
 
-<p>One of my goals for next year is to get a deeper understanding of R’s C API. I’m making a start on this by reading <a href="https://deepr.gagolewski.com/chapter/310-compiled.html">Chapter 14 of Deep R Programming by Marek Gagolewski: “Interfacing compiled code”</a>. It’s a great resource, though the chapter preface states “we assume basic knowledge of the C language”. <del>I do not have this knowledge</del> My C knowledge is fairly limited, and so this blog post will pull out some of the details from that chapter, especially bits where I’ve had to go “wtf is that?!” or remind myself by googling. My current level of C knowledge at the moment is pretty minimal; the main things I know are:</p>
-<ul>
-<li>C is a compiled language (as opposed to an interpreted language) and C code needs compiling before it can be run</li>
-<li>A lot of R’s internals are based on C</li>
-<li>C is a statically-type language; this means that variable types are defined when the variable is created and cannot later change other than via explicit manual casting</li>
-</ul>
-<p>And that’s basically it! I imagine there are other bits I don’t realise I know which I’ve picked up from being an R package maintainer and dabbling in a few C++ tutorials, but I’ll try to explain everything as much as possible. OK, let’s do this!</p>
-<p>The book chapter provides an example package with a simple C function implemented, and walks us through the code step-by-step. Great!</p>
-<p>Section 14.1.1 starts off with an example of a C function defined in <code>src/cfunc.h</code>. I guess the first thing to note is the location of the file - in the package’s <code>src</code> directory. This is where any compiled code needs to go, typically C or C++ code, or even Fortran if you’re really going old-school.</p>
-<section id="header-files-and-source-files" class="level3">
-<h3 class="anchored" data-anchor-id="header-files-and-source-files">Header files and source files</h3>
-<p>Another thing to note here is the file name, which ends in <code>.h</code>. C code can be divided into header files (ending in <code>.h</code>) and source files (ending in <code>.c</code>). Header files contain the function declarations (including variable types) and other things like macros (named bits of code for the pre-processor to work with). They’re sometimes referred to as the interface - they contain information about functions’ inputs and outputs - including the argument names and types.</p>
+</header>
+
+
+<p>Here’s a summary of my highlights of 2023!</p>
+<section id="arrow-positconf-workshop" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-positconf-workshop">Arrow posit::conf workshop</h2>
+<p>The biggest professional achievement for me was having the privilege of being invited to co-present <a href="https://github.com/posit-conf-2023/arrow">a workshop with Steph Hazlitt about Arrow at posit::conf</a>. Steph is fantastic to work with, and while writing and delivering the workshop was hard work, it paid off in the end - we received really positive feedback from attendees. The experience reignited my passion for teaching, and desire to develop those skills. I’ve applied for Carpentries instructor training, which I’m still waiting to hear back about, and I’m excited to also be working with Steph on creating a 2 hour version of the workshop, which we’re planning on teaching at user events in 2024.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="posit_conf.jpg" class="img-fluid figure-img" width="500"></p>
+<figcaption>Hanging out with some awesome people at posit::conf 2023!</figcaption>
+</figure>
+</div>
 </section>
-<section id="once-only-includes" class="level3">
-<h3 class="anchored" data-anchor-id="once-only-includes">Once-only includes</h3>
-<p>The first couple of lines of code in the header file contain these lines:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifndef __CFUNS_H</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define __CFUNS_H</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>and the final line is</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>What’s happening here is that, often we can end up with projects containing multiple files, some of which source each other, and include them. We don’t want to end up with duplication of the headers which have been included, otherwise the compiler will raise an error, so we put them in an <code>#ifndef</code> wrapper, and give them a name. Basically, what we’re saying to the preprocessor here is that if this name hasn’t already been defined, defined it and include this code, but if it’s already defined then skip this.</p>
+<section id="arrow-r-maintenance-bot" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-r-maintenance-bot">Arrow R Maintenance bot</h2>
+<p>Another project I enjoyed working on was creating the <a href="https://github.com/thisisnic/arrow_r_maintenance">Arrow maintenance bot</a>. It pulls data from the GitHub API, aggregates the relevant bits, and then posts it to a Zulip channel (though also works for Slack). It was an itch I’d wanted to scratch for a long time, as I’d previously got this information by clicking on various bookmarks every so often whenever I remembered. The output is shown in the screenshot below; basically, it summarises new bug tickets which need investigating, investigated bugs which need a fix, and open PRs which may need reviewing. <img src="r_maintenance_bot.png" class="img-fluid" width="520" alt="Screenshot showing the output that the maintenance bot produces"></p>
+<p>There are more aspects of arrow maintenance which I’d love to automate and pull together in dashboard form - I’ve been discussing this with a friend, and I hope we find the time to work on this in 2024!</p>
 </section>
-<section id="includes" class="level3">
-<h3 class="anchored" data-anchor-id="includes">Includes</h3>
-<p>The third line in <code>src/cfunc.h</code> is:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stddef.h&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This allows for the inclusion of a file from <a href="https://en.wikipedia.org/wiki/C_standard_library">the C standard library</a>, which has a few different variables included. The key one for us here is <code>size_t</code>, which is commonly used for iterating over items in arrays - we need this as we’ll be including a <code>for</code> loop in the definition of our function.</p>
+<section id="arrow-maintenance-and-book" class="level2">
+<h2 class="anchored" data-anchor-id="arrow-maintenance-and-book">Arrow maintenance and book</h2>
+<p>In January, I became the official package maintainer on CRAN. It took my some time to get my head around this; it’s a daunting responsibility, and in reality I’m part of a wider team, all of whom play an important part.</p>
+<p>The amount of time I’ve been able to spend on Arrow has dropped significantly since I left Voltron Data, though I’m hoping to be able to spend more time this year on it. I feel like my focus will shift a little, away from code, and more towards encouraging new contributors, as well as teaching people how to use the package.</p>
+<p>Most excitingly though, is the book which I am co-authoring! This is taking up the main chunk of my Arrow-related time, but the aim is to have the manuscript submitted to the publishers by summer, if not sooner.</p>
 </section>
-<section id="the-preprocessor" class="level3">
-<h3 class="anchored" data-anchor-id="the-preprocessor">The preprocessor</h3>
-<p>Above I casually mentioned the C preprocessor a couple of times without defining it. A succinct and perhaps naive summary is that there are <a href="https://en.wikichip.org/wiki/c/phases_of_translation">multiple steps</a> in the compilation of C code. One of these phases is preprocessing and it involves things like processing any additional files we’ve said we wanted to include, and replacing macros with their definitions.</p>
+<section id="c" class="level2">
+<h2 class="anchored" data-anchor-id="c">C++</h2>
+<p>Having interacted with bits of C++ code while working on Arrow, I decided to spend time learning C++ more formally. I’ve generally found this tricky - frankly, higher-level languages seem to have more engaging content out there. I made a start on the Udacity C++ Nanodegree, which I completed over half of, but was limited on time and so paused this - I plan to pick it up again next year though. I also tried a more practical approach, and decided to make a PR to the Arrow C++ codebase - one of the PRs I am most proud of this year is <a href="https://github.com/apache/arrow/pull/34050/">this one, adding support for the Substrait cast expression</a>. It was hard, though most of the complexity came from peripheral tasks, like working out how to run the code interactively in the debugger.</p>
 </section>
-<section id="declarations" class="level3">
-<h3 class="anchored" data-anchor-id="declarations">Declarations</h3>
-<p>So, the declaration for the function in the example looks like this</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> my_c_sum<span class="op">(</span><span class="dt">const</span> <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> <span class="dt">size_t</span> n<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>In words, this means that:</p>
-<ul>
-<li>it is a function which returns an object of type double</li>
-<li>the function name is <code>my_c_sum</code></li>
-<li>the first argument is called <code>x</code></li>
-<li><code>x</code> is a pointer to a variable of type double</li>
-<li><code>x</code> is a <code>const</code> variable, which means it won’t be modified in the body of the function</li>
-<li>the second argument is called <code>n</code></li>
-<li><code>n</code> is of type <code>size_t</code></li>
-</ul>
-<p>This concept of a pointer just means that <code>x</code> contains the memory address of the double that we pass in, rather than a copy of the values in it. This prevents us from copying the values unnecessarily.</p>
+<section id="joining-the-rladies-global-team" class="level2">
+<h2 class="anchored" data-anchor-id="joining-the-rladies-global-team">Joining the RLadies Global team</h2>
+<p>I spent some time thinking about how I could engage more with the wider R community, and so I volunteered to join the RLadies global team, helping set up new chapters on meetup.com. I’ve not done much here yet, but am delighted to be part of the organisation, and hope to be able to help out more in 2024</p>
 </section>
-<section id="source-file" class="level3">
-<h3 class="anchored" data-anchor-id="source-file">Source file</h3>
-<p>Source files contain the body of the function, sometimes called the implementation.</p>
-<p>The code in the book chapter goes on to show the content of the file <code>src/cfuncs.c</code>. The first line of this file is:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"cfuns.h"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>This is including the header file we discussed above. The rest of the code in the source file contains the definition of <code>my_c_sum</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* computes the sum of all elements in an array x of size n */</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> my_c_sum<span class="op">(</span><span class="dt">const</span> <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> <span class="dt">size_t</span> n<span class="op">)</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> s <span class="op">=</span> <span class="fl">0.0</span><span class="op">;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">size_t</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> n<span class="op">;</span> <span class="op">++</span>i<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">/* this code does not treat potential missing values specially</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">           (they are kinds of NaNs); to fix this, add:</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">        if (ISNA(x[i])) return NA_REAL;  // #include &lt;R.h&gt;  */</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        s <span class="op">+=</span> x<span class="op">[</span>i<span class="op">];</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s<span class="op">;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>The function signature here is identical to how it is defined in the header file. The <code>for</code> loop uses the <code>n</code> argument which was passed in to represent the size of the array to loop through. In numerous other languages we’d calculate the size of the array in the body of the function, but in C you cannot have an array of unknown size, and so it must be passed in as a parameter. I think this is to do with how the C compiler allocates memory; more modern C <em>does</em> have the concept of variable-length arrays.</p>
-<p>The chapter goes on to discuss further examples which then show how to include a wrapper which can be called by R. I won’t discuss this here, as the text there is all explained well, and the contents are more specific to R’s C API, and not specifically just C-related topics.</p>
-<p>Here’s a summary of the C-related topics mentioned here:</p>
-<ul>
-<li>header files and source files</li>
-<li>includes</li>
-<li>once-only includes</li>
-<li>the preprocessor</li>
-<li>variable-length arrays</li>
-<li><code>const</code> variables</li>
-<li>pointers</li>
-<li>statically-typed languages</li>
-<li>compiled and interpreted languages</li>
-</ul>
+<section id="career-break-and-plans-for-2024-recurse-center" class="level2">
+<h2 class="anchored" data-anchor-id="career-break-and-plans-for-2024-recurse-center">Career break and plans for 2024 (Recurse Center!)</h2>
+<p>Last, but absolutely not least, is my decision to take a career break. After leaving Voltron Data, I’d been working part-time in a contractor capacity, alongside working on the Arrow book, but I decided I wanted to narrow my focus and take some time out for me.</p>
+<p>I’m taking a break and spending the next couple of months focusing on writing. Once most of the book is done, I plan to spend more time on my open source work in general, which will involve teaching and talking about Arrow, as well as pushing forward a few side projects.</p>
+<p>The most exciting news I’ve had this year is that I applied to the Recurse Center a few weeks ago. RC is like a writer’s retreat for programmers, and attendees spend 12 weeks together working on programming problems of their choice. I want to get to grips with R’s internals, and learn about the C API, as well as levelling up my C++ skills in general. I’m delighted to say that I was accepted to attend this morning, and will be joining the spring batch in late March! I’ve got a ton of ideas for projects I want to work on, but will have to see how much time I ultimately end up having.</p>
+<p>Longer-term - I don’t know. Ultimately, I’d love to get paid to work on open source again, but those opportunities are few and far between. I also have some professional goals I’d like to hit before I’m going to be in the right headspace to engage with this too - between writing the book and my plans for Recurse Center, I’ll be there pretty soon.</p>
+<p>This year has been a real rollercoaster, but I’m extremely grateful to all my friends and mentors who have helped me during this time.</p>
 
 
 </section>

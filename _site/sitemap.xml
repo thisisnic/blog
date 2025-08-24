@@ -2,19 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://niccrane.com/blog.html</loc>
-    <lastmod>2024-08-16T14:14:40.337Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts/debugging/index.html</loc>
-    <lastmod>2024-08-16T14:14:40.361Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts/2023wrapup/index.html</loc>
-    <lastmod>2024-08-16T14:14:40.341Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts/clineshiny/index.html</loc>
-    <lastmod>2025-08-03T20:16:28.332Z</lastmod>
+    <lastmod>2025-08-24T17:21:16.145Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/socalmediagen2/index.html</loc>
@@ -22,15 +10,23 @@
   </url>
   <url>
     <loc>https://niccrane.com/posts/llms_for_learning/index.html</loc>
-    <lastmod>2025-08-04T15:17:45.251Z</lastmod>
+    <lastmod>2025-08-24T17:21:12.965Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/projects/phd/index.html</loc>
-    <lastmod>2024-08-16T14:14:40.385Z</lastmod>
+    <loc>https://niccrane.com/projects/book/index.html</loc>
+    <lastmod>2024-08-16T15:09:15.089Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/projects/firstcontributions/index.html</loc>
-    <lastmod>2024-08-16T15:14:49.233Z</lastmod>
+    <loc>https://niccrane.com/posts-archive/debugging/index.html</loc>
+    <lastmod>2024-08-16T14:14:40.361Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts-archive/2023wrapup/index.html</loc>
+    <lastmod>2024-08-16T14:14:40.341Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts-archive/clineshiny/index.html</loc>
+    <lastmod>2025-08-03T20:16:28.332Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/contact.html</loc>
@@ -50,7 +46,7 @@
   </url>
   <url>
     <loc>https://niccrane.com/index.html</loc>
-    <lastmod>2025-08-03T20:16:28.312Z</lastmod>
+    <lastmod>2025-08-24T17:21:16.145Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/projects.html</loc>
@@ -73,8 +69,16 @@
     <lastmod>2024-08-16T14:14:40.417Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/projects/book/index.html</loc>
-    <lastmod>2024-08-16T15:09:15.089Z</lastmod>
+    <loc>https://niccrane.com/posts-archive/goats/index.html</loc>
+    <lastmod>2024-08-16T14:14:40.365Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts-archive/c_deepr/index.html</loc>
+    <lastmod>2024-08-16T14:14:40.357Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts-archive/rc/index.html</loc>
+    <lastmod>2024-08-16T14:14:40.373Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/rwatcher/index.html</loc>
@@ -87,17 +91,5 @@
   <url>
     <loc>https://niccrane.com/posts/socialmediagen/index.html</loc>
     <lastmod>2025-02-19T10:58:21.530Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts/goats/index.html</loc>
-    <lastmod>2024-08-16T14:14:40.365Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts/c_deepr/index.html</loc>
-    <lastmod>2024-08-16T14:14:40.357Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts/rc/index.html</loc>
-    <lastmod>2024-08-16T14:14:40.373Z</lastmod>
   </url>
 </urlset>
