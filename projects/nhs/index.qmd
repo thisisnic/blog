@@ -1,0 +1,14 @@
+---
+title: "Supporting Genomic Medicine in the NHS with R and Shiny"
+author: "Nic Crane"
+image: miportal.png
+---
+
+I contributed to a modular Shiny application used in the national rollout of genomic testing within the NHS, building on the 100,000 Genomes Project. It let operational staff, lab teams, and programme managers track genomic samples and view key metrics without needing to interact directly with backend systems.
+
+What I worked on:
+- UI and server logic across multiple Shiny sub-apps
+- Integration with APIs and SQL databases
+- Interactive visualisations using plotly, visNetwork, sunburstR and other htmlwidget packages - Profiling, refactoring, and scaling reactive code for performance
+
+The app was built to support a national rollout and continues to be used across NHS teams.

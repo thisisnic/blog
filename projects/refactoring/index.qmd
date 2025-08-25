@@ -1,0 +1,14 @@
+---
+title: "Refactoring a Legacy Shiny App for Maintainability"
+author: "Nic Crane"
+image: rpackages.png
+---
+
+I led a team within a large organisation responsible for maintaining an internal Shiny app used to manage R package installation requests. The codebase had become increasingly fragile and hard to maintain, with tightly coupled logic and growing technical debt.
+
+What I worked on:
+- Refactored reactive logic to simplify control flow and heavily modularised code to support maintainability
+- Introduced testing strategies and CI workflows
+- Improved onboarding for new developers by making the codebase easier to understand
+
+The changes made the application significantly more maintainable and safer to extend as the team evolved, reducing development time considerably.

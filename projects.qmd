@@ -1,7 +1,12 @@
 ---
 title: "Projects"
 listing: 
-  contents: projects
+  contents: 
+    - "projects/book/index.qmd"
+    - "projects/refactoring/index.qmd"
+    - "projects/migration/index.qmd"
+    - "projects/nhs/index.qmd"
   type: grid
-  sort: "date desc"
+  sort: false
+  fields: [title, image]
 ---

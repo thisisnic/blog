@@ -26,7 +26,7 @@ If you're interested in hiring me to work on a project, you can get in touch by 
 
 ## Bio
 
-I have a PhD in Statistics, and have been using R for 15 years.
+I have a PhD in Statistics, and have been working in R for 15 years.
 
 During my career, I've worked across multiple industries, including pharma, public health, academia, and startups, and on projects encompassing everything from teaching hundreds of new programmers how to work with R, maintaining popular open source packages, to delving into the complexities of deploying R code in production environments where scalability matters.
 

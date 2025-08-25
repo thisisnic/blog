@@ -1,0 +1,14 @@
+---
+title: "Scoping a Large-Scale SAS to R Migration"
+author: "Nic Crane"
+image: sasmacros.png
+---
+
+As part of a consultancy engagement, I audited a large SAS codebase to help a client understand the feasibility and risk profile of migrating to R. The codebase was business-critical and had grown organically over many years.
+
+What I worked on:
+- Static code analysis of SAS codebase to estimate size and complexity (e.g. SQL-style vs. custom PROC logic)
+- Identified areas where statistical methods or parameter defaults might behave differently in R
+- Delivered a scoped migration plan to help inform budget, risk, and staffing decisions
+
+The audit helped the client avoid assumptions about direct conversion and provided a structured way to evaluate next steps.

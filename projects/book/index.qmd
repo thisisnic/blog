@@ -1,11 +1,9 @@
 ---
 title: "Scaling Up With R and Arrow"
 author: "Nic Crane"
-date: "2024-08-14"
-image: thumbnail.png
+image: scaling_up.png
 ---
-  
-[Published online for free at arrowrbook.com](www.arrowrbook.com)
 
-A book I co-authored with Jonathan Keane and Neal Richardson about working with larger-than-memory datasets in R with Arrow. The paper version will be published later this year.
+I've been an active contributor to the Apache Arrow R package, where I've worked on implementing features, acting as package maintainer, and extending `dplyr` support to Arrow. This work has influenced how I approach performance, reproducibility, and maintainability - both in open source and in client projects.
 
+In 2024, I co-authored Scaling Up With R and Arrow, which was [published by CRC Press](https://www.routledge.com/Scaling-Up-with-R-and-Apache-Arrow-Bigger-Data-Easier-Workflows/Crane-Keane-Richardson/p/book/9781032660288?srsltid=AfmBOooQcBGX3Oc49Yrt1sICgCOiGGf5x1Z7TmzwjXzDZsonZTKKxNQY) and also [available online for free at arrowrbook.com](www.arrowrbook.com).
