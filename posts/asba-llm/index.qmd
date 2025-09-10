@@ -1,0 +1,13 @@
+---
+title: "Aspect-based sentiment analysis with {ellmer}"
+author: "Nic Crane"
+date: "2025-10-01"
+categories: [R, AI]
+image: ""
+toc: true
+toc-depth: 2
+---
+
+Ideas so far - see this repo which is in the vader-analysis directory; the idea is to compare the results they go there with the LLM.
+
+https://github.com/joedom99/Aspect-Based-Sentiment-Analysis-of-Online-Reviews-Using-R-With-VADER
