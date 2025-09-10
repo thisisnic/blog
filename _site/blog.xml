@@ -9,8 +9,86 @@
 <link>https://niccrane.com/blog.html</link>
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
-<generator>quarto-1.7.31</generator>
-<lastBuildDate>Sat, 02 Aug 2025 23:00:00 GMT</lastBuildDate>
+<generator>quarto-1.5.57</generator>
+<lastBuildDate>Tue, 09 Sep 2025 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>Taming Messy Survey Data with Arrow</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/pums-arrow/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Earlier this year, the <a href="https://arrowrbook.com/">book</a> that I co-authored with Jon Keane and Neal Richardson, Scaling Up with R and Apache Arrow was published by CRC. It was a joy to write this book, though a lot of hard work, and one of the big choices we need to make was what dataset we were going to use.</p>
+<p>It’s been said many times that data cleaning makes up 80% of data science, and this was reflected in our own experiences in the industry. While many tutorials start with perfectly cleaned up data to focus solely on concepts, we felt that this doesn’t reflect real-world conditions, and even more so for large datasets.</p>
+<p>We wanted to the examples in the book to reflect our readers’ day-to-day challenges, and so we decided to work with the US Census Bureau’s Public Use Microdata Sample (PUMS) dataset, containing data from the <a href="https://www.census.gov/programs-surveys/acs.html">American Community Survey (ACS)</a>.</p>
+<p>While it’s common to work with aggregated survey data, the PUMS dataset differs in that it contains individual-level records. It’s a bit more complicated than this - there’s weighting to account for too due to how the data in anonymised - but effectively it’s a massive dataset which samples 1% of the US population per year.</p>
+<p>In this blog post, I’m going to outline the specific steps we needed to take to make the raw PUMS dataset analysis-ready, and where we used Arrow and Parquet in that process.</p>
+<p>You can find the full processing code <a href="https://github.com/arrowrbook/book/tree/main/pums_dataset">here</a>. Huge thanks to Jon who did most of the work on prepping the data for the book!</p>
+<section id="step-1.-downloading-and-unzipping-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="step-1.-downloading-and-unzipping-the-data">Step 1. Downloading and unzipping the data</h2>
+<p>The final dataset we assembled covers years 2005-2022. There are multiple versions available for many years - 1, 3, and 5 year estimates, and we used the 1 year estimates. Data for the year 2020 is missing since that year’s data was only released in 5-year estimates due to COVID.</p>
+<p>The raw data was retrieved from <a href="https://www2.census.gov/programs-surveys/acs/data/pums/">the Census’s FTP site</a> and the values to recode categorical and string data was retrieved from the Census’s API (via the <code>censusapi</code> R package).</p>
+<p>Even at the point of downloading the original data, we faced a few challenges due to the fact that the structure of the original data is not uniform; recording and storing methods changed.</p>
+<p>A few of the attributes of the data:</p>
+<ul>
+<li>There are 1, 3, and 5 year versions of the survey</li>
+<li>The data for 2000 - 2006 are in the root directory for that year, but other years have subdirectories depending on whether the 1, 3, or 5 year version</li>
+<li>Puerto Rico data only started from 2004 onwards</li>
+<li>The data dictionaries are only available from 2005 onwards</li>
+</ul>
+<p>The download script accounts for these, and sets a two hour timeout to account for slow connections.</p>
+<p>Time taken to download the entire dataset?</p>
+<!-- add this here! -->
+</section>
+<section id="step-2.-recoding-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="step-2.-recoding-the-data">Step 2. Recoding the data</h2>
+<p>We needed to do some significant recoding of the data itself to ensure that it was consistent.</p>
+<p>One of the trickier aspects of working with multi-year PUMS data is that the same variable doesn’t always stay the same from year to year. For example, <code>WKW</code> (“Weeks Worked Last Year”) is literally a numeric count in 2005, but in later years it’s a categorical code with values like “50 to 52 weeks”. If you just bind the years together, Arrow (or any other parser) will complain, because the column can’t be both integer and string at the same time. There were numerous similar examples in the data, and so it was recoded with the following general principles:</p>
+<ul>
+<li>For string values, if there were less than or equal to 10 unique values, we converted these to factors.</li>
+<li>For string values, if there were more than 10 unique values, we converted these to strings.</li>
+<li>We used integer or floats for values that were numeric in nature, and recoded special values (<em>e.g.</em> variable <code>RETP</code> “Retirement income past 12 months” where a value of -1 means “N/A (Less than 15 years old)”) that are missing-like as <code>NA</code></li>
+<li>If there were codes that broadly corresponded to <code>TRUE</code> and <code>FALSE</code> (e.g.&nbsp;“yes” and “no”), these were converted into booleans</li>
+<li>Re-pad codes that sometimes had leading zeros</li>
+<li>Detect when a variable had switched type (e.g.&nbsp;<code>WKW</code> numeric one year, categorical the next) and recode to match</li>
+</ul>
+<p>When we read each CSV, we used Arrow schemas to force the correct column types before applying our recoding rules. Arrow’s CSV reader was fast enough to let us loop through hundreds of files relatively easily, and once recoded, we immediately wrote the results back out to Parquet.</p>
+</section>
+<section id="step-3.-repartitioning-and-more-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="step-3.-repartitioning-and-more-cleaning">Step 3. Repartitioning and more cleaning</h2>
+<p>At this point, there was still more work to be done, but now we were working with cleaned up Parquet files, the process became much simpler.</p>
+<p>We still had columns we wanted to relabel; in <a href="https://arrowrbook.com/data_manipulation.html#relabeling-values">Chapter 3</a> we talk about variables with values which had remained roughly the same, but with slightly different labels; for example, a possible response to whether the respondent was a US citizen changed from “Yes, naturalized” in 2005 to “U.S. citizen by naturalization” in 2021. These values needed to be relabelled so that they matched, but this process was significantly simpler now it could be done working in Arrow with lazily-evaluated queries on Parquet datasets, instead of reading the files into memory.</p>
+<p>We also needed to repartition the data - split it out into subdirectories. Repartitioning works best when you know the typical ways in which you’re going to filter your data. We ended up writing <a href="https://arrowrbook.com/datasets.html#how-partitioning-affects-performance">a whole section in the book</a> showing how various partitioning strategies affected speed for different queries.</p>
+</section>
+<section id="step-4.-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="step-4.-analysis">Step 4. Analysis</h2>
+<ul>
+<li>Why Arrow helped - massively shrank the dataset size (show original size -&gt; new size)</li>
+<li>Speed of analysis</li>
+<li>Show a nice end-to-end example which ends up with plots</li>
+</ul>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<ul>
+<li>Messy data is the norm, not the exception.</li>
+<li>Arrow gave us the control (schemas) and the output format (Parquet) to make messy data usable.</li>
+<li>Working with messy survey data in the book was deliberate — it teaches readers real workflows, not toy pipelines.</li>
+</ul>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Arrow</category>
+  <guid>https://niccrane.com/posts/pums-arrow/</guid>
+  <pubDate>Tue, 09 Sep 2025 23:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/pums-arrow/scaling_up.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Using ChatGPT as a Code Tutor: A One-Hour Learning Experiment</title>
   <dc:creator>Nic Crane</dc:creator>
