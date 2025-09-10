@@ -72,5 +72,5 @@ We also needed to repartition the data - split it out into subdirectories.  Repa
 ## Conclusions
 
 - Messy data is the norm, not the exception.
-- Arrow gave us the control (schemas, recodes) and the output format (Parquet) to make messy data usable.
+- Arrow gave us the control (schemas) and the output format (Parquet) to make messy data usable.
 - Working with messy survey data in the book was deliberate — it teaches readers real workflows, not toy pipelines.
