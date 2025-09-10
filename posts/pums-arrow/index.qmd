@@ -54,8 +54,7 @@ One of the trickier aspects of working with multi-year PUMS data is that the sam
 
 When we read each CSV, we used Arrow schemas to force the correct column types before applying our recoding rules.  Arrow's CSV reader was fast enough to let us loop through hundreds of files relatively easily, and once recoded, we immediately wrote the results back out to Parquet.
 
-
-## Step 3. Repartitioning and more cleaning the data
+## Step 3. Repartitioning and more cleaning
 
 At this point, there was still more work to be done, but now we were working with cleaned up Parquet files, the process became much simpler.
 
