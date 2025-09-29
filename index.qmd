@@ -32,7 +32,7 @@ During my career, I've worked across multiple industries, including pharma, publ
 
 I've built dashboards and internal tools supporting hundreds of concurrent users, deployed across the NHS, and have developed and led workshops at major R conferences like Posit Conf.
 
-I am one of the core maintainers of the Apache Arrow R project, acting as package maintainer, and authoring [Scaling Up with R and Arrow](arrowrbook.com) - available online and published by CRC Press in 2025.
+I am one of the core maintainers of the Apache Arrow R project, acting as package maintainer, and authoring [Scaling Up with R and Arrow](https://arrowrbook.com/) - available online and published by CRC Press in 2025.
 
 ## Services
 
