@@ -6,7 +6,7 @@ categories: [R, Arrow]
 image: "scaling_up.jpg"
 ---
 
-Earlier this year, the [book](https://arrowrbook.com/) that I co-authored with Jon Keane and Neal Richardson, Scaling Up with R and Apache Arrow was published by CRC.  It was a joy to write this book, though a lot of hard work, and one of the big choices we need to make was what dataset we were going to use.
+Earlier this year, the [book](https://arrowrbook.com/) that I co-authored with Jonathan Keane and Neal Richardson, Scaling Up with R and Apache Arrow was published by CRC.  It was a joy to write this book, though a lot of hard work, and one of the big choices we need to make was what dataset we were going to use.
 
 It's been said many times that data cleaning makes up 80% of data science, and this was reflected in our own experiences in the industry.  While many tutorials start with perfectly cleaned up data to focus solely on concepts, we felt that this doesn't reflect real-world conditions, and even more so for large datasets.
 
