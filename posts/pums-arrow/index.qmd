@@ -16,7 +16,7 @@ While it's common to work with aggregated survey data, the PUMS dataset differs 
 
 In this blog post, I'm going to outline the specific steps we needed to take to make the raw PUMS dataset analysis-ready, and where we used Arrow and Parquet in that process.
 
-You can find the full processing code [here](https://github.com/arrowrbook/book/tree/main/pums_dataset).  Huge thanks to Jon who did most of the work on prepping the data for the book!
+You can find the full processing code [here](https://github.com/arrowrbook/book/tree/main/pums_dataset).  Huge thanks to Jonathan who did most of the work on prepping the data for the book!
 
 ## Step 1. Downloading and unzipping the data
 
