@@ -29,7 +29,7 @@ Even at the point of downloading the original data, we faced a few challenges du
 A few of the attributes of the data:
 
 - There are 1, 3, and 5 year versions of the survey
-- The data for 2000 - 2006 are in the root directory for that year, but other years have subdirectories depending on whether the 1, 3, or 5 year version
+- The data for 2000 - 2006 are in the root directory for that year, but other years have subdirectories depending on whether they are the 1, 3, or 5 year version
 - Puerto Rico data only started from 2004 onwards
 - The data dictionaries are only available from 2005 onwards
 
