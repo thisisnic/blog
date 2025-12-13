@@ -1,0 +1,15 @@
+---
+title: "About Me"
+---
+
+As a data scientist and self-taught developer, I spent years feeling like I wasn't technical enough to understand a lot of software engineering concepts, until I realised it wasn't me; it was the content and how it was how it was explained. I've lost count of how many times I've gone from "this is impossible" to "oh, I just needed someone to explain it properly." Now I do that for other people.
+
+## My background
+
+I have a PhD in Statistics, and have been working in R for 15 years.
+
+During my career, I've worked across multiple industries, including pharma, public health, academia, and startups, and on projects encompassing everything from teaching hundreds of new programmers how to work with R, maintaining popular open source packages, to delving into the complexities of deploying R code in production environments where scalability matters.
+
+I've built dashboards and internal tools supporting hundreds of concurrent users, deployed across the NHS, and have developed and led workshops at major R conferences like Posit Conf.
+
+I am one of the core maintainers of the Apache Arrow R project, acting as package maintainer, and authoring Scaling Up with R and Arrow - available online and published by CRC Press in 2025.

@@ -6,8 +6,10 @@ website:
   site-url: https://niccrane.com
   navbar:
     right:
-      - text: About
+      - text: Home
         file: index.qmd
+      - text: About
+        file: about.qmd
       - text: Past Work
         file: projects.qmd
       - text: Talks & Workshops

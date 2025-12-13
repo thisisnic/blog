@@ -2,7 +2,6 @@
 title: "Projects"
 listing: 
   contents: 
-    - "projects/book/index.qmd"
     - "projects/refactoring/index.qmd"
     - "projects/migration/index.qmd"
     - "projects/nhs/index.qmd"
@@ -10,3 +9,5 @@ listing:
   sort: false
   fields: [title, image]
 ---
+
+Here is a select subset of previous client projects.

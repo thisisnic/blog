@@ -23,7 +23,6 @@
   {
     "listing": "/projects.html",
     "items": [
-      "/projects/book/index.html",
       "/projects/refactoring/index.html",
       "/projects/migration/index.html",
       "/projects/nhs/index.html"

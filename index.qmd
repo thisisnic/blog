@@ -15,53 +15,38 @@ about:
     - icon: bluesky
       text: Bluesky
       href: https://bsky.app/profile/niccrane.bsky.social
-    - icon: mastodon
-      text: Mastodon
-      href: https://fosstodon.org/@nic_crane
 ---
 
-Hi, I'm Nic! I'm an independent R consultant with a background in data science and software engineering. I specialise in helping organisations work with R in production environments, whether that means designing and building tools from scratch, strengthening fragile workflows, or planning a move away from legacy systems.
+Hi, I'm Nic! I help people level up their R skills and data teams work more efficiently with R. Sometimes that's scaling up data pipelines that have ground to a halt, and sometimes it's figuring out how to use LLMs in analytics workflows.
 
-If you're interested in hiring me to work on a project, you can get in touch by emailing me at: [nic@ncdatalabs.com](mailto:nic@ncdatalabs.com).
+I've taught thousands of people through online courses, sold-out workshops at EARL and posit::conf, and I now run open-access courses for individuals alongside private training for organisations.
 
-## Bio
-
-I have a PhD in Statistics, and have been working in R for 15 years.
-
-During my career, I've worked across multiple industries, including pharma, public health, academia, and startups, and on projects encompassing everything from teaching hundreds of new programmers how to work with R, maintaining popular open source packages, to delving into the complexities of deploying R code in production environments where scalability matters.
-
-I've built dashboards and internal tools supporting hundreds of concurrent users, deployed across the NHS, and have developed and led workshops at major R conferences like Posit Conf.
-
-I am one of the core maintainers of the Apache Arrow R project, acting as package maintainer, and authoring [Scaling Up with R and Arrow](https://arrowrbook.com/) - available online and published by CRC Press in 2025.
+I also take on consulting projects. If you're interested in working together, you can get in touch by emailing me at: [nic\@ncdatalabs.com](mailto:nic@ncdatalabs.com).
 
 ## Services
 
-### Production R Code Consulting and Training
+### Public Training Courses
 
-Many data science tools start life as quick prototypes. Everything works at first, but as usage grows they can become slow, fragile, or hard to maintain.
+I regularly run publicly accessible training courses on working with Arrow in R, and LLMs in R. Details on how to sign up for my next courses coming soon!
 
-I help turn these into reliable, production-quality tools. That might mean adding tests and safeguards, refactoring overcomplicated code, or setting up CI/CD pipelines and good release practices.
+### Private Courses for Organisations
 
-My focus is on practical improvements that make your codebase sustainable long-term, ensuring it's robust enough for business-critical use, without unnecessary complexity.
+I teach team training sessions on intermediate and advanced R topics such as:
 
-I also have trained hundreds of people in getting started with R, and offer courses and workshops for a variety of team setups.
+-   Big Data in R with Arrow and Parquet
+-   LLMs in R
+-   Working with R in Production
 
-### Migrating to R
-
-Switching from proprietary tools to R can cut costs, improve flexibility, and give you reproducible, future-proof workflows.  Migrations are never simple though - translating legacy code, bringing staff up to speed, and keeping business running takes considerable planning.
-
-I can help by analysing existing workflows, building R replacements (packages, Shiny apps, data products), and training teams in the skills they need. My approach covers both the technical transition and the people side of things.
+If you need a bespoke training course tailored to your organisation's needs, get in touch and we can discuss your needs and where I can help.
 
 ### General R Consulting and Training
 
-I'm also available for more general R and data science consulting and team support.  Whether you need help with an one-off project or regular support on a monthly retainer, get in touch and we can explore how I can help. 
+I'm also available for more general R and data science consulting and team support. Whether you need help with an one-off project or regular support on a monthly retainer, get in touch for a free discovery call.
 
-## Projects
+## Resources
 
-### Apache Arrow
+I've been an active contributor to the Apache Arrow R package, where I've worked on implementing features, acting as package maintainer, managing complex build configuration, and extending dplyr support to Arrow. This work has influenced how I approach performance, reproducibility, and maintainability - both in open source and in client projects.
 
-I am one of the maintainers of the [Arrow R package](https://arrow.apache.org/docs/r/), where I work on feature development, bugfixes, release management, and more.
+In 2024, I co-authored Scaling Up With R and Arrow, which was published by CRC Press and also available online at arrowrbook.com.
 
-### Scaling Up with R and Arrow
-
-In 2025 I published [Scaling Up with R and Arrow](https://arrowrbook.com/) with CRC Press.
+![](scaling_up.png){fig-align="center" width="300"}

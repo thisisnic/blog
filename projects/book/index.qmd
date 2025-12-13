@@ -1,9 +1,0 @@
----
-title: "Scaling Up With R and Arrow"
-author: "Nic Crane"
-image: scaling_up.png
----
-
-I've been an active contributor to the Apache Arrow R package, where I've worked on implementing features, acting as package maintainer, and extending `dplyr` support to Arrow. This work has influenced how I approach performance, reproducibility, and maintainability - both in open source and in client projects.
-
-In 2024, I co-authored Scaling Up With R and Arrow, which was [published by CRC Press](https://www.routledge.com/Scaling-Up-with-R-and-Apache-Arrow-Bigger-Data-Easier-Workflows/Crane-Keane-Richardson/p/book/9781032660288?srsltid=AfmBOooQcBGX3Oc49Yrt1sICgCOiGGf5x1Z7TmzwjXzDZsonZTKKxNQY) and also [available online for free at arrowrbook.com](https://arrowrbook.com/).
