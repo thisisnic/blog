@@ -31,11 +31,14 @@ I regularly run publicly accessible training courses on working with Arrow in R,
 
 ### Private Courses for Organisations
 
-I teach team training sessions on intermediate and advanced R topics such as:
+Production-Ready R Program
+
+Tailored training for teams who need to get R code running reliably in production. Modules include:
 
 -   Big Data in R with Arrow and Parquet
 -   LLMs in R
--   Working with R in Production
+-   CI/CD and deployment
+-   (other topics as needed)
 
 If you need a bespoke training course tailored to your organisation's needs, get in touch and we can discuss your needs and where I can help.
 
