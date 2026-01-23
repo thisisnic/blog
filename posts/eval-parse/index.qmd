@@ -1,0 +1,163 @@
+---
+title: "Why is eval parse bad?"
+author: "Nic Crane"
+date: "2021-04-20"
+categories: [R]
+---
+
+I was writing Arrow bindings for `na.omit` and needed a way of applying `is.na` to every column of a table at once. I'd originally implemented using `dplyr::filter`, but had failed to realise that Arrow only suggests `dplyr` but doesn't import it, and so needed to refactor it.
+
+Table objects in `Arrow` have a `Filter` method, and I knew that a naive implementation would be a for loop which iteratively called `Table$Filter(!is.na(column_name))` for each column in my table. However, this would be ugly at best and inefficient at worst, and so what I really wanted was to be able to call `Table$Filter(!is.na(col1) & !is.na(col2) & ... !is.na(colN))` where `1`...`N` are my column names.
+
+An early implementation without `dplyr::filter` looked like this:
+
+```r
+filter_text = paste0("!is.na(tbl$", names(tbl), ")", collapse = " & ")
+filter = rlang::parse_expr(filter_text)
+tbl$Filter(rlang::eval_bare(filter))
+```
+
+To break this down a bit, I'll demonstrate a line by line run, using `airquality` as my input data. Below you can see that we start off with 153 rows.
+
+```r
+tbl = arrow::Table$create(airquality)
+tbl
+```
+
+```
+## Table
+## 153 rows x 6 columns
+## $Ozone <int32>
+## $Solar.R <int32>
+## $Wind <double>
+## $Temp <int32>
+## $Month <int32>
+## $Day <int32>
+##
+## See $metadata for additional Schema metadata
+```
+
+If I call `na.omit` on the `airquality` data.frame, I'm left with 111 rows.
+
+```r
+nrow(na.omit(airquality))
+```
+
+```
+## [1] 111
+```
+
+So now for the Arrow implementation. I first construct my filter:
+
+```r
+filter_text = paste0("!is.na(tbl$", names(tbl), ")", collapse = " & ")
+filter_text
+```
+
+```
+## [1] "!is.na(tbl$Ozone) & !is.na(tbl$Solar.R) & !is.na(tbl$Wind) & !is.na(tbl$Temp) & !is.na(tbl$Month) & !is.na(tbl$Day)"
+```
+
+I then convert the string to an expression.
+
+```r
+filter = rlang::parse_expr(filter_text)
+filter
+```
+
+```
+## !is.na(tbl$Ozone) & !is.na(tbl$Solar.R) & !is.na(tbl$Wind) &
+##     !is.na(tbl$Temp) & !is.na(tbl$Month) & !is.na(tbl$Day)
+```
+
+Finally, I evaluate the expression:
+
+```r
+tbl$Filter(rlang::eval_bare(filter))
+```
+
+```
+## Table
+## 111 rows x 6 columns
+## $Ozone <int32>
+## $Solar.R <int32>
+## $Wind <double>
+## $Temp <int32>
+## $Month <int32>
+## $Day <int32>
+##
+## See $metadata for additional Schema metadata
+```
+
+It looks like it's worked - it has! - but something feels wrong. I've heard people in the past talk about `eval(parse(text = stuff))` being a bad way of doing things, and my solution felt a bit dirty in a similar way, though I wasn't sure why.
+
+A bit of a search and I found [an answer on StackOverflow](https://stackoverflow.com/questions/13649979/what-specifically-are-the-dangers-of-evalparse). In short, the main reasons that eval/parse is warned against are:
+
+- if you're evaluating text passed in by a user there could be security concerns
+- there are other more efficient and human-readable ways of accomplishing the same thing
+- it may be unclear what's being evaluated from what environment
+
+So, my code wasn't as bad as I thought. However, in another bit of the Arrow codebase I'd seen some pretty nice code written using data masks and environment, and so refactored my code a little to mirror this style.
+
+```r
+# paste together the filter function as a character vector
+filter_text = paste0(
+  ".data$Filter(",
+  paste0("!is.na(.data$", names(tbl), ")", collapse = " & "),
+  ")"
+)
+# parse expression; results in:
+# .data$Filter(!is.na(.data$Ozone) & !is.na(.data$Solar.R) & !is.na(.data$Wind) &
+#  !is.na(.data$Temp) & !is.na(.data$Month) & !is.na(.data$Day))
+filter = rlang::parse_expr(filter_text)
+
+# tidily evaluate the results, within the data mask
+rlang::eval_tidy(filter,  rlang::new_data_mask(rlang::env(.data = tbl)))
+```
+
+The above solution is my latest one at time of writing but hasn't been reviewed or merged yet, so may require further changes. Here, I move in the called to `Table$Filter` into the filter text, so the whole expression is captured. This now means that I can use the `.data` pronoun to refer to the dataset, and instead of depending on the fact that a variable called `tbl` has been passed into my function, can instead manually pass it in when I call `rlang::env`.
+
+I'm happier with this solution; whilst it still feels weird to construct calls using strings, at least this way, what is being called against what feels a little cleaner.
+
+One thing that really helped me work all this out was the [`rlang` cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/master/tidyeval.pdf), which is a resource I'd recommend to anyone wrestling with tidy eval.
+
+[Edited to add below]
+
+So in the end, after discussing with a colleague, we decided that parsing an expression was still potentially problematic. Although I'd dismissed the possible security concerns, they mentioned that it could be the case that someone has a dodgy column name, and it was unclear whether encapsulating things in their own environment would remove this risk or not. They suggested that I see if I could get `purrr` to do something useful, and after a little experimentation, here was my eventual solution.
+
+```r
+# Creates a list of ChunkedArrays containing true/false for each value depending
+# if it's an NA or not
+not_na <- purrr::map(tbl$columns, ~!is.na(.x))
+
+# reduces across lists to a single ChunkedArray (i.e. only true if all rows contain true)
+not_na_agg <- purrr::reduce(not_na, `&`)
+
+# filter only to retrieve rows which match with true
+tbl$Filter(not_na_agg)
+```
+
+As is common in these circumstances, there was a simpler and more aesthetically pleasing solution available that didn't require parsing of expressions. I'm much happier with the above code - it feels like a much better approach!
+
+[Edited again!]
+
+Ultimately we went with a different approach that implemented functionality that already exists in the Arrow package. This approach is even better as, instead of evaluating `!is.na` on each column of data and combining them, we instead build an expression that is evaluated against the dataset.
+
+```r
+not_na <- purrr::map(tbl$columns, ~arrow:::build_array_expression("is_valid", .x))
+not_na_agg <- Reduce("&", not_na)
+tbl$Filter(arrow:::eval_array_expression(not_na_agg))
+```
+
+```
+## Table
+## 111 rows x 6 columns
+## $Ozone <int32>
+## $Solar.R <int32>
+## $Wind <double>
+## $Temp <int32>
+## $Month <int32>
+## $Day <int32>
+##
+## See $metadata for additional Schema metadata
+```

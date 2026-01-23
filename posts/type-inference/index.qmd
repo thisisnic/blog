@@ -1,0 +1,501 @@
+---
+title: "Type inference in readr and arrow"
+author: "Nic Crane"
+date: "2022-11-21"
+categories: [R, Arrow]
+---
+
+The CSV format is widely used in data science, and at its best works well as a simple human-readable format that is widely known and understood. The simplicity of CSVs though, as a basic text format also has its drawbacks. One is that it contains no information about data types of its columns, and if you're working with CSVs in an application more complex than a text editor, those data types must be inferred by whatever is reading the data.
+
+In this blog post, I'm going to discuss how CSV type inference works in the R packages [readr](https://readr.tidyverse.org/) and [arrow](https://arrow.apache.org/docs/r/), and highlight the differences between the two.
+
+Before I get started though, I'd like to acknowledge that this post is an exercise in examining the underlying mechanics of the two packages. In practice, I've found that when working with datasets small enough to fit in-memory, it's much more fruitful to either read in the data first and then manipulate it into the required shape, or just specify the column types up front. Still, the strategies for automatic guessing are interesting to explore.
+
+::: {layout-ncol=2}
+![](readr_hex.png){width=200}
+
+![](arrow-logo_hex_black-txt_white-bg.png){width=200}
+:::
+
+## How does type inference work in readr?
+
+Since readr version 2.0.0 (released in July 2020), there was a significant overhaul of the underlying code, which subsequently depended on the [vroom](https://vroom.r-lib.org/) package.
+
+The type inference is done by a C++ function in vroom called `guess_type__()` which guesses types in the following order:
+
+- Does the column contain 0 rows? If yes, return "character"
+
+- Are all values missing? If yes, return "logical"
+
+- Tries to parse column to each of these formats and returns the first one it successfully parses:
+
+  - Logical
+  - Integer (though the default is to not look for these)
+  - Double
+  - Number (a special type which can remove characters from strings representing numbers and then convert them to doubles)
+  - Time
+  - Date
+  - Datetime
+  - Character
+
+The ordering above in the parsing bullet point goes from most to least strict in terms of the conditions which have to be met to successfully parse an input as that data type. For example, for a column to be of logical type, it can only contain a small subset of values representing true (`T`, `t`, `True`, `TRUE`, `true`), false (`F`, `f`, `False`, `FALSE`, `false`) or NA, which is why this is the most strict type, but all of the other types could be read in as character data, which is the least strict and why this is last in the order.
+
+## How does type inference work in arrow?
+
+In arrow, `read_csv_arrow()` handles CSV reading, and much of its interface has been designed to closely follow the excellent APIs of `readr::read_csv()` and `vroom::vroom()`. The intention here is that users can use parameter names they're familiar with from the aforementioned readers when using arrow, and get the same results. The underlying code is pretty different though.
+
+In addition, Arrow has a different set of possible data types compared to R; see [the Arrow docs](https://arrow.apache.org/docs/r/articles/arrow.html) for more information about the mapping between R data types and Arrow types.
+
+In [the Arrow docs](https://arrow.apache.org/docs/cpp/csv.html#data-types), we can see that types are inferred in this order:
+
+- Null
+- Int64
+- Boolean
+- Date32
+- Timestamp (with seconds unit)
+- Float64
+- Dictionary\<String\> (if ConvertOptions::auto_dict_encode is true)
+- Dictionary\<Binary\> (if ConvertOptions::auto_dict_encode is true)
+- String
+- Binary
+
+Note that if you use `arrow::read_csv_arrow()` with parameter `as_data_frame = TRUE` (the default), the Arrow data types are then converted to R data types.
+
+```r
+simple_data <- data.frame(x = c(1, 2, 3), y = c("a", "b", "c"), z = c(1.1, 2.2, 3.3))
+
+readr::write_csv(simple_data, "simple_data.csv")
+
+# columns are arrow's int64, string, and double (aka float64) types
+arrow::read_csv_arrow("simple_data.csv", as_data_frame = FALSE)
+```
+
+```
+## Table
+## 3 rows x 3 columns
+## $x <int64>
+## $y <string>
+## $z <double>
+```
+
+```r
+# columns converted to R's integer, character, and double types
+arrow::read_csv_arrow("simple_data.csv", as_data_frame = TRUE)
+```
+
+```
+## # A tibble: 3 x 3
+##       x y         z
+##   <int> <chr> <dbl>
+## 1     1 a       1.1
+## 2     2 b       2.2
+## 3     3 c       3.3
+```
+
+## What are the main differences between readr and arrow type inference?
+
+Although there appear to be quite a few differences between the order of type inference when comparing arrow and readr, in practice, this doesn't have much effect. Type inference for logical/boolean and integer values are the opposite way round, but given that the underlying data that translates into these types looks very different, they're not going to be mixed up. The biggest differences come from custom behaviours which are specific to readr and arrow; I've outlined them below.
+
+### Guessing integers
+
+In the code for readr, the default setting is for numeric values to always be read in as doubles but never integers. If you want readr to guess that a column may be an integer, you need to read it in as character data, and then call `type_convert()`. This isn't necessarily a great workflow though, and in most cases it would make sense to just manually specify the column type instead of having it inferred.
+
+In arrow, if data can be represented as integers but not doubles, then it will be.
+
+```r
+int_or_dbl <- data.frame(
+  x = c(1L, 2L, 3L)
+)
+
+readr::write_csv(int_or_dbl, "int_or_dbl.csv")
+
+readLines("int_or_dbl.csv")
+```
+
+```
+## [1] "x" "1" "2" "3"
+```
+
+```r
+# double
+readr::read_csv("int_or_dbl.csv")
+```
+
+```
+## Rows: 3 Columns: 1
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## dbl (1): x
+##
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+```
+## # A tibble: 3 x 1
+##       x
+##   <dbl>
+## 1     1
+## 2     2
+## 3     3
+```
+
+```r
+# integer via inference
+readr::read_csv("int_or_dbl.csv", col_types = list(.default = col_character())) %>%
+  type_convert(guess_integer = TRUE)
+```
+
+```
+##
+## -- Column specification --------------------------------------------------------
+## cols(
+##   x = col_integer()
+## )
+```
+
+```
+## # A tibble: 3 x 1
+##       x
+##   <int>
+## 1     1
+## 2     2
+## 3     3
+```
+
+```r
+# integer via specification
+readr::read_csv("int_or_dbl.csv", col_types = list(col_integer()))
+```
+
+```
+## # A tibble: 3 x 1
+##       x
+##   <int>
+## 1     1
+## 2     2
+## 3     3
+```
+
+```r
+# integer via inference
+arrow::read_csv_arrow("int_or_dbl.csv")
+```
+
+```
+## # A tibble: 3 x 1
+##       x
+##   <int>
+## 1     1
+## 2     2
+## 3     3
+```
+
+### 32-bit integers
+
+Another difference between readr and arrow is the difference between how integers larger than 32 bits are read in. Natively, R can only support 32-bit integers, though it can support 64-bit integers via the [bit64](https://cran.r-project.org/web/packages/bit64/index.html) package. If we create a CSV with one column containing the largest integer that R can natively support, and then another column containing that value plus 1, we get different behaviour when we import this data with readr and arrow. In readr, when we enable integer guessing, the smaller value is read in as an integer, and the larger value is read in as a double. However, once we move over to manually specifying column types, we can use `vroom::col_big_integer()` to use bit64 and get us a large integer column. The arrow package also uses bit64, and its integer guessing results in 64-bit integer via inference.
+
+```r
+sixty_four <- data.frame(x = 2^31 - 1, y = 2^31)
+
+readr::write_csv(sixty_four, "sixty_four.csv")
+
+# doubles by default
+readr::read_csv("sixty_four.csv")
+```
+
+```
+## Rows: 1 Columns: 2
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## dbl (2): x, y
+##
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+```
+## # A tibble: 1 x 2
+##            x          y
+##        <dbl>      <dbl>
+## 1 2147483647 2147483648
+```
+
+```r
+# 32 bit integer or double depending on value size
+readr::read_csv("sixty_four.csv", col_types = list(.default = col_character())) %>%
+  type_convert(guess_integer = TRUE)
+```
+
+```
+##
+## -- Column specification --------------------------------------------------------
+## cols(
+##   x = col_integer(),
+##   y = col_double()
+## )
+```
+
+```
+## # A tibble: 1 x 2
+##            x          y
+##        <int>      <dbl>
+## 1 2147483647 2147483648
+```
+
+```r
+# integers by specification
+readr::read_csv(
+  "sixty_four.csv",
+  col_types = list(x = col_integer(), y = vroom::col_big_integer())
+)
+```
+
+```
+## # A tibble: 1 x 2
+##            x          y
+##        <int>    <int64>
+## 1 2147483647 2147483648
+```
+
+```r
+# integers by inference
+arrow::read_csv_arrow("sixty_four.csv")
+```
+
+```
+## # A tibble: 1 x 2
+##            x          y
+##        <int>    <int64>
+## 1 2147483647 2147483648
+```
+
+### The "number" parsing strategy
+
+One really cool feature in readr is the "number" parsing strategy. This allows values which have been stored as character data with commas to separate the thousands to be read in as doubles. This is not supported in arrow.
+
+```r
+number_type <- data.frame(
+  x = c("1,000", "1,250")
+)
+
+readr::write_csv(number_type, "number_type.csv")
+
+# double type, but parsed in as number in column spec shown below
+readr::read_csv("number_type.csv")
+```
+
+```
+## Rows: 2 Columns: 1
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## num (1): x
+##
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+```
+## # A tibble: 2 x 1
+##       x
+##   <dbl>
+## 1  1000
+## 2  1250
+```
+
+```r
+# read in as character data in Arrow
+arrow::read_csv_arrow("number_type.csv")
+```
+
+```
+## # A tibble: 2 x 1
+##   x
+##   <chr>
+## 1 1,000
+## 2 1,250
+```
+
+### Dictionaries/Factors
+
+Anyone who's been around long enough might remember that R's native CSV reading function `read.csv()` had a default setting of importing character columns as factors (I definitely have `read.csv(..., stringAsFactors=FALSE)` carved into a groove in some dark corner of my memory). This default was changed in version 4.0.0, released in April 2020, reflecting the fact that in most cases users want their string data to be imported as characters unless otherwise specified. Still, some datasets contain character data which users do want to import as factors. In readr, this can be controlled by manually specifying the column as a factor
+
+In arrow, if you don't want to individually specify column types, you can set up an option to import character columns as dictionaries (the Arrow equivalent of factors), which are converted into factors.
+
+```r
+dict_type <- data.frame(
+  x = c("yes", "no", "yes", "no")
+)
+
+readr::write_csv(dict_type, "dict_type.csv")
+
+# character data
+readr::read_csv("dict_type.csv")
+```
+
+```
+## Rows: 4 Columns: 1
+## -- Column specification --------------------------------------------------------
+## Delimiter: ","
+## chr (1): x
+##
+## i Use `spec()` to retrieve the full column specification for this data.
+## i Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+```
+## # A tibble: 4 x 1
+##   x
+##   <chr>
+## 1 yes
+## 2 no
+## 3 yes
+## 4 no
+```
+
+```r
+# factor data
+readr::read_csv("dict_type.csv", col_types = list(x = col_factor()))
+```
+
+```
+## # A tibble: 4 x 1
+##   x
+##   <fct>
+## 1 yes
+## 2 no
+## 3 yes
+## 4 no
+```
+
+```r
+# set up the option. there's an open ticket to make this code a bit nicer to read.
+auto_dict_option <- arrow::CsvConvertOptions$create(auto_dict_encode = TRUE)
+arrow::read_csv_arrow("dict_type.csv", convert_options = auto_dict_option)
+```
+
+```
+## # A tibble: 4 x 1
+##   x
+##   <fct>
+## 1 yes
+## 2 no
+## 3 yes
+## 4 no
+```
+
+### Custom logical/boolean values
+
+Another slightly niche but potentially useful piece of functionality available in arrow is the ability to customise which values can be parsed as logical/boolean type and how they translate to `TRUE`/`FALSE`. This can be achieved by setting some custom conversion options.
+
+```r
+alternative_true_false <- arrow::CsvConvertOptions$create(
+  false_values = "no", true_values = "yes"
+)
+arrow::read_csv_arrow("dict_type.csv", convert_options = alternative_true_false)
+```
+
+```
+## # A tibble: 4 x 1
+##   x
+##   <lgl>
+## 1 TRUE
+## 2 FALSE
+## 3 TRUE
+## 4 FALSE
+```
+
+## Using schemas for manual control of data types
+
+Although relying on the reader itself to guess your column types can work well, what if you want more precise control?
+
+In readr, you can use the `col_types` parameter to specify column types. You can use the same parameter in arrow to use R type specifications.
+
+```r
+given_types <- data.frame(x = c(1, 2, 3), y = c(4, 5, 6))
+
+readr::write_csv(given_types, "given_types.csv")
+
+readr::read_csv("given_types.csv", col_types = list(col_integer(), col_double()))
+```
+
+```
+## # A tibble: 3 x 2
+##       x     y
+##   <int> <dbl>
+## 1     1     4
+## 2     2     5
+## 3     3     6
+```
+
+You can also use this shortcode specification. Here, "i" means integer and "d" means double.
+
+```r
+readr::read_csv("given_types.csv", col_types = "id")
+```
+
+```
+## # A tibble: 3 x 2
+##       x     y
+##   <int> <dbl>
+## 1     1     4
+## 2     2     5
+## 3     3     6
+```
+
+In arrow you can use the shortcodes (though not the `col_*()` functions), but you must specify the column names.
+
+We skip the first row as our data has a header row - this is the same behaviour as when we use both names and types in `readr::read_csv()` which then assumes that the header row is data if we don't skip it.
+
+```r
+arrow::read_csv_arrow("given_types.csv", col_names = c("x", "y"), col_types = "id", skip = 1)
+```
+
+```
+## # A tibble: 3 x 2
+##       x     y
+##   <int> <dbl>
+## 1     1     4
+## 2     2     5
+## 3     3     6
+```
+
+What if you want to use Arrow types instead of R types though? In this case, you need to use a schema. I won't go into detail here, but in short, schemas are lists of fields, each of which contain a field name and a data type. You can specify a schema like this:
+
+```r
+# this gives the same result as before - because our Arrow data has been converted to the relevant R type
+arrow::read_csv_arrow("given_types.csv", schema = schema(x = int8(), y = float32()), skip = 1)
+```
+
+```
+## # A tibble: 3 x 2
+##       x     y
+##   <int> <dbl>
+## 1     1     4
+## 2     2     5
+## 3     3     6
+```
+
+```r
+# BUT, if you don't read it in as a data frame you'll see the Arrow type
+arrow::read_csv_arrow("given_types.csv", schema = schema(x = int8(), y = float32()), skip = 1, as_data_frame = FALSE)
+```
+
+```
+## Table
+## 3 rows x 2 columns
+## $x <int8>
+## $y <float>
+```
+
+## Parquet
+
+An alternative approach is to use Parquet format, which stores the data types along with the data. This means that if you're sharing your data with others, you don't need to worry about it being read in as the wrong data types. In a follow-up post I'll explore the Parquet format and compare management of data types in CSVs and Parquet.
+
+## Further Reading
+
+If you want a much more detailed discussion of Arrow data types, see [this excellent blog post](https://blog.djnavarro.net/posts/2022-03-04_data-types-in-arrow-and-r/) by Danielle Navarro.
+
+## Thanks
+
+Huge thanks to everyone who helped review and tweak this blog post, and special thanks to [Jenny Bryan](https://github.com/jennybc) who gave some really helpful feedback on the content on readr/vroom!

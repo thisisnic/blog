@@ -1,12 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://niccrane.com/posts/rwatcher/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.470Z</lastmod>
+    <loc>https://niccrane.com/posts/show-exec-plan/index.html</loc>
+    <lastmod>2026-01-23T22:13:36.837Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/posts/llms_for_learning/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.463Z</lastmod>
+    <loc>https://niccrane.com/posts/shiny-confirm-popup/index.html</loc>
+    <lastmod>2026-01-23T21:57:48.421Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/goats/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.459Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/good-examples/index.html</loc>
+    <lastmod>2026-01-23T22:09:14.300Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/r-examples/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.467Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/pkgdown-version-selector/index.html</loc>
+    <lastmod>2026-01-23T22:11:45.682Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/type-inference/index.html</loc>
+    <lastmod>2026-01-23T22:13:37.025Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/socalmediagen2/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.473Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/three-valued-logic/index.html</loc>
+    <lastmod>2026-01-23T22:06:13.487Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/ursa-computing-first-month/index.html</loc>
+    <lastmod>2026-01-23T22:09:14.124Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts/socialmediagen/index.html</loc>
@@ -49,12 +81,8 @@
     <lastmod>2025-12-18T10:18:44.923Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/posts-archive/goats/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.459Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts-archive/debugging/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.455Z</lastmod>
+    <loc>https://niccrane.com/posts-archive/rc/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.460Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts-archive/c_deepr/index.html</loc>
@@ -63,10 +91,6 @@
   <url>
     <loc>https://niccrane.com/posts-archive/clineshiny/index.html</loc>
     <lastmod>2025-12-13T11:56:17.452Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts-archive/rc/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.460Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/posts-archive/2023wrapup/index.html</loc>
@@ -109,11 +133,43 @@
     <lastmod>2026-01-23T21:16:29.782Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/posts/socalmediagen2/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.473Z</lastmod>
+    <loc>https://niccrane.com/posts/leaflet-shiny/index.html</loc>
+    <lastmod>2026-01-23T22:37:28.029Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/posts/r-examples/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.467Z</lastmod>
+    <loc>https://niccrane.com/posts/scraping-rstudioconf-2018-abstracts/index.html</loc>
+    <lastmod>2026-01-23T22:16:46.702Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/open-source-apprenticeship/index.html</loc>
+    <lastmod>2026-01-23T22:09:14.511Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/tidyverse-contributor/index.html</loc>
+    <lastmod>2026-01-23T22:16:46.539Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/debugging/index.html</loc>
+    <lastmod>2026-01-23T21:53:49.794Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/llms_for_learning/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.463Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/eval-parse/index.html</loc>
+    <lastmod>2026-01-23T22:06:13.629Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/packagemetrics/index.html</loc>
+    <lastmod>2026-01-23T22:06:13.288Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/error-chaining/index.html</loc>
+    <lastmod>2026-01-23T22:11:45.501Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts/rwatcher/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.470Z</lastmod>
   </url>
 </urlset>

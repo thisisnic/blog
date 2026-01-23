@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nic Crane">
+<meta name="dcterms.date" content="2018-08-22">
+
+<title>Scraping rstudio::conf 2018 Abstracts</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-aa08cb5b93ec1017f491aff1d0ba7e11.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SJ58WZL69W"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../workshops.html"> 
+<span class="menu-text">Workshops</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects.html"> 
+<span class="menu-text">Past Work</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../talks.html"> 
+<span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../blog.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Scraping rstudio::conf 2018 Abstracts</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nic Crane </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 22, 2018</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>RStudio Conference 2019 takes place in January 2019, and this week RStudio put out a <a href="https://blog.rstudio.com/2018/08/20/rstudio-conf-2019-contributed-talks-eposters/">call for contributed talks and e-posters</a>. Though I was eager to browse previous years’ abstracts for inspiration, I couldn’t find them all in one place, and so I decided to use one of my favourite R packages, <code>rvest</code>, to do some web scraping to grab the content.</p>
+<p>My main aim was to find all of the abstracts for the contributed talks only from 2018.</p>
+<p>As this ended up being an unusually long blog post, here’s a table containing links to the videos and abstract for contributed talks. A detailed walk through of the code used to create it can be found below.</p>
+<p>As ever, give me a shout <a href="https://twitter.com/nic_crane">on Twitter</a> if you have any comments or questions!</p>
+<p>Here’s a walkthrough of the code, and the full list of abstracts.</p>
+<section id="getting-started" class="level1">
+<h1>Getting Started</h1>
+<p>I found last year’s conference schedule <a href="https://beta.rstudioconnect.com/content/3105/">here</a>, which seemed as good a place as any to start. First, I loaded the <code>rvest</code> package and used <code>read_html()</code> (from <code>xml2</code> which is automatically loaded when you load <code>rvest</code>) to pull the html from the page.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>my_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">"https://beta.rstudioconnect.com/content/3105/"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>my_html</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## {xml_document}
+## &lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+## [1] &lt;head&gt;\n&lt;meta charset="utf-8"&gt;\n&lt;meta http-equiv="Content-Type" cont ...
+## [2] &lt;body&gt;\n\n&lt;style type="text/css"&gt;\n.main-container {\n  max-width: 9 ...</code></pre>
+<p>The <code>my_html</code> object is an xml document, and to do anything useful with it, I need to work out which components I need. I could do this manually, but it’s much simpler to use <a href="https://selectorgadget.com/">Selector Gadget</a> to help me.</p>
+<section id="selector-gadget" class="level2">
+<h2 class="anchored" data-anchor-id="selector-gadget">Selector Gadget</h2>
+<p>Selector Gadget is a tool which takes a lot of effort out of webscraping. For an in-depth description, check out <a href="https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html">this rvest vignette</a>. In short, once Selector Gadget is loaded, I click on any unselected components to pick which ones I need (in green), look at what else is highlighted (in yellow) and then click on these to deselect them (now in red) and carry on selecting and/or deselecting components until only the ones I want are in green or yellow.</p>
+<p><img src="selector_gadget.png" class="img-fluid" style="width:50.0%"></p>
+<p>Then, I copy the text out of the box, in the case, “.talk-title”. This is the CSS selector needed to grab those components, and I supply this as the <code>css</code> argument to <code>html_nodes()</code>. As I just want the inner text, I pipe the result of this into <code>html_text()</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>talks <span class="ot">&lt;-</span> my_html <span class="sc">%&gt;%</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".talk-title"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(talks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] "\nTo the Tidyverse and Beyond: Challenges for the Future in Data Science\n\n"
+## [2] "\nTo the Tidyverse and Beyond: Challenges for the Future in Data Science\n\n"
+## [3] "\nTidy spatial data analysis\n\n"
+## [4] "Scaling Shiny apps with async programming"
+## [5] "\nRStudio 1.1 new features\n\n"
+## [6] "\nThe future of time series and financial analysis in the tidyverse\n\n"</code></pre>
+<p>I now repeat this process to get the presenter names. Handily, the CSS selector for these is “.presenter”!</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>authors <span class="ot">&lt;-</span> my_html <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".presenter"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(authors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] "Dianne Cook"   "Dianne Cook"   "Edzer Pebesma" "Joe Cheng"
+## [5] "Kevin Ushey"   "Davis Vaughan"</code></pre>
+<p>Now I’ve got my talks and authors, I’m next going to combine them in a <code>data_frame</code>. Once this is done, I’m also going to tidy them up by removing all the newline characters (“”) from the titles.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>schedule <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(talks, authors) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">talks =</span> <span class="fu">str_remove_all</span>(talks, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(schedule)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 6 x 2
+##   talks                                                        authors
+##   &lt;chr&gt;                                                        &lt;chr&gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Future in D~ Dianne Cook
+## 2 Tidy spatial data analysis                                   Edzer Pebe~
+## 3 Scaling Shiny apps with async programming                    Joe Cheng
+## 4 RStudio 1.1 new features                                     Kevin Ushey
+## 5 The future of time series and financial analysis in the tid~ Davis Vaug~
+## 6 Developing robust shiny apps with regression testing         Winston Ch~</code></pre>
+<p>Great! So now what? Well, the point of this analysis is to look at the contributed talks, rather than those from invited speakers or RStudio staff, so in the next part of this post, I’m going to be using lots of <code>dplyr</code> joins to remove these!</p>
+</section>
+</section>
+<section id="finding-only-contributed-talks" class="level1">
+<h1>Finding Only Contributed Talks</h1>
+<p>Let’s start of with identifying talks from invited speakers and RStudio staff.</p>
+<p>I found <a href="https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/">this post on the RStudio blog</a> which lists the invited speakers. I repeat the process from earlier using <code>rvest</code> and <code>xml2</code> functions to scrape the list of invited speakers.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>invited_speakers <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">"https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"table:nth-child(6) td:nth-child(1)"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>invited <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">authors =</span> invited_speakers, <span class="at">Status =</span> <span class="st">"Invited"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(invited)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 6 x 2
+##   authors         Status
+##   &lt;chr&gt;           &lt;chr&gt;
+## 1 Mara Averick    Invited
+## 2 Nick Carchedi   Invited
+## 3 Tanya Cashorali Invited
+## 4 Eric Colson     Invited
+## 5 Sandra Griffith Invited
+## 6 Aaron Horowitz  Invited</code></pre>
+<p>Now I need to combine this back with my original table, <code>schedule</code>, so I use <code>left_join()</code> from <code>dplyr</code> to help me.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">left_join</span>(schedule, invited, <span class="at">by =</span> <span class="st">"authors"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(author_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 6 x 3
+##   talks                                                authors      Status
+##   &lt;chr&gt;                                                &lt;chr&gt;        &lt;chr&gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Fut~ Dianne Cook  &lt;NA&gt;
+## 2 Tidy spatial data analysis                           Edzer Peb~ Invit~
+## 3 Scaling Shiny apps with async programming            Joe Cheng    &lt;NA&gt;
+## 4 RStudio 1.1 new features                             Kevin Ush~ &lt;NA&gt;
+## 5 The future of time series and financial analysis in~ Davis Vaugh~ &lt;NA&gt;
+## 6 Developing robust shiny apps with regression testing Winston Ch~ &lt;NA&gt;</code></pre>
+<p>Something you may have noticed is that we have some duplicated rows in the table, and so I use <code>distinct()</code> to remove these.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">distinct</span>(author_tbl)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(author_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 6 x 3
+##   talks                                                authors      Status
+##   &lt;chr&gt;                                                &lt;chr&gt;        &lt;chr&gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Fut~ Dianne Cook  &lt;NA&gt;
+## 2 Tidy spatial data analysis                           Edzer Peb~ Invit~
+## 3 Scaling Shiny apps with async programming            Joe Cheng    &lt;NA&gt;
+## 4 RStudio 1.1 new features                             Kevin Ush~ &lt;NA&gt;
+## 5 The future of time series and financial analysis in~ Davis Vaugh~ &lt;NA&gt;
+## 6 Developing robust shiny apps with regression testing Winston Ch~ &lt;NA&gt;</code></pre>
+<p>Great! Now I’ve remove the duplications, let’s take a look at how many rows have no value in the <code>Status</code> column. I can use <code>sum()</code> and <code>is.na()</code> to do this</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(author_tbl<span class="sc">$</span>Status))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] 51</code></pre>
+<p>I still have 51 rows with no value in the <code>Status</code> column, but I’m only expecting around 20. I need to remove talks from RStudio staff to get to my contributed talks.</p>
+<p>I did the next bit manually, by searching for any of the individuals I hadn’t already heard of. It’s likely that there’s a quicker way to do this, using the web scraping techniques we’ve already looked at.</p>
+<p>In no particular order…</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rstudio_staff <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Joe Cheng"</span>, <span class="st">"Winston Chang"</span>, <span class="st">"Alan Dipert"</span>, <span class="st">"Sean Lopp"</span>,</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Kevin Ushey"</span>, <span class="st">"Jonathan McPherson"</span>, <span class="st">"Mel Gregory"</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Yihui Xie"</span>, <span class="st">"Max Kuhn"</span>, <span class="st">"Jenny Bryan"</span>, <span class="st">"Jim Hester"</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Joseph Rickert"</span>, <span class="st">"Jeff Allen"</span>, <span class="st">"Aron Atkins"</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Barbara Borges Ribeiro"</span>, <span class="st">"Nathan Stephens"</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Mine Cetinkaya-Rundel"</span>, <span class="st">"Aaron Berg"</span>, <span class="st">"Hadley Wickham"</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Edgar Ruiz"</span>, <span class="st">"Amanda Gadrow"</span>, <span class="st">"JJ Allaire"</span>, <span class="st">"Kevin Kuo"</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Javier Luraschi"</span>, <span class="st">"Michael Quinn"</span>, <span class="st">"Tareef Kawaf"</span>)</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>rstudio <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">authors =</span> rstudio_staff, <span class="at">Status =</span> <span class="st">"RStudio"</span>)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rstudio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 6 x 2
+##   authors            Status
+##   &lt;chr&gt;              &lt;chr&gt;
+## 1 Joe Cheng          RStudio
+## 2 Winston Chang      RStudio
+## 3 Alan Dipert        RStudio
+## 4 Sean Lopp          RStudio
+## 5 Kevin Ushey        RStudio
+## 6 Jonathan McPherson RStudio</code></pre>
+<p>OK, so this is where it gets a little complicated, so please bear with me.</p>
+<p>What I need to do next is combine my list of RStudio people with the <code>schedule</code> data_frame. However, I can’t just do a <code>left_join</code>:</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(author_tbl, rstudio, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 6 x 4
+##   talks                                       authors    Status.x Status.y
+##   &lt;chr&gt;                                       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;
+## 1 To the Tidyverse and Beyond: Challenges fo~ Dianne Co~ &lt;NA&gt;     &lt;NA&gt;
+## 2 Tidy spatial data analysis                  Edzer Peb~ Invited  &lt;NA&gt;
+## 3 Scaling Shiny apps with async programming   Joe Cheng  &lt;NA&gt;     RStudio
+## 4 RStudio 1.1 new features                    Kevin Ush~ &lt;NA&gt;     RStudio
+## 5 The future of time series and financial an~ Davis Vau~ &lt;NA&gt;     &lt;NA&gt;
+## 6 Developing robust shiny apps with regressi~ Winston C~ &lt;NA&gt;     RStudio</code></pre>
+<p>Oh no! The left join has created 2 new columns, <code>Status.x</code> and <code>Status.y</code>, representing the value of <code>Status</code> in the <code>x</code> and <code>y</code>.</p>
+<p>This is because all of the RStudio staff already exist in <code>author_tbl</code>, with a <code>Status</code> value of <code>NA</code>.</p>
+<p>Sad times! However, a quick trip to Stack Overflow tells me what I need to do: <em>Note that more efficient solutions may exist!</em></p>
+<ol type="1">
+<li><p>Extract all of the speakers who are not RStudio staff from <code>author_tbl</code> using <code>anti_join()</code>.</p></li>
+<li><p>Join my <code>rstudio</code> table with my original <code>schedule</code> table which does not have a <code>Status</code> column, using <code>left_join()</code>. As I removed duplicates after this, I’ll have to do it again, using <code>distinct()</code>.</p></li>
+<li><p>Combine the outputs from 1 and 2, using <code>bind_rows()</code>. It looks kinda ugly below as I wanted to do it all in a single pipe.</p></li>
+</ol>
+<p>I’ve used <code>tail()</code> to have a peek at the last 6 rows of the data_frame as I expect the rows for all the RStudio staff to be at the bottom of the table.</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(author_tbl, rstudio, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(rstudio, schedule, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>()</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(author_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 6 x 3
+##   talks                                               authors       Status
+##   &lt;chr&gt;                                               &lt;chr&gt;         &lt;chr&gt;
+## 1 Debugging techniques in RStudio                     Amanda Gadrow RStud~
+## 2 Machine Learning with R and TensorFlow              JJ Allaire    RStud~
+## 3 Building Spark ML pipelines with sparklyr           Kevin Kuo     RStud~
+## 4 Deploying TensorFlow models with tfdeploy           Javier Luras~ RStud~
+## 5 Large scale machine learning using TensorFlow, Big~ Michael Quinn RStud~
+## 6 R for Presidents                                    Tareef Kawaf  RStud~</code></pre>
+<p>Hooray!</p>
+<p>I skim through the data and realise I probably need to add a <code>Status</code> value for the keynote speakers. JJ Allaire has already been included in <code>RStudio</code>, so it’s just Dianne Cook that I need to add. I use the same technique as before:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>keynotes <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">authors =</span> <span class="st">"Dianne Cook"</span>,</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">Status =</span> <span class="st">"keynote"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(author_tbl, keynotes, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(keynotes, schedule, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>()</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>I have a quick look over the data, and remove the discussions and closing remarks from the data using <code>filter()</code>.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> author_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(<span class="sc">!</span>talks <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"R in industry discussion"</span>, <span class="st">"Tidyverse discussion"</span>, <span class="st">"Closing remarks"</span>) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally, I <code>filter()</code> again to only show the rows for which the <code>Status</code> column contains an <code>NA</code>, and drop the now-redundant <code>Status</code> column.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>contributed_talks <span class="ot">&lt;-</span> <span class="fu">filter</span>(author_tbl, <span class="fu">is.na</span>(Status)) <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Status)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>contributed_talks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 20 x 2
+##    talks                                                 authors
+##    &lt;chr&gt;                                                 &lt;chr&gt;
+##  1 The future of time series and financial analysis in ~ Davis Vaughan
+##  2 infer: a package for tidy statistical inference       Andrew Bray
+##  3 Tidying up your network analysis with tidygraph and ~ Thomas Lin Peder~
+##  4 The lesser known stars of the tidyverse               Emily Robinson
+##  5 Creating interactive web graphics suitable for explo~ Carson Sievert
+##  6 Open-source solutions for medical marijuana           Carl Ganz
+##  7 Adaptive feedback for learnr tutorials                Daniel Kaplan
+##  8 tidycf: Turning analysis on its head by turning cash~ Emily Riederer
+##  9 Branding and automating your work with R Markdown     Daniel Hadley
+## 10 Understanding PCA using Shiny and Stack Overflow data Julia Silge
+## 11 Connecting to open source databases                   Kirill Müller
+## 12 An assignment operator to unpack vectors and lists    Nathan Teetor
+## 13 Developing and deploying large scale shiny applicati~ Herman Sontrop
+## 14 Five packages in five weeks - from boredom to contri~ Giora Simchoni
+## 15 A SAS-to-R success story                              Elizabeth J. Atk~
+## 16 Reinforcement learning in Minecraft with CNTK-R       Ali Zaidi
+## 17 Kaggle in the classroom: using R and GitHub to run p~ Colin Rundel
+## 18 Imagine Boston 2030: Using R-Shiny to keep ourselves~ Kayla Patel
+## 19 Something old, something new, something borrowed, so~ Chester Ismay
+## 20 Training an army of new data scientists               Marco Blume</code></pre>
+<p>I’m now left with around 20 talks, which is the number I expected. Hooray!</p>
+<p>The final step is to get hold of the abstracts.</p>
+</section>
+<section id="getting-the-urls-of-the-abstracts" class="level1">
+<h1>Getting the URLs of the Abstracts</h1>
+<p>The only place I could find the abstracts for the talks was on the individual videos, so there’s a final bit of webscraping to do.</p>
+<p>Like before, I used <code>read_html()</code> to pull the entire page, and then <code>html_nodes()</code> and <code>html_text()</code> to pull out the text.</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>video_links <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">"https://www.rstudio.com/resources/videos/rstudioconf-2018-talks/"</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>titles <span class="ot">&lt;-</span> video_links <span class="sc">%&gt;%</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"#post-15671 a"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Get rid of any blank values</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>titles <span class="ot">&lt;-</span> titles[titles<span class="sc">!=</span><span class="st">""</span>]</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(titles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] "Greg Swinehart"
+## [2] "The unreasonable effectiveness of empathy"
+## [3] "Teach the Tidyverse to beginners"
+## [4] "How I Learned to Stop Worrying and Love the Firewall"
+## [5] "Imagine Boston 2030: Using R-Shiny to keep ourselves accountable and empower the public"
+## [6] "Phrasing: communicating data science through tweets, gifs, and classic misdirection"</code></pre>
+<p>I also need the links to the pages where the talks are. To pull these out, instead of <code>html_text()</code>, I used <code>html_attr()</code> which extracts everything with a specified attribute, in this case, “href” for the link locations.</p>
+<p>As there is duplication I only keep every alternating value.</p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> video_links <span class="sc">%&gt;%</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"#post-15671 a"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attr</span>(<span class="st">"href"</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> links[<span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">1</span>, <span class="at">to =</span> <span class="fu">length</span>(links), <span class="at">by =</span> <span class="dv">2</span>)]</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(links)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] "https://www.rstudio.com/rviews/author/greg/"
+## [2] "https://www.rstudio.com/resources/videos/the-unreasonable-effectiveness-of-empathy/"
+## [3] "https://www.rstudio.com/resources/videos/teach-the-tidyverse-to-beginners/"
+## [4] "https://www.rstudio.com/resources/videos/how-i-learned-to-stop-worrying-and-love-the-firewall/"
+## [5] "https://www.rstudio.com/resources/videos/imagine-boston-2030-using-r-shiny-to-keep-ourselves-accountable-and-empower-the-public/"
+## [6] "https://www.rstudio.com/resources/videos/phrasing-communicating-data-science-through-tweets-gifs-and-classic-misdirection/"</code></pre>
+<p>I then grab the presenter names…</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>names <span class="ot">&lt;-</span> video_links <span class="sc">%&gt;%</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"em"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] "JD Long"         "David Robinson"  "Ian Lyttle"      "Kayla Patel"
+## [5] "Mara Averick"    "Tanya Cashorali"</code></pre>
+<p>Great! Now I’m ready to combine my titles, links, and names. If we look at the first few elements of <code>names</code>, <code>titles</code> and <code>links</code>, we can see that there is an erroneous extra value in <code>titles</code> and <code>links</code> but not <code>names</code> - I must have accidentally picked this up with my selectors from earlier.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(names, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] "JD Long"        "David Robinson" "Ian Lyttle"</code></pre>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(titles, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] "Greg Swinehart"
+## [2] "The unreasonable effectiveness of empathy"
+## [3] "Teach the Tidyverse to beginners"</code></pre>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(links, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## [1] "https://www.rstudio.com/rviews/author/greg/"
+## [2] "https://www.rstudio.com/resources/videos/the-unreasonable-effectiveness-of-empathy/"
+## [3] "https://www.rstudio.com/resources/videos/teach-the-tidyverse-to-beginners/"</code></pre>
+<p>To get rid of this, I combine <code>names</code> and <code>titles</code> in a data_frame and then <code>slice()</code> this extra row off before adding the <code>name</code> column.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>abstract_links <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(titles, links) <span class="sc">%&gt;%</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> names)</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(abstract_links)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## # A tibble: 6 x 3
+##   titles                          links                           name
+##   &lt;chr&gt;                           &lt;chr&gt;                           &lt;chr&gt;
+## 1 The unreasonable effectiveness~ https://www.rstudio.com/resour~ JD Long
+## 2 Teach the Tidyverse to beginne~ https://www.rstudio.com/resour~ David R~
+## 3 How I Learned to Stop Worrying~ https://www.rstudio.com/resour~ Ian Lyt~
+## 4 Imagine Boston 2030: Using R-S~ https://www.rstudio.com/resour~ Kayla P~
+## 5 Phrasing: communicating data s~ https://www.rstudio.com/resour~ Mara Av~
+## 6 Rapid prototyping data product~ https://www.rstudio.com/resour~ Tanya C~</code></pre>
+<p>Awesome, I have my table of URLs, talks, and authors. Let’s join that with my table of contributed talks.</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(contributed_talks, abstract_links, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"authors"</span> <span class="ot">=</span> <span class="st">"name"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>There are a couple of talks missing URLS and further inspection reveals that this is due to a missing middle name and a missing umlaut, so I make a couple of manual adjustments using <code>case_when()</code> and redo my join.</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>talks_and_urls <span class="ot">&lt;-</span> contributed_talks <span class="sc">%&gt;%</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">authors =</span> <span class="fu">case_when</span>(</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    authors <span class="sc">==</span> <span class="st">"Ali Zaidi"</span> <span class="sc">~</span> <span class="st">"Ali-Kazim Zaidi"</span>,</span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>    authors <span class="sc">==</span> <span class="st">"Kirill Müller"</span> <span class="sc">~</span> <span class="st">"Kirill Muller"</span>,</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> authors</span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(abstract_links, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"authors"</span> <span class="ot">=</span> <span class="st">"name"</span>))</span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>talks_and_urls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>And it’s worked! But what I want is the actual abstract text, which is what I’ll be doing in the next section.</p>
+</section>
+<section id="scraping-the-abstracts" class="level1">
+<h1>Scraping the Abstracts</h1>
+<p>In order to scrape the abstracts from the table of talks and URLs, I need to:</p>
+<ol type="1">
+<li>Read each URL</li>
+<li>Use the relevant selector to pull out just the abstract text nodes</li>
+<li>Use <code>html_text()</code> to pull just the text out of each node.</li>
+</ol>
+<p>I’ve done this a few times already, so it should be simple case of chucking this all into an <code>lapply()</code>, right? Well, not quite…</p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">lapply</span>(talks_and_urls<span class="sc">$</span>links, <span class="cf">function</span>(i){</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(i) <span class="sc">%&gt;%</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".2_3 p"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<pre><code>## Error in parse_simple_selector(stream): Expected selector, got &lt;NUMBER '.2' at 1&gt;</code></pre>
+<p>I quickly get an error. I’m not sure of the source of this, but a remedy here is to use XPath instead of CSS (easily acquired from Selector Gadget) to specify the components I want:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">lapply</span>(talks_and_urls<span class="sc">$</span>links, <span class="cf">function</span>(i){</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(i) <span class="sc">%&gt;%</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="at">xpath=</span><span class="st">'//*[contains(concat( " ", @class, " " ), concat( " ", "2_3", " " ))]//p'</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This takes a while as there are a lof of asbtracts to pull, but once it’s done, it’s looking good. This object is a list, each element containing a character vector of length 1 or more for each abstract. I want to make sure they’re all only 1 item long, so use <code>vapply()</code> to <code>paste()</code> the contents of each abstract into a single character object.</p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">vapply</span>(abstracts, <span class="cf">function</span>(abstract){</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(abstract, <span class="at">collapse =</span> <span class="st">"  "</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>}, <span class="fu">character</span>(<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Finally, I append the abstracts column onto my <code>talks_and_urls</code> table.</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>talks_and_urls<span class="sc">$</span>abstracts <span class="ot">=</span> abstracts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So here we have it, the full list of abstracts. I’m not 100% sure it’s accurate, as <a href="https://blog.rstudio.com/2017/11/06/rstudio-conf-2018-program/">this post</a> on the RStudio blog suggests different numbers of people for each status. My best guess is that couple of people I have down as delivering “contributed” talks were actually invited speakers who were invited after the publication of this blog post.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/niccrane\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

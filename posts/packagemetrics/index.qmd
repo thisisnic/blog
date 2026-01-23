@@ -1,0 +1,64 @@
+---
+title: "Comparing R packages using packagemetrics"
+author: "Nic Crane"
+date: "2018-07-31"
+categories: [R]
+---
+
+A colleague asked for my opinion on 2 packages; `loggit` and `futile.logger`. Whilst I have used `futile.logger` before, I hadn't used `loggit` and so used the metrics of the package to evaluate the package itself.
+
+The `packagemetrics` package allows us to generate a number of metrics about a package, so we can compare them. The first thing I do is call `package_list_metrics()` to get metrics about these two packages. I've changed the shape of the table, just so it's easier to read in this blog post.
+
+```r
+library(packagemetrics)
+library(dplyr)
+```
+
+```r
+pkg_df <- package_list_metrics(c("loggit", "futile.logger"))
+as_data_frame(t(pkg_df), rownames = "stat")
+```
+
+```
+## # A tibble: 18 x 3
+##    stat               V1                           V2
+##    <chr>              <chr>                        <chr>
+##  1 package            loggit                       futile.logger
+##  2 published          2018-04-09                   2016-07-10
+##  3 title              Effortless Exception Logging A Logging Utility for R
+##  4 depends_count      1                            1
+##  5 suggests_count     3                            2
+##  6 tidyverse_happy    " TRUE"                      FALSE
+##  7 has_vignette_build FALSE                        FALSE
+##  8 has_tests          TRUE                         TRUE
+##  9 reverse_count      " 0"                         27
+## 10 dl_last_month      "  250"                      37313
+## 11 ci                 Travis                       <NA>
+## 12 test_coverage      NONE                         <NA>
+## 13 forks              " 0"                         <NA>
+## 14 stars              15                           <NA>
+## 15 watchers           " 5"                         <NA>
+## 16 last_commit        <NA>                         <NA>
+## 17 last_issue_closed  8.4                          <NA>
+## 18 contributors       " 3"                         <NA>
+```
+
+You can see from the table that the last publication date for `loggit` is April 2018 whereas for `futile.logger` it is July 2016. It can be quite hard to gain much from this metric; whereas more recent updates can suggest active development and ongoing improvements to functionality, a lack of update may indicate that a package has reached a stable state.
+
+Reverse dependencies, however, tells us a lot more; if a package has a high number of reverse dependencies, one might conclude that there is a higher degree of trust in it in the community, but also more importantly, that it has been exposed to a higher number of users and therefore be less likely to have undiscovered bug. This is also true for the number of downloads.
+
+The second half of the values in the table are blank, implying that futile.logger isn't on GitHub. For me, if this were true, it'd be a cause for concern as I'd like to be able to see the number of open issues and how recent updates were. However, a quick Google search tells me that futile.logger is in fact on GitHub, but just not linked to in its CRAN page.
+
+Reading GitHub issues pages is fairly simple. Rather than read every issue in detail, I try to get a rough idea of what's going on, by skimming through. Typically a large number of issues tend to stem from user questions and enhancement requests, so just looking at the raw numbers isn't enough.
+
+![](futile.logger-issues.png){width=50%}
+
+Looking through the open issues for `futile.logger`, the package authors has already flagged a couple of items as bugs, reducing my work. They appear to be do with namespacing issues, so certainly something to be aware of although not necessarily important.
+
+Going to the equivalent page for `loggit`, I see that there is only one ticket open, but has been flagged as an enhancement. However, fewer issues is not necessarily a sign of package quality, as it cannot be decoupled from package popularity.
+
+![](loggit-issues.png){width=50%}
+
+At this point, I could go on, and explore the source code for each package, but at this point I feel it'd lead to diminishing returns. The conclusion I draw and pass on to my colleague is that both packages seem to be functional with no glaring issues. As I've used `futile.logger` before, and it seems to be more widely used, I'd lean towards that one. My colleague thanks me for my advice and goes with `loggit` anyway because he's used it before on a project and it worked pretty well there, which is fair enough.
+
+Package metrics can be a useful source of information about a package, but ultimately, there's no substitute for experience. Other logging packages are available; these were merely the ones I'd heard of.

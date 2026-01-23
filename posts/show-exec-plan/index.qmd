@@ -1,0 +1,60 @@
+---
+title: "Arrow New Feature Showcase: `show_exec_plan()`"
+author: "Nic Crane"
+date: "2022-08-26"
+categories: [R, Arrow]
+---
+
+The `arrow` package allows you to take advantage of the power of the [Acero execution engine](https://arrow.apache.org/docs/cpp/streaming_execution.html) for data manipulation and analysis. The code in `arrow` provides bindings to `dplyr` verbs and `tidyverse` functions, so that you can use these interfaces without having to understand the inner workings of Acero. But what if you actually want to know more?
+
+In the latest release of `arrow`, version 9.0.0, the [`show_exec_plan()`](https://arrow.apache.org/docs/r/reference/show_exec_plan.html) function is introduced. This function allows you to see the execution plan generated from your code. For example:
+
+```r
+library(arrow)
+library(dplyr)
+mtcars %>%
+  arrow_table() %>%
+  filter(mpg > 20) %>%
+  mutate(wt_kg = (wt*1000) * 0.453592)  %>%
+  show_exec_plan()
+```
+
+```
+## ExecPlan with 4 nodes:
+## 3:SinkNode{}
+##   2:ProjectNode{projection=[mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb, "wt_kg": multiply_checked(multiply_checked(wt, 1000), 0.453592)]}
+##     1:FilterNode{filter=(mpg > 20)}
+##       0:TableSourceNode{}
+```
+
+This functionality is similar to that of [`dplyr::explain()`](https://dplyr.tidyverse.org/reference/explain.html) and you'll get the same result whether you call [`arrow::show_exec_plan()`](https://arrow.apache.org/docs/r/reference/show_exec_plan.html), [`dplyr::explain()`](https://dplyr.tidyverse.org/reference/explain.html) or [`dplyr::show_query()`](https://dplyr.tidyverse.org/reference/explain.html) on an `arrow_dplyr_query` object.
+
+Shout out to [Dragoș Moldovan-Grünfeld](https://twitter.com/dragosmg) who made the PR to implement this function!
+
+See sections below for definitions of the terms mentioned above.
+
+## What is Acero?
+
+Acero is an Arrow-native query execution engine, developed as part of the Arrow C++ / R libraries.
+
+## What is a query execution engine?
+
+A query execution engine is a piece of software which allows users to execute queries against a data source. It typically has multiple steps, which could include things like taking the query and parsing it into an algebraic format, re-ordering and optimising the query in order to run it in the most efficient way, and actually running the query.
+
+## What is an ExecPlan?
+
+Queries to be run on Acero are specified as execution plans aka ExecPlans. These are directed graphs which express what operations need to take place via nodes - called ExecNodes in this case. The graph for the ExecPlan in the code example earlier in this post looks like this:
+
+```
+TableSourceNode -> FilterNode -> ProjectNode -> SinkNode
+```
+
+The ExecNodes in the plan above are:
+
+- [TableSourceNode](https://arrow.apache.org/docs/cpp/streaming_execution.html#table-source) - used to input the data
+
+- [FilterNode](https://arrow.apache.org/docs/cpp/streaming_execution.html#filter) - where we apply our filter to only retain rows where the value of `mpg` is greater than 20
+
+- [ProjectNode](https://arrow.apache.org/docs/cpp/streaming_execution.html#project) - this then specifies which columns we want, including the new column `wt_kg` as a [compute expression](https://arrow.apache.org/docs/cpp/api/compute.html)
+
+- [SinkNode](https://arrow.apache.org/docs/cpp/streaming_execution.html#sink) - this provides the output

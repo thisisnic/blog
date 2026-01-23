@@ -1,0 +1,56 @@
+---
+title: "Open Source Developer Apprenticeship - 9 months in"
+author: "Nic Crane"
+date: "2022-01-23"
+categories: [R, Arrow, Career]
+---
+
+I've been meaning to blog for ages but have been so wrapped up in project things and getting [nerd-sniped](https://xkcd.com/356/). Here's a bit about the last six months.
+
+# Open-ended role
+
+![](getitnow.gif)
+
+I'm doing a better job of [adapting to the environment of total freedom within the role](https://thisisnic.github.io/2021/07/05/my-first-3-months-at-ursa-computing/). My team has quarterly initiatives to complete, but otherwise, my job is just to "be an open-source maintainer" and do whatever that entails, with colleagues occasionally asking me to get involved with specific pieces of work. At first, this was deeply disorienting (and certainly I'm not the only one who feels this) - I want to be good at this and to be good at it, I need something to measure myself again, and super-explicit expectations and concrete standards for everything are crucial in this, right? Actually...no. Like everyone else, I have areas in which I'm stronger and weaker, and this environment allows me to play to my strengths, work on my weaknesses when it's a good time to do so, and figure out where I fit in the wider team. If something isn't getting done which falls within my remit, I'll either figure it out myself or hear about it, and it'll get sorted. If I'm doing something catastrophically wrong, I'm sure someone will let me know and help me work out how to fix it. Beyond that, I need to take ownership of asking for feedback, which is weirdly daunting - even from colleagues that I get on really well with - but learning to bite the bullet and do it is important.
+
+On a practical level, I've found that keeping a spreadsheet of things I'm working on and things I intend to work on soon, with checklists of things I need to check each day, has been an effective and straightforward way of organising my time and priorities on a daily/weekly basis. And when I find the time, I plan on making something - perhaps a Shiny dashboard, Slack bot, or API - to help me keep track of answers to questions like "have any PRs been approved but not merged?", "are there any new R PRs which haven't yet been reviewed?" and "are there any new GitHub Issues without replies?"
+
+# Learning and documentation
+
+![](assemblyline.gif)
+
+It's been a delight to find out that learning new things and producing documentation can be deeply intertwined processes, and I've noticed a three-stage process that seems to work for me.
+
+1. Ingestion. This is where I write a ton of scruffy biro notes, draw diagrams, and sometimes even transcribe chunks of lectures verbatim when the topic is particularly far from my current knowledge. These usually get blu-tacked to my office wall to use as reference materials.
+2. Consolidation. I take my notes from the ingestion stage, chuck away the irrelevant bits and condense them down to a smaller reference doc. This could be another piece of A4 stuck on the wall or a Google Doc. This is when I start to get excited that things are making a lot more sense.
+3. Documentation. At some point, I realise that the thing I've learned is useful to someone else, and now I have to write it up properly. This is a weird bit of the process as I can't tell you how long something is going to take or how I know when it's done - it just kind of happens. I can't say I love this bit once I'm three rounds of edits and reshuffling in, but once it's done and I have some content, it's pretty satisfying.
+
+# C++
+
+![](lego.gif)
+
+When I first started, I felt like I wanted to learn everything, and very earnestly started picking up books on C++ and proclaiming I was going to learn the language. Since then, I've dabbled a bit but not taken it much further, and more recently, I've decided to change the scope of those ambitions. If programming in R and Python are like building things out of Lego bricks, C++ is more akin to becoming a polymer scientist and learning how to build the bricks. Worthwhile and interesting, sure, but not something I can get excited about in the same way. All that said, however, I'm still looking at learning "enough C++ to be useful in an R context"; I guess the equivalent of knowing enough about manufacturing to build my own custom bricks from time to time.
+
+# The SO non-incident
+
+![](gotyourback.gif)
+
+There was something that happened around month 5, which was really important at the time, and I've wanted to write about it. I'd replied to my second Arrow question on Stack Overflow - a little intimidating at the time, interacting in a different domain with different social norms compared to internally at Voltron Data or within the Apache Arrow project. Anyway, my (accurate and correct!) answer got deleted, and upon first glance, it looked like it had happened unfairly (which historically has disproportionately happened to people who aren't your stereotypical dev). Some of my colleagues took this really seriously and were trying to see what they could do about it. Later, it transpired that this was not the case; I'd accidentally transgressed some rule relating to linking to an external source without pasting the relevant bit of content into my answer, and I submitted a new answer, which was not deleted. But, my colleagues' initial reaction to what basically appeared to be discriminatory behaviour was...*everything*. I feel grateful to work with such excellent humans, and this whole incident made me realise it's time to replace my mindset of "some people will treat you like this and best avoid those places/interactions if you don't want to deal with that BS" with a new attitude of "you absolutely belong here, and people have got your back".
+
+# Being an open-source maintainer
+
+![](dev.gif)
+
+Working for Voltron Data and being a maintainer on Apache Arrow is one of the coolest jobs I've had in my life, if I'm honest, and I still have moments where I go "huh, I'm paid to work on open-source? Wow!" Don't get me wrong, there are boring bits where I can spend more hours than I'd like tracking down an elusive bug than only shows up on a certain CI job or resolving some horrible merge conflicts after a rebase. But, these are balanced with things like working with new contributors on their first PR, writing documentation that turns implicit knowledge into explicit writing that can be shared, learning so so many new things, and submitting PRs for things that I personally care about on the project. My highlight reel so far includes:
+
+- Submitting PRs to other projects - having actual problems I wanted to solve, even if it was just adding extra documentation or fixing typos (as opposed to trying to find things to do/fix as I was more invested in the **idea** of being a contributor), was really gratifying.
+- Getting added to the [list of authors](https://arrow.apache.org/docs/r/authors.html) on the arrow R package - I'd submitted a ton of PRs for that release but wasn't expecting to get added to the author list, so it was a great surprise.
+- Becoming a [committer on the Apache Arrow project](https://arrow.apache.org/committers/) - being given the power to merge PRs was a little intimidating at first, but again, this privilege/responsibility was something I'd thought was further away, so it was a super exciting moment when it happened and it was nice to be recognised as "demonstrating a sustained commitment to the project".
+- Being heavily involved in publishing the first versions of the [Apache Arrow cookbooks](https://arrow.apache.org/cookbook/) - I'm one of the main authors on the R cookbook, and whilst there's a load of changes I'd like to see, getting the first version out was a real achievement.
+- Updating the R package docs - I'm passionate about documentation and did a lot of work for this release adding diagrams and rephrasing the (already great) docs to try to make them simpler to understand and reach a wider audience of users.
+- Publishing [docreview](https://github.com/thisisnic/docreview/) on [CRAN](https://cran.r-project.org/web/packages/docreview/index.html) - I desperately need to make time to work on this side project, but getting the initial version of it together was instrumental in helping me work on the arrow docs and learn a few things about being a maintainer and starting new projects.
+- Getting involved in a lot of CI work - our CI is pretty complex, and this is an area that I've found challenging, but I love the detective work involved in working out how to maintain and extend our builds.
+- In general, building confidence as a developer. This is an ongoing process, and I'm not there yet, but recently I've started to notice a real shift in (a somewhat unconscious) mindset from "this is really challenging, how will I ever get this" to "I'm sure I'll figure it out somehow".
+- Honestly, working with such a badass group of smart, hard-working, considerate people. I regularly find myself observing how people handle certain situations or approaches they take to solving problems and trying to mirror that behaviour.
+
+(Note that around July 2021, Ursa Computing (i.e. where I originally started my apprenticeship) became part of a new company, [Voltron Data](https://voltrondata.com/), but for the sake of simplicity here, I refer to where I work as Voltron Data, even when talking about things that happened prior to July 2021.)

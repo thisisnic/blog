@@ -1,0 +1,68 @@
+---
+title: "Three Valued Logic"
+author: "Nic Crane"
+date: "2021-04-17"
+categories: [R]
+---
+
+This week I was writing Arrow bindings for some R functions and came across a concept that was new to me: three-valued logic.
+
+I encountered this when working out the expected behaviour of the functions `any` and `all` which are used for aggregation of boolean/logical values.
+
+If I have a vector without any NA values, the behaviour of these functions is pretty straightforward. In the example below, `vec > 3` evaluates to `FALSE FALSE FALSE  TRUE  TRUE` and so a call to `any()` results in `TRUE` and a call to `all()` results in `FALSE`.
+
+```r
+vec <- 1:5
+any(vec > 3) # are any values greater than 5?
+```
+
+```
+## [1] TRUE
+```
+
+```r
+all(vec > 3) # are all values greater than 5?
+```
+
+```
+## [1] FALSE
+```
+
+Things get a little more complicated when we have a vector containing `NA` values. My vector, `na_vec`, has had an `NA` appended to the end and I've changed the expression to `na_vec > 5`. In this case of `all()`, as there are definitely some values which are less than 5, we can say definitively that the answer is `FALSE`. However, in the case of `any()`, things are less clear. As `NA` represents a missing value, it might be the case that this missing value is greater than 5, and so even though none of the known values are greater than 5, we cannot be sure that the missing one is not. Therefore, we get `NA` back.
+
+```r
+na_vec <- c(1:5, NA)
+any(na_vec > 5) # are any values greater than 5?
+```
+
+```
+## [1] NA
+```
+
+```r
+all(na_vec > 5) # are all values greater than 5?
+```
+
+```
+## [1] FALSE
+```
+
+If needed in principle, we can set the argument `na.rm = TRUE` for both of these functions, stripping out the `NA` values and continuing with the evaluation as if they were not there.
+
+I don't think this is overly complex when using these functions, though it makes things more interesting when trying to implement them. There a [Wikipedia article](https://en.wikipedia.org/wiki/Three-valued_logic) on the topic, and it also has other names like "Kleene logic".
+
+I drew this out as a simple flowchart to make sure I had it right, and this is the logic inside it:
+
+#### In the case of `any`:
+
+1. Can you say that the condition has been met? If yes, return TRUE. If no, go to next step.
+2. Are there are missing values? If no, return FALSE. If yes, return NA.
+
+#### And in the case of `all`:
+
+1. Can you say that the condition has been met? If no, return FALSE. If yes from the non-missing values (so more like "maybe"!), go to next step.
+2. Are there are missing values? If no, return TRUE If yes, return NA.
+
+![](three_valued_logic.jpeg){width=25%}
+
+Now I write it out, it doesn't seem overly complex, but it was pretty interesting encountering it for the first time. This concept also exists in SQL and I'm surprised I've not come across it before.
