@@ -1,0 +1,222 @@
+/*-- scss:defaults --*/
+
+// Charcoal + crimson
+$accent: #a63d3d;        // lighter crimson for hover
+$crimson: #760504;       // primary
+$dark: #2c2c2c;          // warm charcoal (navbar/headings)
+$warm-white: #fafafa;    // clean off-white background
+$warm-cream: #f2f2f2;    // light grey sections
+
+// Map to Bootstrap variables
+$primary: $crimson;
+$secondary: $dark;
+$link-color: $crimson;
+$link-hover-color: $accent;
+
+// Navbar
+$navbar-bg: $dark;
+$navbar-fg: white;
+
+// Body
+$body-color: $dark;
+$body-bg: $warm-white;
+
+// Typography - using a modern font pairing
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+$font-family-sans-serif: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
+$headings-font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+$headings-font-weight: 600;
+
+/*-- scss:rules --*/
+
+// Navbar styling
+.navbar {
+  background-color: $dark !important;
+
+  .navbar-brand, .nav-link, .navbar-title {
+    color: white !important;
+  }
+
+  .nav-link:hover {
+    color: $accent !important;
+  }
+}
+
+// Links
+a {
+  color: $crimson;
+  text-decoration: none;
+
+  &:hover {
+    color: $accent;
+  }
+}
+
+// Headings
+h1, h2, h3, h4, h5, h6 {
+  color: $dark;
+}
+
+// Buttons and CTAs
+.btn-primary, .about-link {
+  background-color: $crimson !important;
+  border-color: $crimson !important;
+  color: white !important;
+
+  &:hover {
+    background-color: $accent !important;
+    border-color: $accent !important;
+  }
+}
+
+// Secondary accent for special elements
+.btn-secondary {
+  background-color: $accent !important;
+  border-color: $accent !important;
+  color: white !important;
+
+  &:hover {
+    background-color: $crimson !important;
+  }
+}
+
+// About page links (the buttons under your photo)
+.about-links .about-link {
+  background-color: $crimson !important;
+  border: none !important;
+
+  &:hover {
+    background-color: $accent !important;
+  }
+}
+
+// Alternating section backgrounds
+.level2 {
+  padding: 2rem 1.5rem;
+  margin: 0 -1.5rem 2rem -1.5rem;
+  border-radius: 8px;
+
+  &:nth-of-type(odd) {
+    background-color: $warm-cream;
+  }
+}
+
+// Service cards in grid layout
+.service-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba($dark, 0.08);
+  border-top: 4px solid $accent;
+  height: 100%;
+
+  h3 {
+    margin-top: 0;
+    color: $crimson;
+    font-size: 1.2rem;
+  }
+
+  p, ul {
+    font-size: 0.95rem;
+  }
+}
+
+// Typography enhancements
+h1 {
+  font-size: 2.5rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-top: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid $accent;
+  display: inline-block;
+}
+
+h3 {
+  font-size: 1.3rem;
+}
+
+// Make the about page hero area pop
+.about-entity {
+  background: linear-gradient(135deg, $warm-cream 0%, $warm-white 100%);
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+// Smoother transitions
+a, .btn, .nav-link {
+  transition: all 0.2s ease;
+}
+
+// Left-align body content after the about header
+#quarto-content .content {
+  text-align: left;
+}
+
+// Profile card on homepage
+.profile-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 1rem;
+  padding-bottom: 0.5rem;
+  text-align: center;
+}
+
+// Testimonial cards
+.testimonial {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba($dark, 0.08);
+  border-left: 4px solid $crimson;
+  height: 100%;
+  font-size: 0.95rem;
+  font-style: italic;
+
+  p:first-child {
+    margin-top: 0;
+  }
+
+  p:last-child {
+    font-style: normal;
+    font-weight: 600;
+    color: $crimson;
+    margin-bottom: 0;
+  }
+}
+
+// Bold CTA banner
+.cta-banner {
+  background: $crimson !important;
+  color: white !important;
+  text-align: center;
+  padding: 1.5rem 2rem;
+  margin: 2rem -1rem 2rem -1rem;
+  border-radius: 8px;
+
+  h2 {
+    color: white !important;
+    border: none;
+    margin-bottom: 1.5rem;
+  }
+
+  .btn-cta {
+    background-color: white !important;
+    color: $crimson !important;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 6px;
+
+    &:hover {
+      background-color: $warm-cream !important;
+      color: $crimson !important;
+    }
+  }
+}

@@ -1,13 +1,70 @@
 ---
-title: "Projects"
-listing: 
-  contents: 
-    - "projects/refactoring/index.qmd"
-    - "projects/migration/index.qmd"
-    - "projects/nhs/index.qmd"
-  type: grid
-  sort: false
-  fields: [title, image]
+title: "Past Work"
 ---
 
-Here is a select subset of previous client projects.
+A selection of consulting projects I've worked on.
+
+## Supporting Genomic Medicine in the NHS
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+![](projects/nhs/miportal.png){width="100%"}
+:::
+
+::: {.g-col-12 .g-col-md-8}
+I contributed to a modular Shiny application used in the national rollout of genomic testing within the NHS, building on the 100,000 Genomes Project. It let operational staff, lab teams, and programme managers track genomic samples and view key metrics without needing to interact directly with backend systems.
+
+- UI and server logic across multiple Shiny sub-apps
+- Integration with APIs and SQL databases
+- Interactive visualisations using plotly, visNetwork, sunburstR and other htmlwidget packages
+- Profiling, refactoring, and scaling reactive code for performance
+
+The app was built to support a national rollout and continues to be used across NHS teams.
+:::
+
+:::
+
+## Scoping a Large-Scale SAS to R Migration
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-8}
+I audited a large SAS codebase to help a client understand the feasibility and risk profile of migrating to R. The codebase was business-critical and had grown organically over many years.
+
+- Static code analysis of SAS codebase to estimate size and complexity
+- Identified areas where statistical methods or parameter defaults might behave differently in R
+- Delivered a scoped migration plan to help inform budget, risk, and staffing decisions
+
+The audit helped the client avoid assumptions about direct conversion and provided a structured way to evaluate next steps.
+:::
+
+::: {.g-col-12 .g-col-md-4}
+![](projects/migration/sasmacros.png){width="100%"}
+:::
+
+:::
+
+## Refactoring a Legacy Shiny App
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+![](projects/refactoring/rpackages.png){width="100%"}
+:::
+
+::: {.g-col-12 .g-col-md-8}
+I led a team within a large organisation responsible for maintaining an internal Shiny app used to manage R package installation requests. The codebase had become increasingly fragile and hard to maintain, with tightly coupled logic and growing technical debt.
+
+- Refactored reactive logic to simplify control flow and heavily modularised code
+- Introduced testing strategies and CI workflows
+- Improved onboarding for new developers by making the codebase easier to understand
+
+The changes made the application significantly more maintainable and safer to extend, reducing development time considerably.
+:::
+
+:::
+
+---
+
+Interested in working together? [Get in touch](mailto:nic@ncdatalabs.com).

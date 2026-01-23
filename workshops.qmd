@@ -4,20 +4,39 @@ title: "Workshops"
 
 ## Big Data in R with Arrow and Parquet
 
-Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.
+**Learn Arrow and Parquet to make large-scale analysis fast, reliable, and reproducible.**
 
-The workshop will focus on using the the arrow R package-a mature R interface to Apache Arrow-to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.
+Data analysis pipelines with larger-than-memory data are becoming more and more commonplace, but it's not uncommon to hit a wall when data gets too big for your R session. CSVs end up taking forever to load, and even when they do, analyses grind to a halt. This course shows you how to handle big data in R using open, modern tools.
 
-This course is for you if you:
+### What you'll learn
 
--   want to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow
--   want to learn about Parquet and other file formats that are powerful alternatives to CSV files
--   want to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow
+- Analyse larger-than-memory data without learning new syntax: Use {arrow} with {dplyr} to query millions of rows without crashing R
+- Exercise fine control over data types to avoid common large data pipeline problems
+- Convert messy CSVs into space-saving, shareable Parquet files
+- Optimise Arrow datasets to take full advantage of your hardware
+- Build reproducible workflows using formats and tools designed for long-term reliability
 
-## Testimonials from Past Participants
+### Upcoming dates
 
-> I had the privilege of attending Nic Crane's "Big Data in R with Arrow" workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic's workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. These techniques have proven incredibly valuable in my day-to-day work.
- 
-> What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn. The workshop was so impactful that I've since led several Arrow trainings myself, both at my organization and for community hackathons that I've helped coordinate. Nic's teaching style, depth of knowledge, and ability to connect theory to practical application makes them an exceptional educator. I enthusiastically recommend their workshops to anyone looking to level up their data science and engineering skills!
+**4-5 March 2026** (Online via Google Meet)
 
-> \- Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene
+- Session 1: Wed 4th March - 2:00PM - 5:30PM GMT
+- Session 2: Thu 5th March - 2:00PM - 5:30PM GMT
+
+Attendee numbers are capped to ensure an interactive experience with opportunities to ask questions and get 1:1 help.
+
+[Book your place](https://buytickets.at/ncdatalabs/1996390){.btn .btn-primary}
+
+### Who is this course for?
+
+This course assumes you have basic knowledge of dplyr syntax. It's for you if you:
+
+- want to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow
+- want to learn about Parquet and other file formats that are powerful alternatives to CSV files
+- want to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow
+
+### Testimonials
+
+> "I had the privilege of attending Nic Crane's 'Big Data in R with Arrow' workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic's workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn."
+>
+> — Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene

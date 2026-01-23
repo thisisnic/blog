@@ -1,0 +1,15 @@
+---
+title: "Hacking Productivity with LLMs"
+author: "Nic Crane"
+date: "2025-09-01"
+categories: [llms, productivity]
+image: thumbnail.png
+---
+
+Over the past 18 months, I've used large language models (LLMs) in a series of experiments to improve my productivity as a developer on open source projects in R. I wanted to see if these tools could help with the repetitive, frustrating, or time-consuming parts of development, freeing me up to focus on the interesting problems. The results were mixed: some of these experiments were wildly successful, but others were clear failures.
+
+In this talk, I share what worked, what didn't, and what I learned - exploring the kinds of tasks LLMs are good for and where they fall short, how to use LLMs to build lasting skills, and why in some cases, investing in human connection pays off more than AI assistance.
+
+Presented at posit::conf(2025).
+
+{{< video https://www.youtube.com/watch?v=_nhDYt0f5yc >}}

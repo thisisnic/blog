@@ -1,0 +1,13 @@
+---
+title: "htmlwidgets Are a Secret Sauce in R"
+author: "Nic Crane & Charlotte Hadley"
+date: "2025-10-01"
+categories: [shiny, llms, htmlwidgets]
+image: thumbnail.png
+---
+
+htmlwidgets quietly power some of the most compelling Shiny apps out there, but writing them from scratch can be fiddly and time-consuming. In this talk, we kick things off by taking an audience-sourced ingredient list and asking a large language model to whip up a fresh htmlwidget. Then we plate up a version we prepared earlier - also model-generated - but chopped, seasoned, and finished with our own touches. Along the way, we explore how LLMs can assist in crafting htmlwidgets that reflect your flavour of R - from tidy eval to package structure - rather than sticking to a bland house style.
+
+Presented with Charlotte Hadley at Shiny in Production 2025.
+
+{{< video https://www.youtube.com/watch?v=QIidCe5xICU >}}

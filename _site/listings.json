@@ -10,16 +10,11 @@
     ]
   },
   {
-    "listing": "/projects.html",
-    "items": [
-      "/projects/refactoring/index.html",
-      "/projects/migration/index.html",
-      "/projects/nhs/index.html"
-    ]
-  },
-  {
     "listing": "/talks.html",
     "items": [
+      "/talks/shinyinprod2025/index.html",
+      "/talks/positconf2025/index.html",
+      "/talks/user2025/index.html",
       "/talks/positconf2024_2/index.html",
       "/talks/nyhackr/index.html",
       "/talks/rstudioconf2022/index.html",

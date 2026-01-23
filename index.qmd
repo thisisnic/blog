@@ -1,50 +1,90 @@
 ---
 title: "Dr Nic Crane"
-image: niccrane.png
-about:
-  template: solana
-  links:
-    - text: Contact Me
-      file: contact.qmd
-    - icon: linkedin
-      text: LinkedIn
-      href: https://www.linkedin.com/in/nicolacrane/
-    - icon: github
-      text: Github
-      href: https://github.com/thisisnic
-    - icon: bluesky
-      text: Bluesky
-      href: https://bsky.app/profile/niccrane.bsky.social
 ---
 
-Hi, I'm Nic! I help people level up their R skills and data teams work more efficiently with R. Sometimes that's scaling up data pipelines that have ground to a halt, and sometimes it's figuring out how to use LLMs in analytics workflows.
+::: {.grid}
 
-I've taught thousands of people through online courses, sold-out workshops at EARL and posit::conf, and I now run open-access courses for individuals alongside private training for organisations.
+::: {.g-col-12 .g-col-md-4}
+::: {.profile-card}
+![](niccrane_new.jpg){width="100%"}
 
-I also take on consulting projects. If you're interested in working together, you can get in touch by emailing me at: [nic\@ncdatalabs.com](mailto:nic@ncdatalabs.com).
+[{{< fa brands linkedin size=lg >}}](https://www.linkedin.com/in/nicolacrane/) [{{< fa brands github size=lg >}}](https://github.com/thisisnic) [{{< fa brands bluesky size=lg >}}](https://bsky.app/profile/niccrane.bsky.social)
+:::
+:::
 
-## Services
+::: {.g-col-12 .g-col-md-8}
+## Helping data teams do more with R.
 
+I help data teams scale up their R workflows - from handling larger-than-memory data to getting code into production.
+
+I specialise in big data with R (Arrow, Parquet) and training teams to use AI tools effectively. I run public courses for individuals and private training for organisations, and take on consulting projects.
+
+[Get in touch](mailto:nic@ncdatalabs.com) if you'd like to work together.
+:::
+
+:::
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+::: {.service-card}
 ### Public Training Courses
 
-I regularly run publicly accessible training courses on working with Arrow in R, and LLMs in R. Details on how to sign up for my next courses coming soon!
+Open enrolment courses on Big Data in R with Arrow and LLMs in R.
 
-### Private Courses for Organisations
+[View upcoming courses](workshops.qmd)
+:::
+:::
 
-Production-Ready R Program
+::: {.g-col-12 .g-col-md-4}
+::: {.service-card}
+### Private Courses
 
-Tailored training for teams who need to get R code running reliably in production. Modules include:
+Tailored training for your team. Past topics include Arrow, LLMs in R, CI/CD, and R package development.
 
--   Big Data in R with Arrow and Parquet
--   LLMs in R
--   CI/CD and deployment
--   (other topics as needed)
+[Get in touch](mailto:nic@ncdatalabs.com)
+:::
+:::
 
-If you need a bespoke training course tailored to your organisation's needs, get in touch and we can discuss your needs and where I can help.
+::: {.g-col-12 .g-col-md-4}
+::: {.service-card}
+### Consulting
 
-### General R Consulting and Training
+R and data science consulting for one-off projects or ongoing support.
 
-I'm also available for more general R and data science consulting and team support. Whether you need help with an one-off project or regular support on a monthly retainer, get in touch for a free discovery call.
+[Get in touch](mailto:nic@ncdatalabs.com)
+:::
+:::
+
+:::
+
+::: {.cta-banner}
+## Get in touch to discuss your project
+
+[Contact Me](mailto:nic@ncdatalabs.com){.btn .btn-cta}
+:::
+
+## What People Say
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-6}
+::: {.testimonial}
+"I recently attended Nic's training course on using AI with R. This was my first hands-on experience at interacting with AI agents through R and Nic walked us through from step 0 (pre-course preparation including setting up API keys), interacting with agents within the IDE and programmatically, setting up system prompts and then presenting latest developments at passing information into agents and formatting returned information. This is a topic where things are developing quickly, and Nic managed to walk the fine line between basic concepts and introducing the 'latest greatest'. This was a good course and it certainly helped me 'cross the threshold' into using AI with R."
+
+**— Mike Smith, Senior Director Statistics, Pfizer**
+:::
+:::
+
+::: {.g-col-12 .g-col-md-6}
+::: {.testimonial}
+"I had the privilege of attending Nic Crane's 'Big Data in R with Arrow' workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic's workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn."
+
+**— Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene**
+:::
+:::
+
+:::
 
 ## Resources
 

@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: Dr Nic Crane
+  title: ""
   site-url: https://niccrane.com
   navbar:
     right:
@@ -23,8 +23,7 @@ website:
   google-analytics: "G-SJ58WZL69W"
 format:
   html:
-    theme: sandstone
-    css: styles.css
+    theme: [sandstone, custom.scss]
 
 editor: visual
 

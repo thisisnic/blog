@@ -1,0 +1,17 @@
+---
+title: "Experimenting with LLM Applications in R"
+author: "Nic Crane"
+date: "2025-07-01"
+categories: [llms, r]
+image: thumbnail.png
+---
+
+Large language models (LLMs) are surprisingly easy to use and at their core, they're just an API call away. But how do you go from calling a model to actually building something useful?
+
+In this talk, I share my experiences creating and deploying LLM-powered applications in R. I walk through different approaches I've tried, from incorporating LLMs into Shiny apps, improving my R code, and experimenting with different models and deployment options. Along the way, I highlight what worked, what didn't, and what I learned in the process.
+
+Whether you're curious about integrating LLMs into your own projects or just want to see what's possible, this session offers a practical look at building with LLMs in R without the hype.
+
+Presented at useR! 2025.
+
+{{< video https://www.youtube.com/watch?v=RQ_8tToedMk >}}

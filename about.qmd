@@ -2,14 +2,71 @@
 title: "About Me"
 ---
 
-As a data scientist and self-taught developer, I spent years feeling like I wasn't technical enough to understand a lot of software engineering concepts, until I realised it wasn't me; it was the content and how it was how it was explained. I've lost count of how many times I've gone from "this is impossible" to "oh, I just needed someone to explain it properly." Now I do that for other people.
+::: {.grid}
 
-## My background
+::: {.g-col-12 .g-col-md-8}
+Hi, I'm Nic. I have a PhD in Statistics and have been working in R for 15 years.
 
-I have a PhD in Statistics, and have been working in R for 15 years.
+As a data scientist and self-taught developer, I spent years feeling like I wasn't technical enough to understand a lot of software engineering concepts - until I realised it wasn't me; it was the content and how it was explained. I've lost count of how many times I've gone from "this is impossible" to "oh, I just needed someone to explain it properly."
 
-During my career, I've worked across multiple industries, including pharma, public health, academia, and startups, and on projects encompassing everything from teaching hundreds of new programmers how to work with R, maintaining popular open source packages, to delving into the complexities of deploying R code in production environments where scalability matters.
+That's what I try to do for others - make complex stuff accessible.
+:::
 
-I've built dashboards and internal tools supporting hundreds of concurrent users, deployed across the NHS, and have developed and led workshops at major R conferences like Posit Conf.
+::: {.g-col-12 .g-col-md-4}
+![](niccrane.png){width="100%"}
+:::
 
-I am one of the core maintainers of the Apache Arrow R project, acting as package maintainer, and authoring Scaling Up with R and Arrow - available online and published by CRC Press in 2025.
+:::
+
+## Experience
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+![](projects/nhs/miportal.png){width="100%"}
+:::
+
+::: {.g-col-12 .g-col-md-8}
+I've worked across pharma, public health, academia, and startups - on everything from teaching hundreds of new programmers how to work with R, to maintaining popular open source packages, to deploying R code in production environments where scalability matters.
+
+I've built dashboards and internal tools supporting hundreds of concurrent users deployed across the NHS, and developed and led sold-out workshops at major R conferences including EARL and posit::conf.
+:::
+
+:::
+
+## Teaching
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-8}
+I've taught thousands of people through online courses, conference workshops, and private training. Topics I teach include:
+
+- Big Data in R with Arrow and Parquet
+- LLMs and AI tools in R
+- CI/CD and deployment
+- R package development
+
+See my [upcoming workshops](workshops.qmd) or [get in touch](mailto:nic@ncdatalabs.com) about private training for your team.
+:::
+
+::: {.g-col-12 .g-col-md-4}
+![](teaching.png){width="100%"}
+:::
+
+:::
+
+## Open Source & Writing
+
+::: {.grid}
+
+::: {.g-col-12 .g-col-md-4}
+![](scaling_up.png){width="100%"}
+:::
+
+::: {.g-col-12 .g-col-md-8}
+I'm one of the core maintainers of the Apache Arrow R project, where I've served as package maintainer and contributed extensively to dplyr support for Arrow.
+
+In 2024, I co-authored [Scaling Up with R and Arrow](https://arrowrbook.com), published by CRC Press.
+:::
+
+:::
