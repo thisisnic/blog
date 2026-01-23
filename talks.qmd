@@ -1,5 +1,5 @@
 ---
-title: "Talks and Workshops"
+title: "Talks"
 listing: 
   type: grid
   contents: talks

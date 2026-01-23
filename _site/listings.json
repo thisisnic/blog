@@ -10,22 +10,21 @@
     ]
   },
   {
-    "listing": "/talks.html",
-    "items": [
-      "/talks/positconf2024_2/index.html",
-      "/talks/positconf2024/index.html",
-      "/talks/nyhackr/index.html",
-      "/talks/rstudioconf2022/index.html",
-      "/talks/rstudioconf2019/index.html",
-      "/talks/londonr/index.html"
-    ]
-  },
-  {
     "listing": "/projects.html",
     "items": [
       "/projects/refactoring/index.html",
       "/projects/migration/index.html",
       "/projects/nhs/index.html"
+    ]
+  },
+  {
+    "listing": "/talks.html",
+    "items": [
+      "/talks/positconf2024_2/index.html",
+      "/talks/nyhackr/index.html",
+      "/talks/rstudioconf2022/index.html",
+      "/talks/rstudioconf2019/index.html",
+      "/talks/londonr/index.html"
     ]
   }
 ]

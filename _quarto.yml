@@ -10,9 +10,11 @@ website:
         file: index.qmd
       - text: About
         file: about.qmd
+      - text: Workshops
+        file: workshops.qmd
       - text: Past Work
         file: projects.qmd
-      - text: Talks & Workshops
+      - text: Talks
         file: talks.qmd
       - text: Blog
         file: blog.qmd

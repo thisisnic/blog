@@ -1,0 +1,23 @@
+---
+title: "Workshops"
+---
+
+## Big Data in R with Arrow and Parquet
+
+Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.
+
+The workshop will focus on using the the arrow R package-a mature R interface to Apache Arrow-to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.
+
+This course is for you if you:
+
+-   want to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow
+-   want to learn about Parquet and other file formats that are powerful alternatives to CSV files
+-   want to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow
+
+## Testimonials from Past Participants
+
+> I had the privilege of attending Nic Crane's "Big Data in R with Arrow" workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic's workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. These techniques have proven incredibly valuable in my day-to-day work.
+ 
+> What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn. The workshop was so impactful that I've since led several Arrow trainings myself, both at my organization and for community hackathons that I've helped coordinate. Nic's teaching style, depth of knowledge, and ability to connect theory to practical application makes them an exceptional educator. I enthusiastically recommend their workshops to anyone looking to level up their data science and engineering skills!
+
+> \- Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene

@@ -168,39 +168,18 @@
     "text": "Using ChatGPT as a Code Tutor: A One-Hour Learning Experiment\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nAug 3, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nIterating on an app to create social media posts generating package using {shiny} and {ellmer}\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 17, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nGenerating social media posts to promote blog posts with {shiny} and {ellmer}\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 14, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoring R Package Updates with Github Actions\n\n\n\nR\n\nGitHub Actions\n\n\n\n\n\n\n\n\n\nDec 28, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\nR\n\nPython\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Dr Nic Crane",
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "Projects",
     "section": "",
-    "text": "Hi, I’m Nic! I help people level up their R skills and data teams work more efficiently with R. Sometimes that’s scaling up data pipelines that have ground to a halt, and sometimes it’s figuring out how to use LLMs in analytics workflows.\nI’ve taught thousands of people through online courses, sold-out workshops at EARL and posit::conf, and I now run open-access courses for individuals alongside private training for organisations.\nI also take on consulting projects. If you’re interested in working together, you can get in touch by emailing me at: nic@ncdatalabs.com."
+    "text": "Here is a select subset of previous client projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRefactoring a Legacy Shiny App for Maintainability\n\n\n\n\n\n\n\n\n\n\n\n\nScoping a Large-Scale SAS to R Migration\n\n\n\n\n\n\n\n\n\n\n\n\nSupporting Genomic Medicine in the NHS with R and Shiny\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "index.html#services",
-    "href": "index.html#services",
-    "title": "Dr Nic Crane",
-    "section": "Services",
-    "text": "Services\n\nPublic Training Courses\nI regularly run publicly accessible training courses on working with Arrow in R, and LLMs in R. Details on how to sign up for my next courses coming soon!\n\n\nPrivate Courses for Organisations\nProduction-Ready R Program\nTailored training for teams who need to get R code running reliably in production. Modules include:\n\nBig Data in R with Arrow and Parquet\nLLMs in R\nCI/CD and deployment\n(other topics as needed)\n\nIf you need a bespoke training course tailored to your organisation’s needs, get in touch and we can discuss your needs and where I can help.\n\n\nGeneral R Consulting and Training\nI’m also available for more general R and data science consulting and team support. Whether you need help with an one-off project or regular support on a monthly retainer, get in touch for a free discovery call."
-  },
-  {
-    "objectID": "index.html#resources",
-    "href": "index.html#resources",
-    "title": "Dr Nic Crane",
-    "section": "Resources",
-    "text": "Resources\nI’ve been an active contributor to the Apache Arrow R package, where I’ve worked on implementing features, acting as package maintainer, managing complex build configuration, and extending dplyr support to Arrow. This work has influenced how I approach performance, reproducibility, and maintainability - both in open source and in client projects.\nIn 2024, I co-authored Scaling Up With R and Arrow, which was published by CRC Press and also available online at arrowrbook.com."
-  },
-  {
-    "objectID": "talks/positconf2024/index.html",
-    "href": "talks/positconf2024/index.html",
-    "title": "Big Data in R with Arrow",
+    "objectID": "contact.html",
+    "href": "contact.html",
+    "title": "Contact Me",
     "section": "",
-    "text": "A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023 and 2024.\nCourse homepage"
-  },
-  {
-    "objectID": "talks/positconf2024/index.html#overview",
-    "href": "talks/positconf2024/index.html#overview",
-    "title": "Big Data in R with Arrow",
-    "section": "Overview",
-    "text": "Overview\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
+    "text": "Loading…"
   },
   {
     "objectID": "talks/rstudioconf2019/index.html",
@@ -464,9 +443,9 @@
   {
     "objectID": "talks.html",
     "href": "talks.html",
-    "title": "Talks and Workshops",
+    "title": "Talks",
     "section": "",
-    "text": "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail\n\n\n\n\n\n\nNic Crane\n\n\nAug 17, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\nBig Data in R with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 12, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\nNo matching items"
+    "text": "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail\n\n\n\n\n\n\nNic Crane\n\n\nAug 17, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "projects/nhs/index.html",
@@ -497,18 +476,46 @@
     "text": "A talk about getting involved in open source!\nSlides here"
   },
   {
-    "objectID": "contact.html",
-    "href": "contact.html",
-    "title": "Contact Me",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Dr Nic Crane",
     "section": "",
-    "text": "Loading…"
+    "text": "Hi, I’m Nic! I help people level up their R skills and data teams work more efficiently with R. Sometimes that’s scaling up data pipelines that have ground to a halt, and sometimes it’s figuring out how to use LLMs in analytics workflows.\nI’ve taught thousands of people through online courses, sold-out workshops at EARL and posit::conf, and I now run open-access courses for individuals alongside private training for organisations.\nI also take on consulting projects. If you’re interested in working together, you can get in touch by emailing me at: nic@ncdatalabs.com."
   },
   {
-    "objectID": "projects.html",
-    "href": "projects.html",
-    "title": "Projects",
+    "objectID": "index.html#services",
+    "href": "index.html#services",
+    "title": "Dr Nic Crane",
+    "section": "Services",
+    "text": "Services\n\nPublic Training Courses\nI regularly run publicly accessible training courses on working with Arrow in R, and LLMs in R. Details on how to sign up for my next courses coming soon!\n\n\nPrivate Courses for Organisations\nProduction-Ready R Program\nTailored training for teams who need to get R code running reliably in production. Modules include:\n\nBig Data in R with Arrow and Parquet\nLLMs in R\nCI/CD and deployment\n(other topics as needed)\n\nIf you need a bespoke training course tailored to your organisation’s needs, get in touch and we can discuss your needs and where I can help.\n\n\nGeneral R Consulting and Training\nI’m also available for more general R and data science consulting and team support. Whether you need help with an one-off project or regular support on a monthly retainer, get in touch for a free discovery call."
+  },
+  {
+    "objectID": "index.html#resources",
+    "href": "index.html#resources",
+    "title": "Dr Nic Crane",
+    "section": "Resources",
+    "text": "Resources\nI’ve been an active contributor to the Apache Arrow R package, where I’ve worked on implementing features, acting as package maintainer, managing complex build configuration, and extending dplyr support to Arrow. This work has influenced how I approach performance, reproducibility, and maintainability - both in open source and in client projects.\nIn 2024, I co-authored Scaling Up With R and Arrow, which was published by CRC Press and also available online at arrowrbook.com."
+  },
+  {
+    "objectID": "workshops.html",
+    "href": "workshops.html",
+    "title": "Workshops",
     "section": "",
-    "text": "Here is a select subset of previous client projects.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nRefactoring a Legacy Shiny App for Maintainability\n\n\n\n\n\n\n\n\n\n\n\n\nScoping a Large-Scale SAS to R Migration\n\n\n\n\n\n\n\n\n\n\n\n\nSupporting Genomic Medicine in the NHS with R and Shiny\n\n\n\n\n\nNo matching items"
+    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package-a mature R interface to Apache Arrow-to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
+  },
+  {
+    "objectID": "workshops.html#big-data-in-r-with-arrow-and-parquet",
+    "href": "workshops.html#big-data-in-r-with-arrow-and-parquet",
+    "title": "Workshops",
+    "section": "",
+    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.\nThe workshop will focus on using the the arrow R package-a mature R interface to Apache Arrow-to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.\nThis course is for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow"
+  },
+  {
+    "objectID": "workshops.html#testimonials-from-past-participants",
+    "href": "workshops.html#testimonials-from-past-participants",
+    "title": "Workshops",
+    "section": "Testimonials from Past Participants",
+    "text": "Testimonials from Past Participants\n\nI had the privilege of attending Nic Crane’s “Big Data in R with Arrow” workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic’s workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. These techniques have proven incredibly valuable in my day-to-day work.\n\n\nWhat stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn. The workshop was so impactful that I’ve since led several Arrow trainings myself, both at my organization and for community hackathons that I’ve helped coordinate. Nic’s teaching style, depth of knowledge, and ability to connect theory to practical application makes them an exceptional educator. I enthusiastically recommend their workshops to anyone looking to level up their data science and engineering skills!\n\n\n- Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene"
   },
   {
     "objectID": "about.html",

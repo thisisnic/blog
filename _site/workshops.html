@@ -6,10 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Nic Crane">
-<meta name="dcterms.date" content="2024-08-12">
 
-<title>Big Data in R with Arrow – Dr Nic Crane</title>
+<title>Workshops – Dr Nic Crane</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,23 +23,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="../../site_libs/quarto-search/fuse.min.js"></script>
-<script src="../../site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="../../">
-<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../../site_libs/quarto-html/anchor.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-4ee2f0d83185c0271eec25d4351182f2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-4ee2f0d83185c0271eec25d4351182f2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -80,7 +78,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 </script>
 
 
-<link rel="stylesheet" href="../../styles.css">
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="nav-fixed fullcontent quarto-light">
@@ -90,7 +88,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="../../index.html">
+    <a class="navbar-brand" href="./index.html">
     <span class="navbar-title">Dr Nic Crane</span>
     </a>
   </div>
@@ -101,27 +99,31 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html"> 
+    <a class="nav-link" href="./index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html"> 
+    <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../projects.html"> 
+    <a class="nav-link active" href="./workshops.html" aria-current="page"> 
+<span class="menu-text">Workshops</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./projects.html"> 
 <span class="menu-text">Past Work</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../talks.html"> 
-<span class="menu-text">Talks &amp; Workshops</span></a>
+    <a class="nav-link" href="./talks.html"> 
+<span class="menu-text">Talks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../blog.html"> 
+    <a class="nav-link" href="./blog.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../blog.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="./blog.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -142,29 +144,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Big Data in R with Arrow</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">open-source</div>
-  </div>
-  </div>
+<h1 class="title">Workshops</h1>
+</div>
 
 
 
 <div class="quarto-title-meta">
 
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nic Crane </p>
-          </div>
-  </div>
     
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">August 12, 2024</p>
-    </div>
-  </div>
   
     
   </div>
@@ -174,18 +161,28 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 </header>
 
 
-<p>A workshop on Arrow that Stephanie Hazlitt and I wrote and presented at posit::conf 2023 and 2024.</p>
-<p><a href="https://posit-conf-2024.github.io/arrow/">Course homepage</a></p>
-<section id="overview" class="level2">
-<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<section id="big-data-in-r-with-arrow-and-parquet" class="level2">
+<h2 class="anchored" data-anchor-id="big-data-in-r-with-arrow-and-parquet">Big Data in R with Arrow and Parquet</h2>
 <p>Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. In this workshop you will learn how to use Apache Arrow, a multi-language toolbox for working with larger-than-memory tabular data, to create seamless “big” data analysis pipelines with R.</p>
-<p>The workshop will focus on using the the arrow R package—a mature R interface to Apache Arrow—to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.</p>
+<p>The workshop will focus on using the the arrow R package-a mature R interface to Apache Arrow-to process larger-than-memory files and multi-file datasets with arrow using familiar dplyr syntax. You’ll learn to create and use interoperable data file formats like Parquet for efficient data storage and access, with data stored both on disk and in the cloud, and also how to exercise fine control over data types to avoid common large data pipeline problems. This workshop will provide a foundation for using Arrow, giving you access to a powerful suite of tools for performant analysis of larger-than-memory data in R.</p>
 <p>This course is for you if you:</p>
 <ul>
 <li>want to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow</li>
 <li>want to learn about Parquet and other file formats that are powerful alternatives to CSV files</li>
 <li>want to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow</li>
 </ul>
+</section>
+<section id="testimonials-from-past-participants" class="level2">
+<h2 class="anchored" data-anchor-id="testimonials-from-past-participants">Testimonials from Past Participants</h2>
+<blockquote class="blockquote">
+<p>I had the privilege of attending Nic Crane’s “Big Data in R with Arrow” workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic’s workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. These techniques have proven incredibly valuable in my day-to-day work.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn. The workshop was so impactful that I’ve since led several Arrow trainings myself, both at my organization and for community hackathons that I’ve helped coordinate. Nic’s teaching style, depth of knowledge, and ability to connect theory to practical application makes them an exceptional educator. I enthusiastically recommend their workshops to anyone looking to level up their data science and engineering skills!</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>- Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene</p>
+</blockquote>
 
 
 </section>
