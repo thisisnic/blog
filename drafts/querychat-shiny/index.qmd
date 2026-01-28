@@ -1,0 +1,93 @@
+---
+title: "Exploring querychat: talk to your data in a Shiny app"
+author: "Nic Crane"
+date: "2026-01-25"
+categories: [R, Shiny]
+---
+
+![](logo.png){width=200 fig-align="center"}
+
+I was excited to see the release of the [querychat](https://cran.r-project.org/web/packages/querychat/index.html) package on CRAN recently. I first noticed this package on [Posit's GitHub](https://github.com/posit-dev/querychat), and was really curious to see what it did. In short, it lets you ask questions to a chatbot which then generates SQL and queries a data frame or database connection to answer your question.
+
+## Reproducibility through SQL
+
+It's a really exciting and powerful tool because it allows you to overcome some of the key issues with using LLMs for data analysis - LLMs are often poor at many tasks to do with numbers, and in most data analysis contexts we need reproducible and accurate results. 
+
+Under the hood it uses DuckDB, and tibbles are converted into DuckDB tables which can then be queried using SQL.
+
+In translating questions into SQL we have repeatable code that we can run again separately, and it's a small leap from there to ensure that the SQL is correct and the LLM response represents it faithfully to get accurate answers.  
+
+## Filtering the data
+
+You can create the simplest possible app by calling the `querychat_app()` function.
+
+```{r}
+#| eval: false
+library(querychat)
+
+querychat_app(mtcars)
+```
+
+querychat can filter data shown in the table, only having access to summary statistics, not the raw values.
+
+![](filter.png)
+
+The summary statistics provided are the database schema; in the case of mtcars, it looks like this:
+
+```text
+You have access to a DuckDB SQL database with the following schema:
+
+<database_schema>
+Table: mtcars
+Columns:
+- mpg (FLOAT)
+  Range: 10.4 to 33.9
+- cyl (FLOAT)
+  Range: 4 to 8
+- disp (FLOAT)
+  Range: 71.1 to 472
+- hp (FLOAT)
+  Range: 52 to 335
+- drat (FLOAT)
+  Range: 2.76 to 4.93
+- wt (FLOAT)
+  Range: 1.513 to 5.424
+- qsec (FLOAT)
+  Range: 14.5 to 22.9
+- vs (FLOAT)
+  Range: 0 to 1
+- am (FLOAT)
+  Range: 0 to 1
+- gear (FLOAT)
+  Range: 3 to 5
+- carb (FLOAT)
+  Range: 1 to 8
+</database_schema>
+```
+
+The data sent contains column names, types, and value ranges.
+
+## Keeping your data private
+
+When querychat has full access to the data, it can perform aggregations and use the results to inform answers to questions.
+
+![](query_allowed.png)
+
+However, you can configure querychat to only have data filtering enabled, without the results being returned to the LLM.  The LLM still has access to the information in the schema, which is provided as part of the default system prompt.  
+
+Setting `tools = "update"` disables the query tool entirely.
+
+```{r}
+#| eval: false
+library(querychat)
+
+querychat_app(mtcars, tools = "update")
+```
+
+![](query_disallowed.png)
+
+## Learn more
+
+LLMs are going to have a huge impact on how we communicate with and about data, and so the querychat package is a huge step forward in this regard.  If you want to learn more, here's a more detailed post on the [Shiny blog](https://shiny.posit.co/blog/posts/querychat-python-r/) by Veerle Eeftink - van Leemput, or check out her video below.
+
+{{< video https://www.youtube.com/watch?v=EQjr0p25KS8 >}}

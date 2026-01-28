@@ -413,6 +413,41 @@
     "text": "Over the past 18 months, I’ve used large language models (LLMs) in a series of experiments to improve my productivity as a developer on open source projects in R. I wanted to see if these tools could help with the repetitive, frustrating, or time-consuming parts of development, freeing me up to focus on the interesting problems. The results were mixed: some of these experiments were wildly successful, but others were clear failures.\nIn this talk, I share what worked, what didn’t, and what I learned - exploring the kinds of tasks LLMs are good for and where they fall short, how to use LLMs to build lasting skills, and why in some cases, investing in human connection pays off more than AI assistance.\nPresented at posit::conf(2025)."
   },
   {
+    "objectID": "drafts/querychat-shiny/index.html",
+    "href": "drafts/querychat-shiny/index.html",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "",
+    "text": "I was excited to see the release of the querychat package on CRAN recently. I first noticed this package on Posit’s GitHub, and was really curious to see what it did. In short, it lets you ask questions to a chatbot which then generates SQL and queries a data frame or database connection to answer your question."
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#reproducibility-through-sql",
+    "href": "drafts/querychat-shiny/index.html#reproducibility-through-sql",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "Reproducibility through SQL",
+    "text": "Reproducibility through SQL\nIt’s a really exciting and powerful tool because it allows you to overcome some of the key issues with using LLMs for data analysis - LLMs are often poor at many tasks to do with numbers, and in most data analysis contexts we need reproducible and accurate results.\nUnder the hood it uses DuckDB, and tibbles are converted into DuckDB tables which can then be queried using SQL.\nIn translating questions into SQL we have repeatable code that we can run again separately, and it’s a small leap from there to ensure that the SQL is correct and the LLM response represents it faithfully to get accurate answers."
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#filtering-the-data",
+    "href": "drafts/querychat-shiny/index.html#filtering-the-data",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "Filtering the data",
+    "text": "Filtering the data\nYou can create the simplest possible app by calling the querychat_app() function.\n\nlibrary(querychat)\n\nquerychat_app(mtcars)\n\nquerychat can filter data shown in the table, only having access to summary statistics, not the raw values.\n\nThe summary statistics provided are the database schema; in the case of mtcars, it looks like this:\nYou have access to a DuckDB SQL database with the following schema:\n\n&lt;database_schema&gt;\nTable: mtcars\nColumns:\n- mpg (FLOAT)\n  Range: 10.4 to 33.9\n- cyl (FLOAT)\n  Range: 4 to 8\n- disp (FLOAT)\n  Range: 71.1 to 472\n- hp (FLOAT)\n  Range: 52 to 335\n- drat (FLOAT)\n  Range: 2.76 to 4.93\n- wt (FLOAT)\n  Range: 1.513 to 5.424\n- qsec (FLOAT)\n  Range: 14.5 to 22.9\n- vs (FLOAT)\n  Range: 0 to 1\n- am (FLOAT)\n  Range: 0 to 1\n- gear (FLOAT)\n  Range: 3 to 5\n- carb (FLOAT)\n  Range: 1 to 8\n&lt;/database_schema&gt;\nThe data sent contains column names, types, and value ranges."
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#keeping-your-data-private",
+    "href": "drafts/querychat-shiny/index.html#keeping-your-data-private",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "Keeping your data private",
+    "text": "Keeping your data private\nWhen querychat has full access to the data, it can perform aggregations and use the results to inform answers to questions.\n\nHowever, you can configure querychat to only have data filtering enabled, without the results being returned to the LLM. The LLM still has access to the information in the schema, which is provided as part of the default system prompt.\nSetting tools = \"update\" disables the query tool entirely.\n\nlibrary(querychat)\n\nquerychat_app(mtcars, tools = \"update\")"
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#learn-more",
+    "href": "drafts/querychat-shiny/index.html#learn-more",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "Learn more",
+    "text": "Learn more\nLLMs are going to have a huge impact on how we communicate with and about data, and so the querychat package is a huge step forward in this regard. If you want to learn more, here’s a more detailed post on the Shiny blog by Veerle Eeftink - van Leemput, or check out her video below."
+  },
+  {
     "objectID": "projects/nhs/index.html",
     "href": "projects/nhs/index.html",
     "title": "Supporting Genomic Medicine in the NHS with R and Shiny",
@@ -614,6 +649,41 @@
     "title": "Scoping a Large-Scale SAS to R Migration",
     "section": "",
     "text": "As part of a consultancy engagement, I audited a large SAS codebase to help a client understand the feasibility and risk profile of migrating to R. The codebase was business-critical and had grown organically over many years.\nWhat I worked on: - Static code analysis of SAS codebase to estimate size and complexity (e.g. SQL-style vs. custom PROC logic) - Identified areas where statistical methods or parameter defaults might behave differently in R - Delivered a scoped migration plan to help inform budget, risk, and staffing decisions\nThe audit helped the client avoid assumptions about direct conversion and provided a structured way to evaluate next steps."
+  },
+  {
+    "objectID": "drafts/ai-tooling-open-source/index.html",
+    "href": "drafts/ai-tooling-open-source/index.html",
+    "title": "AI Tooling and Open Source",
+    "section": "",
+    "text": "Working on Arrow, I’ve been noticing an increase in AI-generated pull requests recently. In this blog post, I discuss my take on how AI tooling affects open source, the actions maintainers have been taking to address the less positive aspects, and emerging policies that open source projects are implementing around the topic of AI-generated pull requests."
+  },
+  {
+    "objectID": "drafts/ai-tooling-open-source/index.html#attitudes-to-ai-tools---licensing-and-slop",
+    "href": "drafts/ai-tooling-open-source/index.html#attitudes-to-ai-tools---licensing-and-slop",
+    "title": "AI Tooling and Open Source",
+    "section": "Attitudes to AI tools - licensing and slop",
+    "text": "Attitudes to AI tools - licensing and slop\nEarlier reactions to the use of these AI tools in some open source projects have been quite negative, and there are lots of examples of open source projects explicitly banning the use of AI tools in generating contributions, for example, Gentoo Linux in 2024 banned all AI contributions.\nI certainly have sympathy for this perspective, and there are certainly good and valid reasons around complications relating to licensing and AI-generated code that I believe open source developers need to be cautious of. The ASF have published some high-level guidelines on the use of generative tooling that capture the risk of replicating copyrighted materials.\nThat said though, I also believe that the evolution of these tools means that condemning them outright is throwing the baby out with the bathwater. Entire features created with AI absolutely can be problematic from a licensing perspective, but much maintenance work of existing codebases is less fraught. In my experience, fixes and changes generated based on the existing codebase and reasoning around it rarely end up replicating other codebases, and these tools are a net win for maintainers when used well.\nAs the sophistication of tools has increased, I found that at some point in 2025, the balance tipped for me from relatively poor results towards them becoming net useful. I also believe a lot of developers are in this place where many people are using these tools but fewer are openly admitting it. While there are negative opinions about these kinds of tools, I think it’s unrealistic to pretend that they aren’t being used prevalently."
+  },
+  {
+    "objectID": "drafts/ai-tooling-open-source/index.html#the-problem-of-ai-generated-prs-in-open-source",
+    "href": "drafts/ai-tooling-open-source/index.html#the-problem-of-ai-generated-prs-in-open-source",
+    "title": "AI Tooling and Open Source",
+    "section": "The problem of AI-generated PRs in open source",
+    "text": "The problem of AI-generated PRs in open source\nThere is a certain class of AI-generated pull request that is becoming problematic. The pattern is often obvious - a pull request is submitted by a contributor who has never previously contributed to the codebase. The code may have clear signs of AI tool usage - verbose and unnecessary comments, overly broad scope of changes, excessive or non-existent unit tests, and changes which span multiple areas of the codebase which human contributors don’t tend to have expertise on.\nA charitable interpretation of these PRs is that they represent a genuine but misguided desire to be helpful. A less charitable interpretation suggests that the author wants to claim an open source contribution, without any real understanding of the code that they’re changing, or interest in iterating on a long-running pull request until it’s ready to merge.\nTo a certain extent I get it. Some of my first open source pull requests were absolutely done for the sake of something that I viewed as a real achievement and not a genuine investment in a codebase, simply because I didn’t really understand how any of it worked at that point. And so, I don’t want to outright condemn people with this mindset.\nAnd I’ve made a fair share of embarrassing mistakes in my own use of AI tools. In my earlier explorations, I accidentally allowed Claude to push to an upstream branch instead of my own fork, and proposed poorly thought-through changes that I did not understand well enough to take responsibility for when maintainers responded with thoughtful questions. The realisation of this potential for harm made me drastically alter my approach, but I share this openly to acknowledge the need to empathise with novice users of complex tools.\nAll of that said though, as an open source maintainer, I have limited time to dedicate to code review. I love working with new contributors, both for the human connection and because it improves project health by increasing the number of people who are able to contribute. However, there is very little intrinsic value in me reviewing AI-generated code which the author has either abandoned or will just continue to use AI to respond to my suggestions. At this point I may as well just use AI myself to make this pull request.\nThoughtful use of AI tools requires multiple iterations and changes, and questioning of the tooling as to the reasoning behind changes, and taking ownership of the changes through the understanding gained during the process. I believe this is a net positive and it would be hypocritical to condemn others doing this.\nThe distinction here that is important to me is the difference between thoughtful uses of these tools to augment genuine work versus a sort of “throw it over the fence and hope it gets merged” approach."
+  },
+  {
+    "objectID": "drafts/ai-tooling-open-source/index.html#taking-it-to-the-mailing-list",
+    "href": "drafts/ai-tooling-open-source/index.html#taking-it-to-the-mailing-list",
+    "title": "AI Tooling and Open Source",
+    "section": "Taking it to the mailing list",
+    "text": "Taking it to the mailing list\nGiven all the negativity I’ve seen online around the use of AI tooling, I was both nervous and curious to see what the conversation would look like when I opened the discussion on the Apache Arrow developer mailing list around the use of these tools. It was great to see that, as ever, the Apache Arrow developer community engaged in a thoughtful discussion in which folks suggested additions to my suggested phrasing of policy, and chimed in with their own experiences. This clearly isn’t a novel or new idea as Andrew Lamb pointed me straight to some excellent guidelines in the DataFusion project. (For context, DataFusion is a query engine built on Arrow, used to be kept in the former Arrow monorepo, and is part of the Arrow community). DataFusion had already developed and published some excellent guidelines which I borrowed some ideas from as well. Since I opened the Arrow pull request, I saw other projects also making similar decisions and our own pull request being linked to in those.\nI decided to give the pull request a few extra days for people to add extra opinions before merging, but it will be interesting to see what happens now. I also recognise that we actually can’t necessarily tell when people make thoughtful use of AI tooling, and my own personal motivation for writing this guidance was that I can link to it when reviewing pull requests in which I suspect more engagement is needed from the submitter. I’ve seen these both myself and from other people, and it takes a large amount of emotional energy trying to respond to something with the empathy and welcoming nature that we wish to show towards new contributors, while not investing time and energy in a pull request which may well be abandoned if the submitter isn’t interested in doing any extra work. Conversely though, if they are interested, we don’t want to drive them away.\nI see many other projects are also considering these issues at the moment as well, for example Jupyter. A refreshingly realistic perspective was adopted recently by the Journal of Open Source Software who adapted their review process given the increase in AI tooling, placing more emphasis on the uniquely human factors crucial for creating quality software."
+  },
+  {
+    "objectID": "drafts/ai-tooling-open-source/index.html#other-challenges",
+    "href": "drafts/ai-tooling-open-source/index.html#other-challenges",
+    "title": "AI Tooling and Open Source",
+    "section": "Other challenges",
+    "text": "Other challenges\nPull requests aren’t the only challenge that open source is seeing in terms of AI tool usage. Another issue that multiple projects have also seen recently is an uptick in security reports. These appear to constitute things that would be considered bugs or edge cases, and deploying fixes may genuinely improve the codebase, but it makes it easy to question the intention of the submitter, given that the status as security holes is tenuous at best. As with pull requests, I don’t want to completely condemn this approach, because I believe that finding and fixing true security issues can only be a net positive for open source projects, but this approach of what appears to be clever phrasing to paint minor bugs as security incidents is at best disingenuous.\nThis is becoming more prevalent, as shown by the curl project recently closing its bug bounty program, and similar issues experienced by Apache Log4j.\nThe irony of the spurious reporting of alleged potential Denial-of-Service attacks is delightfully captured by curl author Daniel Stenberg in the abstract of his upcoming FOSDEM talk which refers to “Sloppy humans causing Denial-of-Service attacks by overloading maintainers with quickly produced almost-real-looking rubbish”.\nAI tooling is having a significant effect on open source development and it’s fascinating to see it play out in real time. I hope it will be a net positive, but there are certainly challenges ahead, and it’s exciting to see how fast things are moving right now."
   },
   {
     "objectID": "talks/nyhackr/index.html",
