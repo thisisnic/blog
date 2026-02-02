@@ -7,32 +7,19 @@ categories: [R, Shiny]
 
 ![](logo.png){width=200 fig-align="center"}
 
-I was excited to see the release of the [querychat](https://cran.r-project.org/web/packages/querychat/index.html) package on CRAN recently. I first noticed this package on [Posit's GitHub](https://github.com/posit-dev/querychat), and was really curious to see what it did. In short, it lets you ask questions to a chatbot which then generates SQL and queries a data frame or database connection to answer your question.
+I was excited to see the release of the [querychat](https://cran.r-project.org/web/packages/querychat/index.html) package on CRAN recently. I first noticed this package on [Posit's GitHub](https://github.com/posit-dev/querychat), and was really curious to see what it did. In short, it lets you ask questions to a chatbot which then generates SQL and queries a data frame or database connection to answer your question.  
 
 ## Reproducibility through SQL
 
-It's a really exciting and powerful tool because it allows you to overcome some of the key issues with using LLMs for data analysis - LLMs are often poor at many tasks to do with numbers, and in most data analysis contexts we need reproducible and accurate results. 
+querychat a really exciting and powerful tool because it allows you to overcome some of the key issues with using LLMs for data analysis.  LLMs are pretty poor at many tasks to do with numbers, and in a data analysis context we need results which we can rely on, understand where they come from, and can be reproduced by others. 
 
-Under the hood it uses DuckDB, and tibbles are converted into DuckDB tables which can then be queried using SQL.
+We can't just feed our tabular data into an LLM and expect to get helpful results back, but querychat helps overcome some of these issues - we now have code that we can run again and get the same answers every time, and if we can trust that the generated SQL properly answers the question we asked, we now have something we can depend on more easily. 
 
-In translating questions into SQL we have repeatable code that we can run again separately, and it's a small leap from there to ensure that the SQL is correct and the LLM response represents it faithfully to get accurate answers.  
+How this works is pretty neat; under the hood, querychat uses DuckDB; data frames are converted into DuckDB tables which can then be queried using SQL.
 
-## Filtering the data
+## The schema
 
-You can create the simplest possible app by calling the `querychat_app()` function.
-
-```{r}
-#| eval: false
-library(querychat)
-
-querychat_app(mtcars)
-```
-
-querychat can filter data shown in the table, only having access to summary statistics, not the raw values.
-
-![](filter.png)
-
-The summary statistics provided are the database schema; in the case of mtcars, it looks like this:
+querychat generates a system prompt; the default one contains instructions on how to generate the required SQL, and some information about the database schema.  In the case of mtcars, the schema looks like this:
 
 ```text
 You have access to a DuckDB SQL database with the following schema:
@@ -65,17 +52,39 @@ Columns:
 </database_schema>
 ```
 
-The data sent contains column names, types, and value ranges.
+It contains column names, types, and value ranges, but crucially doesn't contain our full dataset.  
 
-## Keeping your data private
+## Filtering the data
 
-When querychat has full access to the data, it can perform aggregations and use the results to inform answers to questions.
+You can create the simplest possible app by calling the `querychat_app()` function.
+
+```{r}
+#| eval: false
+library(querychat)
+
+querychat_app(mtcars)
+```
+
+![](filter.png)
+
+
+When data is filtered, the SQL necessary to select a subset is generated, and the data displayed in the app is updated.
+
+This doesn't require access to the underlying data; just the schema so that appropriate queries can be generated based on the available data.
+
+This is a simpler kind of query, but we can also perform aggregations, which work a little differently.
+
+## Aggregating the data
+
+When querychat has full access to the data (enabled by default), it can perform aggregations, the results of which are passed back to the LLM to to inform answers to questions.
 
 ![](query_allowed.png)
 
-However, you can configure querychat to only have data filtering enabled, without the results being returned to the LLM.  The LLM still has access to the information in the schema, which is provided as part of the default system prompt.  
+This is pretty neat, but what if we don't want to pass this data back to the LLM?  
 
-Setting `tools = "update"` disables the query tool entirely.
+One feature of querychat that I like is this ability to enable partial data privacy.  We can disable the tool that querychat uses to query the data in this way, only allowing it to perform filtering.  We can't answer as many interesting questions, but still have functionality while only passing the schema to the LLM.
+
+By default both "query" and "update" tools are enabled, so setting `tools = "update"` disables the query tool entirely, and enables partial data privacy.
 
 ```{r}
 #| eval: false

@@ -85,7 +85,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <body class="nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
             <div id="quarto-search" class="" title="Search"></div>
@@ -131,7 +131,38 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">AI Tooling and Open Source</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">AI</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nic Crane </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 27, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -139,7 +170,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#attitudes-to-ai-tools---licensing-and-slop" id="toc-attitudes-to-ai-tools---licensing-and-slop" class="nav-link active" data-scroll-target="#attitudes-to-ai-tools---licensing-and-slop">Attitudes to AI tools - licensing and slop</a></li>
+  <li><a href="#attitudes-to-ai-tools" id="toc-attitudes-to-ai-tools" class="nav-link active" data-scroll-target="#attitudes-to-ai-tools">Attitudes to AI tools</a></li>
   <li><a href="#the-problem-of-ai-generated-prs-in-open-source" id="toc-the-problem-of-ai-generated-prs-in-open-source" class="nav-link" data-scroll-target="#the-problem-of-ai-generated-prs-in-open-source">The problem of AI-generated PRs in open source</a></li>
   <li><a href="#taking-it-to-the-mailing-list" id="toc-taking-it-to-the-mailing-list" class="nav-link" data-scroll-target="#taking-it-to-the-mailing-list">Taking it to the mailing list</a></li>
   <li><a href="#other-challenges" id="toc-other-challenges" class="nav-link" data-scroll-target="#other-challenges">Other challenges</a></li>
@@ -147,40 +178,10 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">AI Tooling and Open Source</h1>
-  <div class="quarto-categories">
-    <div class="quarto-category">AI</div>
-  </div>
-  </div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    <div>
-    <div class="quarto-title-meta-heading">Author</div>
-    <div class="quarto-title-meta-contents">
-             <p>Nic Crane </p>
-          </div>
-  </div>
-    
-    <div>
-    <div class="quarto-title-meta-heading">Published</div>
-    <div class="quarto-title-meta-contents">
-      <p class="date">January 27, 2026</p>
-    </div>
-  </div>
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <div class="quarto-figure quarto-figure-center">
@@ -189,26 +190,37 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 </figure>
 </div>
 <p>As one of the maintainers of Apache Arrow, lately I’ve been noticing an increase in AI-generated pull requests. In this blog post, I discuss how AI tooling affects open source, the actions maintainers have been taking to address the less positive aspects, and emerging policies that open source projects are implementing around the topic of AI-generated pull requests.</p>
-<section id="attitudes-to-ai-tools---licensing-and-slop" class="level2">
-<h2 class="anchored" data-anchor-id="attitudes-to-ai-tools---licensing-and-slop">Attitudes to AI tools - licensing and slop</h2>
+<section id="attitudes-to-ai-tools" class="level2">
+<h2 class="anchored" data-anchor-id="attitudes-to-ai-tools">Attitudes to AI tools</h2>
 <p>Earlier reactions to the use of AI tools in some open source projects have been quite negative, and there are lots of examples of open source projects explicitly banning the use of AI tools in generating contributions, for example, <a href="https://www.theregister.com/2024/04/16/gentoo_linux_ai_ban/">Gentoo Linux in 2024 banned all AI contributions</a>.</p>
 <p>I have some sympathy for this perspective, and there are certainly good and valid reasons around complications relating to licensing and AI-generated code that I believe open source developers need to be cautious of. The ASF have published some <a href="https://www.apache.org/legal/generative-tooling.html">high-level guidelines</a> on the use of generative tooling that capture the risk of replicating copyrighted materials.</p>
-<p>That said though, I also believe that the evolution of these tools means that condemning them outright is throwing the baby out with the bathwater. Entire features created with AI absolutely can be problematic from a licensing perspective, but much maintenance work of existing codebases is less fraught. In my experience, fixes and changes generated based on the existing codebase and reasoning around it rarely end up replicating other codebases, and these tools are a net win for maintainers when used well.</p>
-<p>As the sophistication of tools has increased, I found that at some point in 2025, the balance tipped for me from relatively poor results towards them becoming net useful. I also believe a lot of developers are in this place where many people are using these tools but fewer are openly admitting it. While there are negative opinions about these kinds of tools, I think it’s unrealistic to pretend that they aren’t being used pretty widely.</p>
+<p>That said though, I also believe that the evolution of these tools means that condemning them outright is throwing the metaphorical baby out with the bathwater. Entire features created with AI absolutely can be problematic from a licensing perspective, but much of the maintenance work required for existing codebases is less fraught. In my experience, fixes and changes generated based on the existing codebase and reasoning around it rarely end up replicating other codebases, and these tools are a net win for maintainers when used well.</p>
+<p>As the sophistication of tools has increased, I found that at some point in 2025, the balance tipped for me from relatively poor results towards them becoming net useful. I also believe a lot of developers are in this place where many of us are actively using these tools but fewer are openly admitting it, due to the scepticism out there.</p>
+<p>While there is some validity in the more cautious perspectives, it’s unrealistic to pretend that they aren’t being used pretty widely at this point.</p>
 </section>
 <section id="the-problem-of-ai-generated-prs-in-open-source" class="level2">
 <h2 class="anchored" data-anchor-id="the-problem-of-ai-generated-prs-in-open-source">The problem of AI-generated PRs in open source</h2>
-<p>There is a certain class of AI-generated pull request that is becoming problematic. There is often a pattern to them - a pull request is submitted by a contributor who has never previously contributed to the codebase. The code may have clear signs of AI tool usage - verbose and unnecessary comments, overly broad scope of changes, excessive or non-existent unit tests, and changes which span multiple areas of the codebase which human contributors don’t tend to have expertise on simultaneously.</p>
-<p>To a certain extent I get it. Some of my first open source pull requests were absolutely done for the sake of something that I viewed as a real achievement and not a genuine investment in a codebase, simply because I didn’t really understand how any of it worked at that point. And I’ve made a fair share of embarrassing mistakes in my own use of AI tools. In my earlier explorations, I accidentally allowed Claude to push to an upstream branch instead of my own fork, and proposed poorly thought-through changes that I did not understand well enough to take responsibility for when maintainers responded with thoughtful questions. The realisation of this potential for harm made me drastically alter my approach.</p>
+<p>There is a certain class of AI-generated pull request that is becoming problematic. There have a distinct pattern to them:</p>
+<ul>
+<li>a pull request is submitted by a contributor who has never previously contributed to the codebase</li>
+<li>code changes are often accompanied by verbose and unnecessary comments</li>
+<li>the scope of the changes is overly broad scope</li>
+<li>unit tests are either excessive or non-existent</li>
+<li>the code itself doesn’t match the style or conventions of the other code</li>
+<li>the contributor doesn’t ask any questions about anything they’re unsure about</li>
+</ul>
+<p>When I see a pull request with these characteristics, I tend to assume that the contributor wanted to contribute to the codebase for whatever reason, decided to use AI to generate the code, but then didn’t engage much if at all with the output before submitting the PR.</p>
+<p>To a certain extent I get it. Some of my first open source pull requests were absolutely done for the sake of something that I viewed as a real achievement and not a genuine investment in a codebase, because I didn’t really understand how open source worked at that point. I was fortunate to end up interacting with patient people who took their time to guide me through the process and help me learn, for which I’m grateful.</p>
+<p>And I’ve made a fair share of embarrassing mistakes in my own use of AI tools. In my earlier explorations, I accidentally allowed Claude to push to an upstream branch instead of my own fork, and proposed poorly thought-through changes that I didn’t actually understand well enough to take responsibility for when other maintainers responded with thoughtful questions. The realisation of this potential for harm made me drastically alter my approach, but I had to make the mistake to learn the lesson.</p>
 <p>All of that said though, most open source maintainers are pressed for time to work on the project. It’s great working with new contributors, both for the human connection and because it improves project health by increasing the number of people who are able to contribute, but there is very little value in a maintainer reviewing AI-generated code which the author has either abandoned or will just continue to use AI to respond to the provided suggestions.</p>
 <p>Thoughtful use of AI tools requires multiple iterations and changes, and questioning of the tooling as to the reasoning behind changes, and taking ownership of the changes through the understanding gained during the process.</p>
 </section>
 <section id="taking-it-to-the-mailing-list" class="level2">
 <h2 class="anchored" data-anchor-id="taking-it-to-the-mailing-list">Taking it to the mailing list</h2>
-<p>After noticing the increase in AI generated PRs and wanting to validate my approach to handling them with the wider community, I started a discussion on the Arrow developer mailing list about defining a set of community-agreed guidelines for AI-generated PRs.</p>
-<p>In reality, we can’t necessarily tell when people make thoughtful use of AI tooling, and so my own personal motivation for suggesting this guidance was that I can drop in a link to it during reviews of PRs when I suspect more engagement is needed from the potential contributor before it’s ready to merge.</p>
-<p>It’s hard to know what to say, and takes a chunk of emotional energy trying to respond to something with the empathy and welcoming nature that we want to show towards new contributors, while simultaneously not investing too much time and energy in a pull request which may well be abandoned. Conversely though, if the contributor really is interested in engaging, we don’t want to drive them away.</p>
-<p>Given all the negativity I’ve seen online around the use of AI tooling, I was both nervous and curious to see what the conversation would look like when I opened the discussion on the Apache Arrow developer mailing list around the use of these tools.</p>
+<p>After noticing the increase in AI generated PRs, I wanted to validate the preferred approach to handling these PRs with the wider Arrow community, and so I started a discussion on the Arrow developer mailing list about defining a set of community-agreed guidelines for AI-generated PRs.</p>
+<p>It takes a chunk of emotional energy trying to respond to a PR with the empathy and welcoming nature that we want to show towards new contributors, while simultaneously not investing too much time and energy in a pull request which may well be abandoned. Conversely though, if the contributor really is interested in engaging, we don’t want to drive them away.</p>
+<p>In reality, we can’t necessarily tell when people make thoughtful use of AI tooling, and so my own personal motivation for suggesting this guidance was to have an official source that we can link to during reviews of PRs which appear to be AI generated.</p>
+<p>Given all the negativity I’ve seen online around the use of AI tooling, and also my own use of such tools, I was a little nervous to see what the conversation would look like when I opened the discussion on the Apache Arrow developer mailing list.</p>
 <p>It was great to see that, as ever, the Apache Arrow developer community engaged in a thoughtful discussion in which folks suggested additions to my suggested phrasing of policy, and chimed in with their own experiences. This clearly isn’t a novel or new idea, and Andrew Lamb pointed me straight to some <a href="https://datafusion.apache.org/contributor-guide/index.html#ai-assisted-contributions">excellent guidelines which already existed in the DataFusion project</a>. (For context, DataFusion is a query engine built on Arrow, used to be kept in the former Arrow monorepo, and is part of the Arrow community). I borrowed some ideas from the DataFusion guidelines as well as the contributions from other folks on the mailing list. The key recommendations we ended up with were:</p>
 <blockquote class="blockquote">
 <ul>
@@ -220,17 +232,17 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <li>Break down large PRs into smaller ones to make review easier</li>
 </ul>
 </blockquote>
-<p>Since we had this discussion, the <a href="https://github.com/apache/arrow/pull/48952">PR</a> was linked to by a couple of other projects and through following the collated examples, I noticed even more open source projects which had already had similar discussions or recent policy updates, for example, <a href="https://github.com/jupyter/governance/issues/326">Jupyter</a>, <a href="https://github.com/zulip/zulip/blob/main/CONTRIBUTING.md#ai-use-policy-and-guidelines">Zulip</a>, <a href="https://llvm.org/docs/AIToolPolicy.html">LLVM</a>, and <a href="https://devguide.python.org/getting-started/generative-ai/">Python</a>.</p>
+<p>Since we had this discussion, the <a href="https://github.com/apache/arrow/pull/48952">PR</a> that we merged was linked to by a couple of other projects and after following the links back I found even more open source projects which had already had engaged in similar discussions or recent policy updates, for example, <a href="https://github.com/jupyter/governance/issues/326">Jupyter</a>, <a href="https://github.com/zulip/zulip/blob/main/CONTRIBUTING.md#ai-use-policy-and-guidelines">Zulip</a>, <a href="https://llvm.org/docs/AIToolPolicy.html">LLVM</a>, and <a href="https://devguide.python.org/getting-started/generative-ai/">Python</a>.</p>
 </section>
 <section id="other-challenges" class="level2">
 <h2 class="anchored" data-anchor-id="other-challenges">Other challenges</h2>
-<p>Pull requests aren’t the only challenge that open source is seeing in terms of AI tool usage; multiple projects have also recently experienced an uptick in security reports. Some of these appear to constitute things that would be considered bugs or edge cases, and deploying fixes may genuinely improve the codebase, but some examples I’ve seen appear to include strategic phrasing to paint bugs as security incidents, and feel a little disingenuous.</p>
+<p>Pull requests aren’t the only challenge that open source is seeing in terms of AI tool usage; multiple projects have also recently experienced an uptick in security reports. Some of these are valid, but others appear to constitute things that would be considered bugs or edge cases. While deploying fixes for these may genuinely improve the codebase, some examples appear to include strategic phrasing to depict bugs as security incidents, and feel a little disingenuous.</p>
 <p>This is becoming more prevalent, as shown by the <a href="https://daniel.haxx.se/blog/2026/01/26/the-end-of-the-curl-bug-bounty">curl project recently closing its bug bounty program</a>, and similar issues <a href="https://daniel.haxx.se/blog/2026/01/26/the-end-of-the-curl-bug-bounty/comment-page-1/#comment-27393">experienced by Apache Log4j</a>.</p>
 <p>The irony of the spurious reporting of alleged potential Denial-of-Service attacks is delightfully captured by curl author Daniel Stenberg in the abstract of his <a href="https://fosdem.org/2026/schedule/event/B7YKQ7-oss-in-spite-of-ai/">upcoming FOSDEM talk</a>:</p>
 <blockquote class="blockquote">
 <p>“Sloppy humans causing Denial-of-Service attacks by overloading maintainers with quickly produced almost-real-looking rubbish”.</p>
 </blockquote>
-<p>AI tooling is having a significant effect on open source development and it’s fascinating to see it play out in real time. I hope it will be a net positive, but there are certainly challenges ahead, and it’s exciting to see how fast things are moving right now.</p>
+<p>AI is having a significant effect on open source development, some of it positive, but it’s certainly not without real challenges as well.</p>
 
 
 </section>

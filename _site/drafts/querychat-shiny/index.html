@@ -216,21 +216,13 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <p>I was excited to see the release of the <a href="https://cran.r-project.org/web/packages/querychat/index.html">querychat</a> package on CRAN recently. I first noticed this package on <a href="https://github.com/posit-dev/querychat">Posit’s GitHub</a>, and was really curious to see what it did. In short, it lets you ask questions to a chatbot which then generates SQL and queries a data frame or database connection to answer your question.</p>
 <section id="reproducibility-through-sql" class="level2">
 <h2 class="anchored" data-anchor-id="reproducibility-through-sql">Reproducibility through SQL</h2>
-<p>It’s a really exciting and powerful tool because it allows you to overcome some of the key issues with using LLMs for data analysis - LLMs are often poor at many tasks to do with numbers, and in most data analysis contexts we need reproducible and accurate results.</p>
-<p>Under the hood it uses DuckDB, and tibbles are converted into DuckDB tables which can then be queried using SQL.</p>
-<p>In translating questions into SQL we have repeatable code that we can run again separately, and it’s a small leap from there to ensure that the SQL is correct and the LLM response represents it faithfully to get accurate answers.</p>
+<p>querychat a really exciting and powerful tool because it allows you to overcome some of the key issues with using LLMs for data analysis. LLMs are pretty poor at many tasks to do with numbers, and in a data analysis context we need results which we can rely on, understand where they come from, and can be reproduced by others.</p>
+<p>We can’t just feed our tabular data into an LLM and expect to get helpful results back, but querychat helps overcome some of these issues - we now have code that we can run again and get the same answers every time, and if we can trust that the generated SQL properly answers the question we asked, we now have something we can depend on more easily.</p>
+<p>How this works is pretty neat; under the hood, querychat uses DuckDB; data frames are converted into DuckDB tables which can then be queried using SQL.</p>
 </section>
-<section id="filtering-the-data" class="level2">
-<h2 class="anchored" data-anchor-id="filtering-the-data">Filtering the data</h2>
-<p>You can create the simplest possible app by calling the <code>querychat_app()</code> function.</p>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(querychat)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">querychat_app</span>(mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>querychat can filter data shown in the table, only having access to summary statistics, not the raw values.</p>
-<p><img src="filter.png" class="img-fluid"></p>
-<p>The summary statistics provided are the database schema; in the case of mtcars, it looks like this:</p>
+<section id="the-schema" class="level2">
+<h2 class="anchored" data-anchor-id="the-schema">The schema</h2>
+<p>querychat generates a system prompt; the default one contains instructions on how to generate the required SQL, and some information about the database schema. In the case of mtcars, the schema looks like this:</p>
 <pre class="text"><code>You have access to a DuckDB SQL database with the following schema:
 
 &lt;database_schema&gt;
@@ -259,14 +251,28 @@ Columns:
 - carb (FLOAT)
   Range: 1 to 8
 &lt;/database_schema&gt;</code></pre>
-<p>The data sent contains column names, types, and value ranges.</p>
+<p>It contains column names, types, and value ranges, but crucially doesn’t contain our full dataset.</p>
 </section>
-<section id="keeping-your-data-private" class="level2">
-<h2 class="anchored" data-anchor-id="keeping-your-data-private">Keeping your data private</h2>
-<p>When querychat has full access to the data, it can perform aggregations and use the results to inform answers to questions.</p>
+<section id="filtering-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="filtering-the-data">Filtering the data</h2>
+<p>You can create the simplest possible app by calling the <code>querychat_app()</code> function.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(querychat)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">querychat_app</span>(mtcars)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><img src="filter.png" class="img-fluid"></p>
+<p>When data is filtered, the SQL necessary to select a subset is generated, and the data displayed in the app is updated.</p>
+<p>This doesn’t require access to the underlying data; just the schema so that appropriate queries can be generated based on the available data.</p>
+<p>This is a simpler kind of query, but we can also perform aggregations, which work a little differently.</p>
+</section>
+<section id="aggregating-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="aggregating-the-data">Aggregating the data</h2>
+<p>When querychat has full access to the data (enabled by default), it can perform aggregations, the results of which are passed back to the LLM to to inform answers to questions.</p>
 <p><img src="query_allowed.png" class="img-fluid"></p>
-<p>However, you can configure querychat to only have data filtering enabled, without the results being returned to the LLM. The LLM still has access to the information in the schema, which is provided as part of the default system prompt.</p>
-<p>Setting <code>tools = "update"</code> disables the query tool entirely.</p>
+<p>This is pretty neat, but what if we don’t want to pass this data back to the LLM?</p>
+<p>One feature of querychat that I like is this ability to enable partial data privacy. We can disable the tool that querychat uses to query the data in this way, only allowing it to perform filtering. We can’t answer as many interesting questions, but still have functionality while only passing the schema to the LLM.</p>
+<p>By default both “query” and “update” tools are enabled, so setting <code>tools = "update"</code> disables the query tool entirely, and enables partial data privacy.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(querychat)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>

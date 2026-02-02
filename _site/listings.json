@@ -1,7 +1,21 @@
 [
   {
+    "listing": "/talks.html",
+    "items": [
+      "/talks/shinyinprod2025/index.html",
+      "/talks/positconf2025/index.html",
+      "/talks/user2025/index.html",
+      "/talks/positconf2024_2/index.html",
+      "/talks/nyhackr/index.html",
+      "/talks/rstudioconf2022/index.html",
+      "/talks/rstudioconf2019/index.html",
+      "/talks/londonr/index.html"
+    ]
+  },
+  {
     "listing": "/blog.html",
     "items": [
+      "/posts/ai-tooling-open-source/index.html",
       "/posts/llms_for_learning/index.html",
       "/posts/socalmediagen2/index.html",
       "/posts/socialmediagen/index.html",
@@ -23,19 +37,6 @@
       "/posts/packagemetrics/index.html",
       "/posts/shiny-confirm-popup/index.html",
       "/posts/leaflet-shiny/index.html"
-    ]
-  },
-  {
-    "listing": "/talks.html",
-    "items": [
-      "/talks/shinyinprod2025/index.html",
-      "/talks/positconf2025/index.html",
-      "/talks/user2025/index.html",
-      "/talks/positconf2024_2/index.html",
-      "/talks/nyhackr/index.html",
-      "/talks/rstudioconf2022/index.html",
-      "/talks/rstudioconf2019/index.html",
-      "/talks/londonr/index.html"
     ]
   }
 ]
