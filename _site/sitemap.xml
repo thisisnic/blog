@@ -53,15 +53,67 @@
     <lastmod>2026-01-23T20:40:25.937Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/index.html</loc>
-    <lastmod>2026-01-23T21:27:42.607Z</lastmod>
+    <loc>https://niccrane.com/learn-arrow.html</loc>
+    <lastmod>2026-02-04T18:32:14.708Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/talks/user2025/index.html</loc>
-    <lastmod>2026-01-23T21:43:44.574Z</lastmod>
+    <loc>https://niccrane.com/contact.html</loc>
+    <lastmod>2025-12-13T11:56:17.428Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/talks/londonr/index.html</loc>
+    <loc>https://niccrane.com/talks/shinyinprod2025/index.html</loc>
+    <lastmod>2026-01-23T21:43:51.179Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.484Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.485Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/positconf2025/index.html</loc>
+    <lastmod>2026-01-23T21:42:06.826Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/projects/migration/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.477Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/projects/refactoring/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.478Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts-archive/2023wrapup/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.438Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts-archive/clineshiny/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.452Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts-archive/c_deepr/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.445Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/posts-archive/rc/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.460Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks.html</loc>
+    <lastmod>2025-12-18T10:18:44.923Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/projects/nhs/index.html</loc>
+    <lastmod>2025-12-13T11:56:17.478Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/drafts/querychat-shiny/index.html</loc>
+    <lastmod>2026-01-28T17:35:16.032Z</lastmod>
+  </url>
+  <url>
+    <loc>https://niccrane.com/talks/nyhackr/index.html</loc>
     <lastmod>2025-12-13T11:56:17.480Z</lastmod>
   </url>
   <url>
@@ -69,64 +121,16 @@
     <lastmod>2025-12-13T11:56:17.484Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/talks/nyhackr/index.html</loc>
+    <loc>https://niccrane.com/talks/londonr/index.html</loc>
     <lastmod>2025-12-13T11:56:17.480Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/drafts/querychat-shiny/index.html</loc>
-    <lastmod>2026-01-28T17:35:16.032Z</lastmod>
+    <loc>https://niccrane.com/talks/user2025/index.html</loc>
+    <lastmod>2026-01-23T21:43:44.574Z</lastmod>
   </url>
   <url>
-    <loc>https://niccrane.com/projects/nhs/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.478Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks.html</loc>
-    <lastmod>2025-12-18T10:18:44.923Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts-archive/rc/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.460Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts-archive/c_deepr/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.445Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts-archive/clineshiny/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.452Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/posts-archive/2023wrapup/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.438Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/projects/refactoring/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.478Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/projects/migration/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.477Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/positconf2025/index.html</loc>
-    <lastmod>2026-01-23T21:42:06.826Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/rstudioconf2022/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.485Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/rstudioconf2019/index.html</loc>
-    <lastmod>2025-12-13T11:56:17.484Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/talks/shinyinprod2025/index.html</loc>
-    <lastmod>2026-01-23T21:43:51.179Z</lastmod>
-  </url>
-  <url>
-    <loc>https://niccrane.com/contact.html</loc>
-    <lastmod>2025-12-13T11:56:17.428Z</lastmod>
+    <loc>https://niccrane.com/index.html</loc>
+    <lastmod>2026-01-23T21:27:42.607Z</lastmod>
   </url>
   <url>
     <loc>https://niccrane.com/projects.html</loc>
