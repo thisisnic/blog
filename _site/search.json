@@ -539,6 +539,34 @@
     "text": "🏁 Final Thoughts: AI’s Role in Shiny Development\nThis experiment showed me a few important things:\n\nVague prompts get mixed results\nAI is better at writing code than about making decisions about data science and how best to represent data\nCosts can add up quickly and being strategic about which aspects to use Cline for feels like the best way forward\n\nThis made me really reflect on the role of AI here. On an app development team, would you rather have 1 person who does it all, or a team of people with different specialisations? I think the latter would work better, for the hackathon itself, I’m going to experiment with a few different approaches such as:\n\nSetting up the app structure myself in advance, and getting Cline to fill in the gaps based on what’s already there\nGPT product manager - putting together a prompt around constructing really well-defined requirements, and using that to help me tightly define what is being created before passing those requirements onto an AI like Cline to create them\ndesigning any plots myself - there may be ways to improve on what was generated here today, but representing data in a human-understandable form might just be best done by humans\n\nI’m looking forward to Saturday’s hackathon - good luck to everyone else participating and I’m super excited to see what comes out of it! 🚀"
   },
   {
+    "objectID": "learn-llms.html",
+    "href": "learn-llms.html",
+    "title": "Learn LLMs in R",
+    "section": "",
+    "text": "Resources for learning how to work with LLMs in R:"
+  },
+  {
+    "objectID": "learn-llms.html#athlyticz",
+    "href": "learn-llms.html#athlyticz",
+    "title": "Learn LLMs in R",
+    "section": "Athlyticz: ML and LLMs in R",
+    "text": "Athlyticz: ML and LLMs in R\nA comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.\nThe course covers:\n\nML foundations with tidymodels: model evaluation, resampling, tuning, preprocessing\nRegression and classification models including neural networks\nModel deployment with vetiver and orbital\nWorking with LLMs using ellmer\nRetrieval-augmented generation (RAG) for building apps with your own data\n\nAimed at R users comfortable with the tidyverse who want to build and deploy ML and LLM applications.\nSign up at Athlyticz"
+  },
+  {
+    "objectID": "learn-llms.html#self-paced",
+    "href": "learn-llms.html#self-paced",
+    "title": "Learn LLMs in R",
+    "section": "LLMs in R (Self-Paced)",
+    "text": "LLMs in R (Self-Paced)\nLearn to work with large language models in R at your own pace.\nView course"
+  },
+  {
+    "objectID": "learn-llms.html#cohort",
+    "href": "learn-llms.html#cohort",
+    "title": "Learn LLMs in R",
+    "section": "Practical AI for R (Cohort)",
+    "text": "Practical AI for R (Cohort)\nA cohort-based course with live sessions and group learning.\nView course"
+  },
+  {
     "objectID": "posts-archive/c_deepr/index.html",
     "href": "posts-archive/c_deepr/index.html",
     "title": "Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’",

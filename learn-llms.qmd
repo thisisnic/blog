@@ -1,0 +1,39 @@
+---
+title: "Learn LLMs in R"
+---
+
+Resources for learning how to work with LLMs in R:
+
+-   **Comprehensive:** The [Athlyticz course](#athlyticz) covers ML with tidymodels through to LLMs, RAG, and deployment.
+
+-   **Self-paced:** My [LLMs in R course](#self-paced) if you want to learn at your own pace.
+
+-   **Cohort-based:** My [Practical AI for R course](#cohort) with live sessions and group learning.
+
+## Athlyticz: ML and LLMs in R {#athlyticz}
+
+A comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.
+
+The course covers:
+
+-   ML foundations with tidymodels: model evaluation, resampling, tuning, preprocessing
+-   Regression and classification models including neural networks
+-   Model deployment with vetiver and orbital
+-   Working with LLMs using ellmer
+-   Retrieval-augmented generation (RAG) for building apps with your own data
+
+Aimed at R users comfortable with the tidyverse who want to build and deploy ML and LLM applications.
+
+[Sign up at Athlyticz](https://athlyticz.com/ai-signup){.btn .btn-primary target="_blank"}
+
+## LLMs in R (Self-Paced) {#self-paced}
+
+Learn to work with large language models in R at your own pace.
+
+[View course](https://www.aifordatapeople.com/products/courses/llms-in-r){.btn .btn-primary target="_blank"}
+
+## Practical AI for R (Cohort) {#cohort}
+
+A cohort-based course with live sessions and group learning.
+
+[View course](https://www.aifordatapeople.com/products/courses/practical-ai-for-r){.btn .btn-primary target="_blank"}
