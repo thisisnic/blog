@@ -34,3 +34,9 @@ The workshops are hands-on with exercises to help you apply what you've learned.
 ## Private Training {#private-training}
 
 I also deliver private workshops for teams. If you'd like to discuss training for your organisation, email me at [nic\@ncdatalabs.com](mailto:nic@ncdatalabs.com).
+
+## R Consortium Webinar Slides {#webinar-slides}
+
+I presented an introduction to Arrow at an R Consortium webinar. The slides are available as a free download:
+
+[Download slides (PDF)](r-consortium-webinar.pdf)
