@@ -37,6 +37,8 @@ I also deliver private workshops for teams. If you'd like to discuss training fo
 
 ## R Consortium Webinar Slides {#webinar-slides}
 
-I presented an introduction to Arrow at an R Consortium webinar. The slides are available as a free download:
+I presented an introduction to Arrow at an R Consortium webinar.
+
+[Watch the webinar on YouTube](https://www.youtube.com/watch?v=Bz17K5ZPHAE){target="_blank"}
 
 [Download slides (PDF)](r-consortium-webinar.pdf)
