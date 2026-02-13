@@ -8,7 +8,7 @@ title: "Dr Nic Crane"
 ::: {.profile-card}
 ![](niccrane_new.jpg){width="100%"}
 
-[{{< fa brands linkedin size=lg >}}](https://www.linkedin.com/in/nicolacrane/) [{{< fa brands github size=lg >}}](https://github.com/thisisnic) [{{< fa brands bluesky size=lg >}}](https://bsky.app/profile/niccrane.bsky.social)
+[{{< fa brands linkedin size=lg >}}](https://www.linkedin.com/in/niccrane/) [{{< fa brands github size=lg >}}](https://github.com/thisisnic) [{{< fa brands bluesky size=lg >}}](https://bsky.app/profile/niccrane.bsky.social)
 :::
 :::
 
