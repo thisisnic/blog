@@ -10,6 +10,8 @@ Resources for learning how to work with LLMs in R:
 
 -   **Cohort-based:** My [Practical AI for R course](#cohort) with live sessions and group learning.
 
+Sign up to my newsletter for the latest in LLMs/AI in R: <https://aifordatapeople.beehiiv.com/subscribe>
+
 ## Athlyticz: ML and LLMs in R {#athlyticz}
 
 A comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.
