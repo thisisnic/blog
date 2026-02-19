@@ -9,7 +9,7 @@ Resources for learning how to work with larger-than-memory data in R using Arrow
 
 - **Learning:** [The book](#the-book) takes you from the basics through to optimising large-scale workflows, and is free to read online.
 
-- **Hands-on:** I run [public workshops](#public-workshops) with exercises and 1:1 help, and also offer [private training](#private-training) for teams.
+- **Hands-on:** I offer [private training](#private-training) for teams.
 
 ## The Book {#the-book}
 
@@ -18,18 +18,6 @@ Resources for learning how to work with larger-than-memory data in R using Arrow
 
 *Scaling Up with R and Arrow* is available to read online for free at [arrowrbook.com](https://arrowrbook.com){target="_blank"}. I wrote it with Jonathan Keane and Neal Richardson, and it covers everything from getting started with Arrow to optimising large-scale data workflows.
 :::
-
-## Public Workshops {#public-workshops}
-
-I run public workshops on working with larger-than-memory data in R using Arrow and Parquet. You'll learn how to:
-
--   Analyse larger-than-memory data using dplyr syntax you already know
--   Convert CSVs into space-saving Parquet files
--   Optimise datasets to take full advantage of your hardware
-
-The workshops are hands-on with exercises to help you apply what you've learned. Attendee numbers are capped to keep things interactive with opportunities for 1:1 help.
-
-[View upcoming dates and book your place](workshops.qmd)
 
 ## Private Training {#private-training}
 

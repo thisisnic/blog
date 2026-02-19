@@ -16,16 +16,9 @@ Data analysis pipelines with larger-than-memory data are becoming more and more 
 - Optimise Arrow datasets to take full advantage of your hardware
 - Build reproducible workflows using formats and tools designed for long-term reliability
 
-### Upcoming dates
+### Book a workshop
 
-**4-5 March 2026** (Online via Google Meet)
-
-- Session 1: Wed 4th March - 2:00PM - 5:30PM GMT
-- Session 2: Thu 5th March - 2:00PM - 5:30PM GMT
-
-Attendee numbers are capped to ensure an interactive experience with opportunities to ask questions and get 1:1 help.
-
-[Book your place](https://buytickets.at/ncdatalabs/1996390){.btn .btn-primary}
+There are no public dates currently scheduled. If you're interested in attending a future session or booking private training for your team, get in touch at [nic@ncdatalabs.com](mailto:nic@ncdatalabs.com).
 
 ### Who is this course for?
 
