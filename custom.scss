@@ -99,8 +99,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 // Alternating section backgrounds (only on main pages, not blog posts)
-// Main pages have .fullcontent class, blog posts don't
-body.fullcontent .level2 {
+// Blog posts have .quarto-banner-title-block on main, so exclude those
+body.fullcontent:not(:has(.quarto-banner-title-block)) .level2 {
   padding: 2rem 1.5rem;
   margin: 0 -1.5rem 2rem -1.5rem;
   border-radius: 8px;
