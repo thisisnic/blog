@@ -286,8 +286,8 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 </div>
 </div>
 </section>
-<section id="llm-classification" class="level1">
-<h1>LLM classification</h1>
+<section id="llm-classification" class="level2">
+<h2 class="anchored" data-anchor-id="llm-classification">LLM classification</h2>
 <p>Before we properly get started, I’m going to have a look at an individual example.</p>
 <p>Let’s have a quick look at the first issue in the data set</p>
 <div class="cell">
@@ -300,13 +300,13 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Ok, so I can see from the title that it’s an R function. I’ll paste it below so you can see it.</p>
-<div class="callout callout-style-default callout-note callout-titled" title="Issue 3 body">
+<div class="callout callout-style-default callout-note callout-titled" title="First issue body">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Issue 3 body
+First issue body
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -394,7 +394,7 @@ R</code></pre>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I was surprised to see a message “waiting 35s for rate limiting” when it ran but after diving deeper into the Claude <a href="https://platform.claude.com/docs/en/api/rate-limits#tier-1">developer docs</a> I realised that I’d hit the 50 requests per minute limit. Pretty simple to limit in the function call, but not need as waiting wasn’t a problem.</p>
-<p>I also wanted to check how much it had cost - $0.04 in total.</p>
+<p>I also wanted to check how much it had cost - $0.04 in total, and some of this was earlier experimentation I had done in the process.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">token_usage</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -728,6 +728,7 @@ C++</code></pre>
 <p>Same again!</p>
 <p>Given that these kinds of issues are typically reported by more experienced contributors and don’t end up going unlabelled anyway, we could justifiably deem them to be poor examples for the task at hand and so claim 100% accuracy here.</p>
 <p>I’m calling this experiment a success and my next steps are to see if I can deploy this or something similar to help with other aspects of Apache Arrow maintenance. The main thing I took from this is how accessible LLM-powered tooling has become and how simple it has been to use for an otherwise manual task.</p>
+<p>I’ve just finished writing a course about how to work with ellmer and extract tidy data from text, and create chatbots; if this is something you’re interested in learning about with step-by-step tutorials, you can find my course at: <a href="https://www.aifordatapeople.com/courses/llms-in-r" class="uri">https://www.aifordatapeople.com/courses/llms-in-r</a>.</p>
 
 
 </section>
