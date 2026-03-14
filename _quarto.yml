@@ -8,12 +8,8 @@ website:
     right:
       - text: Home
         file: index.qmd
-      - text: About
-        file: about.qmd
-      - text: Workshops
-        file: workshops.qmd
-      - text: Past Work
-        file: projects.qmd
+      - text: Courses
+        file: courses.qmd
       - text: Talks
         file: talks.qmd
       - text: Blog

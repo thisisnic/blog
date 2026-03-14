@@ -34,8 +34,3 @@ Learn to work with large language models in R at your own pace.
 
 [View course](https://www.aifordatapeople.com/products/courses/llms-in-r){.btn .btn-primary target="_blank"}
 
-## Practical AI for R (Cohort) {#cohort}
-
-A cohort-based course with live sessions and group learning.
-
-[View course](https://www.aifordatapeople.com/products/courses/practical-ai-for-r){.btn .btn-primary target="_blank"}

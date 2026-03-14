@@ -21,11 +21,11 @@ $navbar-fg: white;
 $body-color: $dark;
 $body-bg: $warm-white;
 
-// Typography - using a modern font pairing
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+// Typography - techy but subtle
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
-$font-family-sans-serif: 'Source Sans 3', -apple-system, BlinkMacSystemFont, sans-serif;
-$headings-font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+$font-family-sans-serif: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+$headings-font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 $headings-font-weight: 600;
 
 /*-- scss:rules --*/
@@ -152,13 +152,6 @@ h3 {
   font-size: 1.3rem;
 }
 
-// Make the about page hero area pop
-.about-entity {
-  background: linear-gradient(135deg, $warm-cream 0%, $warm-white 100%);
-  padding: 2rem;
-  border-radius: 12px;
-  margin-bottom: 2rem;
-}
 
 // Smoother transitions
 a, .btn, .nav-link {

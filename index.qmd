@@ -1,95 +1,37 @@
 ---
-title: "Dr Nic Crane"
+title: "Nic Crane"
+about:
+  template: trestles
+  image: niccrane.png
+  links:
+    - icon: linkedin
+      href: https://www.linkedin.com/in/niccrane/
+    - icon: github
+      href: https://github.com/thisisnic
+    - text: "{{< fa brands bluesky >}}"
+      href: https://bsky.app/profile/niccrane.bsky.social
 ---
 
-::: {.grid}
+## Hi, I'm Nic! 👋
 
-::: {.g-col-12 .g-col-md-4}
-::: {.profile-card}
-![](niccrane_new.jpg){width="100%"}
+I'm an open source developer, and R educator and consultant.
 
-[{{< fa brands linkedin size=lg >}}](https://www.linkedin.com/in/niccrane/) [{{< fa brands github size=lg >}}](https://github.com/thisisnic) [{{< fa brands bluesky size=lg >}}](https://bsky.app/profile/niccrane.bsky.social)
-:::
-:::
+Things I've been working on lately:
 
-::: {.g-col-12 .g-col-md-8}
-## Helping data teams do more with R.
+🏹 Maintaining [Apache Arrow](https://arrow.apache.org/)
 
-I help data teams scale up their R workflows - from handling larger-than-memory data to getting code into production.
+📚 Co-authoring ["Scaling Up with Arrow and R"](www.arrowrbook.com)
 
-I specialise in big data with R (Arrow, Parquet) and training teams to use AI tools effectively. I run public courses for individuals and private training for organisations, and take on consulting projects.
+🤖 Building [courses](https://www.aifordatapeople.com/courses/llms-in-r) teaching people how to work with LLMs in data science
 
 [Get in touch](mailto:nic@ncdatalabs.com) if you'd like to work together.
-:::
-
-:::
-
-::: {.grid}
-
-::: {.g-col-12 .g-col-md-4}
-::: {.service-card}
-### Public Training Courses
-
-Open enrolment courses on Big Data in R with Arrow and LLMs in R.
-
-[View upcoming courses](workshops.qmd)
-:::
-:::
-
-::: {.g-col-12 .g-col-md-4}
-::: {.service-card}
-### Private Courses
-
-Tailored training for your team. Past topics include Arrow, LLMs in R, CI/CD, and R package development.
-
-[Get in touch](mailto:nic@ncdatalabs.com)
-:::
-:::
-
-::: {.g-col-12 .g-col-md-4}
-::: {.service-card}
-### Consulting
-
-R and data science consulting for one-off projects or ongoing support.
-
-[Get in touch](mailto:nic@ncdatalabs.com)
-:::
-:::
-
-:::
-
-::: {.cta-banner}
-## Get in touch to discuss your project
-
-[Contact Me](mailto:nic@ncdatalabs.com){.btn .btn-cta}
-:::
 
 ## What People Say
 
-::: {.grid}
-
-::: {.g-col-12 .g-col-md-6}
-::: {.testimonial}
 "I recently attended Nic's training course on using AI with R. This was my first hands-on experience at interacting with AI agents through R and Nic walked us through from step 0 (pre-course preparation including setting up API keys), interacting with agents within the IDE and programmatically, setting up system prompts and then presenting latest developments at passing information into agents and formatting returned information. This is a topic where things are developing quickly, and Nic managed to walk the fine line between basic concepts and introducing the 'latest greatest'. This was a good course and it certainly helped me 'cross the threshold' into using AI with R."
 
 **— Mike Smith, Senior Director Statistics, Pfizer**
-:::
-:::
 
-::: {.g-col-12 .g-col-md-6}
-::: {.testimonial}
 "I had the privilege of attending Nic Crane's 'Big Data in R with Arrow' workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic's workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn."
 
 **— Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene**
-:::
-:::
-
-:::
-
-## Resources
-
-I've been an active contributor to the Apache Arrow R package, where I've worked on implementing features, acting as package maintainer, managing complex build configuration, and extending dplyr support to Arrow. This work has influenced how I approach performance, reproducibility, and maintainability - both in open source and in client projects.
-
-In 2024, I co-authored Scaling Up With R and Arrow, which was published by CRC Press and also available online at arrowrbook.com.
-
-![](scaling_up.png){fig-align="center" width="300"}
