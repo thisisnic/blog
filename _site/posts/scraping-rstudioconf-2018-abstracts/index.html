@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Scraping rstudio::conf 2018 Abstracts</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -73,10 +76,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-487a329787825a8dd0a4d58ff3b0bb56.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3497c1b0d03429dc8b8bfbaddbbef5f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -208,9 +211,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <section id="getting-started" class="level1">
 <h1>Getting Started</h1>
 <p>I found last year’s conference schedule <a href="https://beta.rstudioconnect.com/content/3105/">here</a>, which seemed as good a place as any to start. First, I loaded the <code>rvest</code> package and used <code>read_html()</code> (from <code>xml2</code> which is automatically loaded when you load <code>rvest</code>) to pull the html from the page.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>my_html <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">"https://beta.rstudioconnect.com/content/3105/"</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>my_html</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>my_html</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## {xml_document}
 ## &lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
 ## [1] &lt;head&gt;\n&lt;meta charset="utf-8"&gt;\n&lt;meta http-equiv="Content-Type" cont ...
@@ -221,11 +224,11 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <p>Selector Gadget is a tool which takes a lot of effort out of webscraping. For an in-depth description, check out <a href="https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html">this rvest vignette</a>. In short, once Selector Gadget is loaded, I click on any unselected components to pick which ones I need (in green), look at what else is highlighted (in yellow) and then click on these to deselect them (now in red) and carry on selecting and/or deselecting components until only the ones I want are in green or yellow.</p>
 <p><img src="selector_gadget.png" class="img-fluid" style="width:50.0%"></p>
 <p>Then, I copy the text out of the box, in the case, “.talk-title”. This is the CSS selector needed to grab those components, and I supply this as the <code>css</code> argument to <code>html_nodes()</code>. As I just want the inner text, I pipe the result of this into <code>html_text()</code>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>talks <span class="ot">&lt;-</span> my_html <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>talks <span class="ot">&lt;-</span> my_html <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".talk-title"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(talks)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(talks)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "\nTo the Tidyverse and Beyond: Challenges for the Future in Data Science\n\n"
 ## [2] "\nTo the Tidyverse and Beyond: Challenges for the Future in Data Science\n\n"
 ## [3] "\nTidy spatial data analysis\n\n"
@@ -233,21 +236,21 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## [5] "\nRStudio 1.1 new features\n\n"
 ## [6] "\nThe future of time series and financial analysis in the tidyverse\n\n"</code></pre>
 <p>I now repeat this process to get the presenter names. Handily, the CSS selector for these is “.presenter”!</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>authors <span class="ot">&lt;-</span> my_html <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>authors <span class="ot">&lt;-</span> my_html <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".presenter"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(authors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(authors)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "Dianne Cook"   "Dianne Cook"   "Edzer Pebesma" "Joe Cheng"
 ## [5] "Kevin Ushey"   "Davis Vaughan"</code></pre>
 <p>Now I’ve got my talks and authors, I’m next going to combine them in a <code>data_frame</code>. Once this is done, I’m also going to tidy them up by removing all the newline characters (“”) from the titles.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>schedule <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(talks, authors) <span class="sc">%&gt;%</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">talks =</span> <span class="fu">str_remove_all</span>(talks, <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>()</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(schedule)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(schedule)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 6 x 2
 ##   talks                                                        authors
 ##   &lt;chr&gt;                                                        &lt;chr&gt;
@@ -264,12 +267,12 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <h1>Finding Only Contributed Talks</h1>
 <p>Let’s start of with identifying talks from invited speakers and RStudio staff.</p>
 <p>I found <a href="https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/">this post on the RStudio blog</a> which lists the invited speakers. I repeat the process from earlier using <code>rvest</code> and <code>xml2</code> functions to scrape the list of invited speakers.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>invited_speakers <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">"https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/"</span>) <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>invited_speakers <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">"https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"table:nth-child(6) td:nth-child(1)"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>invited <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">authors =</span> invited_speakers, <span class="at">Status =</span> <span class="st">"Invited"</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(invited)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(invited)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 6 x 2
 ##   authors         Status
 ##   &lt;chr&gt;           &lt;chr&gt;
@@ -280,8 +283,8 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 5 Sandra Griffith Invited
 ## 6 Aaron Horowitz  Invited</code></pre>
 <p>Now I need to combine this back with my original table, <code>schedule</code>, so I use <code>left_join()</code> from <code>dplyr</code> to help me.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">left_join</span>(schedule, invited, <span class="at">by =</span> <span class="st">"authors"</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(author_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">left_join</span>(schedule, invited, <span class="at">by =</span> <span class="st">"authors"</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(author_tbl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 6 x 3
 ##   talks                                                authors      Status
 ##   &lt;chr&gt;                                                &lt;chr&gt;        &lt;chr&gt;
@@ -292,8 +295,8 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 5 The future of time series and financial analysis in~ Davis Vaugh~ &lt;NA&gt;
 ## 6 Developing robust shiny apps with regression testing Winston Ch~ &lt;NA&gt;</code></pre>
 <p>Something you may have noticed is that we have some duplicated rows in the table, and so I use <code>distinct()</code> to remove these.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">distinct</span>(author_tbl)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(author_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">distinct</span>(author_tbl)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(author_tbl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 6 x 3
 ##   talks                                                authors      Status
 ##   &lt;chr&gt;                                                &lt;chr&gt;        &lt;chr&gt;
@@ -304,12 +307,12 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 5 The future of time series and financial analysis in~ Davis Vaugh~ &lt;NA&gt;
 ## 6 Developing robust shiny apps with regression testing Winston Ch~ &lt;NA&gt;</code></pre>
 <p>Great! Now I’ve remove the duplications, let’s take a look at how many rows have no value in the <code>Status</code> column. I can use <code>sum()</code> and <code>is.na()</code> to do this</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(author_tbl<span class="sc">$</span>Status))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">is.na</span>(author_tbl<span class="sc">$</span>Status))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] 51</code></pre>
 <p>I still have 51 rows with no value in the <code>Status</code> column, but I’m only expecting around 20. I need to remove talks from RStudio staff to get to my contributed talks.</p>
 <p>I did the next bit manually, by searching for any of the individuals I hadn’t already heard of. It’s likely that there’s a quicker way to do this, using the web scraping techniques we’ve already looked at.</p>
 <p>In no particular order…</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rstudio_staff <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Joe Cheng"</span>, <span class="st">"Winston Chang"</span>, <span class="st">"Alan Dipert"</span>, <span class="st">"Sean Lopp"</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>rstudio_staff <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Joe Cheng"</span>, <span class="st">"Winston Chang"</span>, <span class="st">"Alan Dipert"</span>, <span class="st">"Sean Lopp"</span>,</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Kevin Ushey"</span>, <span class="st">"Jonathan McPherson"</span>, <span class="st">"Mel Gregory"</span>,</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Yihui Xie"</span>, <span class="st">"Max Kuhn"</span>, <span class="st">"Jenny Bryan"</span>, <span class="st">"Jim Hester"</span>,</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Joseph Rickert"</span>, <span class="st">"Jeff Allen"</span>, <span class="st">"Aron Atkins"</span>,</span>
@@ -319,7 +322,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>                   <span class="st">"Javier Luraschi"</span>, <span class="st">"Michael Quinn"</span>, <span class="st">"Tareef Kawaf"</span>)</span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>rstudio <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">authors =</span> rstudio_staff, <span class="at">Status =</span> <span class="st">"RStudio"</span>)</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rstudio)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rstudio)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 6 x 2
 ##   authors            Status
 ##   &lt;chr&gt;              &lt;chr&gt;
@@ -331,8 +334,8 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 6 Jonathan McPherson RStudio</code></pre>
 <p>OK, so this is where it gets a little complicated, so please bear with me.</p>
 <p>What I need to do next is combine my list of RStudio people with the <code>schedule</code> data_frame. However, I can’t just do a <code>left_join</code>:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(author_tbl, rstudio, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(author_tbl, rstudio, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 6 x 4
 ##   talks                                       authors    Status.x Status.y
 ##   &lt;chr&gt;                                       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;
@@ -351,13 +354,13 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <li><p>Combine the outputs from 1 and 2, using <code>bind_rows()</code>. It looks kinda ugly below as I wanted to do it all in a single pipe.</p></li>
 </ol>
 <p>I’ve used <code>tail()</code> to have a peek at the last 6 rows of the data_frame as I expect the rows for all the RStudio staff to be at the bottom of the table.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(author_tbl, rstudio, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(author_tbl, rstudio, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">left_join</span>(rstudio, schedule, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>()</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(author_tbl)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">tail</span>(author_tbl)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 6 x 3
 ##   talks                                               authors       Status
 ##   &lt;chr&gt;                                               &lt;chr&gt;         &lt;chr&gt;
@@ -369,22 +372,22 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 6 R for Presidents                                    Tareef Kawaf  RStud~</code></pre>
 <p>Hooray!</p>
 <p>I skim through the data and realise I probably need to add a <code>Status</code> value for the keynote speakers. JJ Allaire has already been included in <code>RStudio</code>, so it’s just Dianne Cook that I need to add. I use the same technique as before:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>keynotes <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">authors =</span> <span class="st">"Dianne Cook"</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>keynotes <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(<span class="at">authors =</span> <span class="st">"Dianne Cook"</span>,</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">Status =</span> <span class="st">"keynote"</span>)</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> <span class="fu">anti_join</span>(author_tbl, keynotes, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">inner_join</span>(keynotes, schedule, <span class="at">by =</span> <span class="st">"authors"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">distinct</span>()</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>I have a quick look over the data, and remove the discussions and closing remarks from the data using <code>filter()</code>.</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> author_tbl <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(<span class="sc">!</span>talks <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"R in industry discussion"</span>, <span class="st">"Tidyverse discussion"</span>, <span class="st">"Closing remarks"</span>) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>author_tbl <span class="ot">&lt;-</span> author_tbl <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(<span class="sc">!</span>talks <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"R in industry discussion"</span>, <span class="st">"Tidyverse discussion"</span>, <span class="st">"Closing remarks"</span>) )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Finally, I <code>filter()</code> again to only show the rows for which the <code>Status</code> column contains an <code>NA</code>, and drop the now-redundant <code>Status</code> column.</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>contributed_talks <span class="ot">&lt;-</span> <span class="fu">filter</span>(author_tbl, <span class="fu">is.na</span>(Status)) <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>contributed_talks <span class="ot">&lt;-</span> <span class="fu">filter</span>(author_tbl, <span class="fu">is.na</span>(Status)) <span class="sc">%&gt;%</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Status)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>contributed_talks</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>contributed_talks</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 20 x 2
 ##    talks                                                 authors
 ##    &lt;chr&gt;                                                 &lt;chr&gt;
@@ -415,7 +418,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <h1>Getting the URLs of the Abstracts</h1>
 <p>The only place I could find the abstracts for the talks was on the individual videos, so there’s a final bit of webscraping to do.</p>
 <p>Like before, I used <code>read_html()</code> to pull the entire page, and then <code>html_nodes()</code> and <code>html_text()</code> to pull out the text.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>video_links <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">"https://www.rstudio.com/resources/videos/rstudioconf-2018-talks/"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>video_links <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">"https://www.rstudio.com/resources/videos/rstudioconf-2018-talks/"</span>)</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>titles <span class="ot">&lt;-</span> video_links <span class="sc">%&gt;%</span></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"#post-15671 a"</span>) <span class="sc">%&gt;%</span></span>
@@ -424,7 +427,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Get rid of any blank values</span></span>
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>titles <span class="ot">&lt;-</span> titles[titles<span class="sc">!=</span><span class="st">""</span>]</span>
 <span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(titles)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(titles)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "Greg Swinehart"
 ## [2] "The unreasonable effectiveness of empathy"
 ## [3] "Teach the Tidyverse to beginners"
@@ -433,13 +436,13 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## [6] "Phrasing: communicating data science through tweets, gifs, and classic misdirection"</code></pre>
 <p>I also need the links to the pages where the talks are. To pull these out, instead of <code>html_text()</code>, I used <code>html_attr()</code> which extracts everything with a specified attribute, in this case, “href” for the link locations.</p>
 <p>As there is duplication I only keep every alternating value.</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> video_links <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> video_links <span class="sc">%&gt;%</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"#post-15671 a"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_attr</span>(<span class="st">"href"</span>)</span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>links <span class="ot">&lt;-</span> links[<span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">1</span>, <span class="at">to =</span> <span class="fu">length</span>(links), <span class="at">by =</span> <span class="dv">2</span>)]</span>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(links)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(links)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "https://www.rstudio.com/rviews/author/greg/"
 ## [2] "https://www.rstudio.com/resources/videos/the-unreasonable-effectiveness-of-empathy/"
 ## [3] "https://www.rstudio.com/resources/videos/teach-the-tidyverse-to-beginners/"
@@ -447,30 +450,30 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## [5] "https://www.rstudio.com/resources/videos/imagine-boston-2030-using-r-shiny-to-keep-ourselves-accountable-and-empower-the-public/"
 ## [6] "https://www.rstudio.com/resources/videos/phrasing-communicating-data-science-through-tweets-gifs-and-classic-misdirection/"</code></pre>
 <p>I then grab the presenter names…</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>names <span class="ot">&lt;-</span> video_links <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>names <span class="ot">&lt;-</span> video_links <span class="sc">%&gt;%</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">"em"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(names)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(names)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "JD Long"         "David Robinson"  "Ian Lyttle"      "Kayla Patel"
 ## [5] "Mara Averick"    "Tanya Cashorali"</code></pre>
 <p>Great! Now I’m ready to combine my titles, links, and names. If we look at the first few elements of <code>names</code>, <code>titles</code> and <code>links</code>, we can see that there is an erroneous extra value in <code>titles</code> and <code>links</code> but not <code>names</code> - I must have accidentally picked this up with my selectors from earlier.</p>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(names, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(names, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "JD Long"        "David Robinson" "Ian Lyttle"</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(titles, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(titles, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "Greg Swinehart"
 ## [2] "The unreasonable effectiveness of empathy"
 ## [3] "Teach the Tidyverse to beginners"</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(links, <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(links, <span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "https://www.rstudio.com/rviews/author/greg/"
 ## [2] "https://www.rstudio.com/resources/videos/the-unreasonable-effectiveness-of-empathy/"
 ## [3] "https://www.rstudio.com/resources/videos/teach-the-tidyverse-to-beginners/"</code></pre>
 <p>To get rid of this, I combine <code>names</code> and <code>titles</code> in a data_frame and then <code>slice()</code> this extra row off before adding the <code>name</code> column.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>abstract_links <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(titles, links) <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>abstract_links <span class="ot">&lt;-</span> <span class="fu">data_frame</span>(titles, links) <span class="sc">%&gt;%</span></span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice</span>(<span class="sc">-</span><span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> names)</span>
 <span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(abstract_links)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(abstract_links)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 6 x 3
 ##   titles                          links                           name
 ##   &lt;chr&gt;                           &lt;chr&gt;                           &lt;chr&gt;
@@ -481,9 +484,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 5 Phrasing: communicating data s~ https://www.rstudio.com/resour~ Mara Av~
 ## 6 Rapid prototyping data product~ https://www.rstudio.com/resour~ Tanya C~</code></pre>
 <p>Awesome, I have my table of URLs, talks, and authors. Let’s join that with my table of contributed talks.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(contributed_talks, abstract_links, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"authors"</span> <span class="ot">=</span> <span class="st">"name"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">left_join</span>(contributed_talks, abstract_links, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"authors"</span> <span class="ot">=</span> <span class="st">"name"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>There are a couple of talks missing URLS and further inspection reveals that this is due to a missing middle name and a missing umlaut, so I make a couple of manual adjustments using <code>case_when()</code> and redo my join.</p>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>talks_and_urls <span class="ot">&lt;-</span> contributed_talks <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>talks_and_urls <span class="ot">&lt;-</span> contributed_talks <span class="sc">%&gt;%</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(</span>
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">authors =</span> <span class="fu">case_when</span>(</span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>    authors <span class="sc">==</span> <span class="st">"Ali Zaidi"</span> <span class="sc">~</span> <span class="st">"Ali-Kazim Zaidi"</span>,</span>
@@ -493,7 +496,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>) <span class="sc">%&gt;%</span></span>
 <span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(abstract_links, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"authors"</span> <span class="ot">=</span> <span class="st">"name"</span>))</span>
 <span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>talks_and_urls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb42-11"><a href="#cb42-11" aria-hidden="true" tabindex="-1"></a>talks_and_urls</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>And it’s worked! But what I want is the actual abstract text, which is what I’ll be doing in the next section.</p>
 </section>
 <section id="scraping-the-abstracts" class="level1">
@@ -505,24 +508,24 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <li>Use <code>html_text()</code> to pull just the text out of each node.</li>
 </ol>
 <p>I’ve done this a few times already, so it should be simple case of chucking this all into an <code>lapply()</code>, right? Well, not quite…</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">lapply</span>(talks_and_urls<span class="sc">$</span>links, <span class="cf">function</span>(i){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">lapply</span>(talks_and_urls<span class="sc">$</span>links, <span class="cf">function</span>(i){</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(i) <span class="sc">%&gt;%</span></span>
 <span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="st">".2_3 p"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Error in parse_simple_selector(stream): Expected selector, got &lt;NUMBER '.2' at 1&gt;</code></pre>
 <p>I quickly get an error. I’m not sure of the source of this, but a remedy here is to use XPath instead of CSS (easily acquired from Selector Gadget) to specify the components I want:</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">lapply</span>(talks_and_urls<span class="sc">$</span>links, <span class="cf">function</span>(i){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">lapply</span>(talks_and_urls<span class="sc">$</span>links, <span class="cf">function</span>(i){</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_html</span>(i) <span class="sc">%&gt;%</span></span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_nodes</span>(<span class="at">xpath=</span><span class="st">'//*[contains(concat( " ", @class, " " ), concat( " ", "2_3", " " ))]//p'</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This takes a while as there are a lof of asbtracts to pull, but once it’s done, it’s looking good. This object is a list, each element containing a character vector of length 1 or more for each abstract. I want to make sure they’re all only 1 item long, so use <code>vapply()</code> to <code>paste()</code> the contents of each abstract into a single character object.</p>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">vapply</span>(abstracts, <span class="cf">function</span>(abstract){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>abstracts <span class="ot">&lt;-</span> <span class="fu">vapply</span>(abstracts, <span class="cf">function</span>(abstract){</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(abstract, <span class="at">collapse =</span> <span class="st">"  "</span>)</span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>}, <span class="fu">character</span>(<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>}, <span class="fu">character</span>(<span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Finally, I append the abstracts column onto my <code>talks_and_urls</code> table.</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>talks_and_urls<span class="sc">$</span>abstracts <span class="ot">=</span> abstracts</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>talks_and_urls<span class="sc">$</span>abstracts <span class="ot">=</span> abstracts</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>So here we have it, the full list of abstracts. I’m not 100% sure it’s accurate, as <a href="https://blog.rstudio.com/2017/11/06/rstudio-conf-2018-program/">this post</a> on the RStudio blog suggests different numbers of people for each status. My best guess is that couple of people I have down as delivering “contributed” talks were actually invited speakers who were invited after the publication of this blog post.</p>
 
 
@@ -580,13 +583,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

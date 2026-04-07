@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Customising pkgdown with a version selector</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -73,10 +76,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-487a329787825a8dd0a4d58ff3b0bb56.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3497c1b0d03429dc8b8bfbaddbbef5f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -236,7 +239,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <p><img src="Screenshot from 2022-04-15 11-23-43.png" class="img-fluid" style="width:50.0%"></p>
 <p>The way I solved this mismatch was to use the solution already used in the main docs - maintain a JSON file mapping from the URL of the deployed docs to the R package version. I did initially think that this was a little overcomplicated and thought about doing it all with JavaScript, but I realised that to do this, I’d literally need to load each URL, extract the R package version from the version badge at the top, and then construct the selector - which is definitely much less efficient than loading a JSON file full of mappings. Instead, I created a JSON file containing key/value pairs; “name” - the displayed name of the package version, and “version” - the part of the URL following “https://arrow.apache.org/docs/”.</p>
 <p>Here’s the latest (at the time of writing) version of that JSON file:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">[</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"7.0.0.9000 (dev)"</span><span class="fu">,</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"version"</span><span class="fu">:</span> <span class="st">"dev/"</span></span>
@@ -269,7 +272,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"name"</span><span class="fu">:</span> <span class="st">"1.0.1"</span><span class="fu">,</span></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"version"</span><span class="fu">:</span> <span class="st">"1.0/"</span></span>
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="ot">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This JSON file then just needs updating with every release - I also updated our release scripts to do that, though I won’t go into detail about that here.</p>
 </section>
 <section id="overriding-the-version-element-with-a-dropdown" class="level3">
@@ -284,7 +287,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <li>creates the selector and objects and replaces the “version” span with the dropdown instead</li>
 </ul>
 <p>Just for transparency, I’ll note that the idea for the function to check the page exists and redirect is based on a colleague’s implementation of this in the main docs, which were based on something else, though I did have to implement it myself here to make it work with my code. Yay for open source and not reinventing the wheel :)</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="bu">document</span>)<span class="op">.</span><span class="fu">ready</span>(<span class="kw">function</span> () {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="bu">document</span>)<span class="op">.</span><span class="fu">ready</span>(<span class="kw">function</span> () {</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">/**</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">   * This replaces the package version number in the docs with a</span></span>
@@ -333,9 +336,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>      <span class="co">// Replace the HTML "version" component with the new selector</span></span>
 <span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>      <span class="fu">$</span>(<span class="st">"span.version"</span>)<span class="op">.</span><span class="fu">replaceWith</span>(sel)<span class="op">;</span></span>
 <span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
-<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Here’s the code which checks if the page exists, and if not, redirect to the main page:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">check_page_exists_and_redirect</span>(<span class="bu">event</span>) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">check_page_exists_and_redirect</span>(<span class="bu">event</span>) {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">/**</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">       * When a user uses the version dropdown in the docs, check if the page</span></span>
@@ -357,7 +360,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        location<span class="op">.</span><span class="at">href</span> <span class="op">=</span> base_path<span class="op">;</span></span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="testing" class="level2">
@@ -372,27 +375,27 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <h3 class="anchored" data-anchor-id="issue-1---cached-html">Issue 1 - cached HTML</h3>
 <p>One <a href="https://issues.apache.org/jira/browse/ARROW-15895">problem</a> was that for one user when they browsed to a page that contained the version selector (let’s call it Page A), navigated to another page (let’s call it Page B), and then hit “back”, the selected/displayed version was the version from Page B and not Page A, as expected, given we were at the URL for Page A.</p>
 <p>This felt like a caching problem to me, and whilst I couldn’t replicate it locally, I had a bit of a search and found similar StackOverflow questions which indicated it was to do with this, so I added this bit of JS code which basically checks if the page is loading from a cache and if so, reloads it.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="bu">window</span>)<span class="op">.</span><span class="fu">bind</span>(<span class="st">"pageshow"</span><span class="op">,</span> <span class="kw">function</span>(<span class="bu">event</span>) {</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">$</span>(<span class="bu">window</span>)<span class="op">.</span><span class="fu">bind</span>(<span class="st">"pageshow"</span><span class="op">,</span> <span class="kw">function</span>(<span class="bu">event</span>) {</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="bu">event</span><span class="op">.</span><span class="at">originalEvent</span><span class="op">.</span><span class="at">persisted</span>) {</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="fu">reload</span>()</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Weirdly, this seemed to affect users on Chrome on macOS but not on Chromium on my Linux machine - perhaps the Chrome/Chromium defaults are a bit different, or we just had different versions with different things going on. I asked a colleague who could replicate the bug on his MacOS machine to test my solution using local overrides as mentioned above, and this seems to have fixed it quite nicely.</p>
 </section>
 <section id="issue-2---not-showing-on-safari-on-macos" class="level3">
 <h3 class="anchored" data-anchor-id="issue-2---not-showing-on-safari-on-macos">Issue 2 - not showing on Safari on macOS</h3>
 <p>Another colleague found that the dropdown selector wasn’t showing up at all on Safari, and they could only see the original ‘version’ tag but no dropdown. It took a while to work this one out, and eventually, I asked a colleague on MacOS to dump out the output from the JS console.</p>
 <p>The problem lay in the <code>$pathEnd</code> variable, defined as:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>$pathEnd  <span class="op">=</span> <span class="kw">function</span>(){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>$pathEnd  <span class="op">=</span> <span class="kw">function</span>(){</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> current_path <span class="op">=</span> <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">pathname</span><span class="op">;</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> current_path<span class="op">.</span><span class="fu">match</span>(<span class="st">"(?&lt;=</span><span class="sc">\/</span><span class="st">r).*"</span>)<span class="op">;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The issue here is that part of the regular expression is using a positive look-behind - basically saying “look ‘/r’ and return everything after it”. As someone who doesn’t use regex often, I felt very smug putting together something “clever” like this, but these kinds of expressions aren’t supported by all browsers, so in the end, I simplified it to a regex that finds the entire chunk, “/r” and all, and then just returns everything after the second character.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>$pathEnd  <span class="op">=</span> <span class="kw">function</span>(){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode javascript code-with-copy"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>$pathEnd  <span class="op">=</span> <span class="kw">function</span>(){</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">var</span> current_path <span class="op">=</span> <span class="bu">window</span><span class="op">.</span><span class="at">location</span><span class="op">.</span><span class="at">pathname</span><span class="op">;</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Can't do this via a positive look-behind or we lose Safari compatibility</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> current_path<span class="op">.</span><span class="fu">match</span>(<span class="st">"</span><span class="sc">\/</span><span class="st">r.*"</span>)[<span class="dv">0</span>]<span class="op">.</span><span class="fu">substr</span>(<span class="dv">2</span>)<span class="op">;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 </section>
 <section id="conclusion" class="level2">
@@ -455,13 +458,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

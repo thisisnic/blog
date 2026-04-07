@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -73,10 +76,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-487a329787825a8dd0a4d58ff3b0bb56.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3497c1b0d03429dc8b8bfbaddbbef5f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -216,16 +219,16 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <section id="once-only-includes" class="level3">
 <h3 class="anchored" data-anchor-id="once-only-includes">Once-only includes</h3>
 <p>The first couple of lines of code in the header file contain these lines:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifndef __CFUNS_H</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define __CFUNS_H</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#ifndef __CFUNS_H</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define __CFUNS_H</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>and the final line is</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#endif</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>What’s happening here is that, often we can end up with projects containing multiple files, some of which source each other, and include them. We don’t want to end up with duplication of the headers which have been included, otherwise the compiler will raise an error, so we put them in an <code>#ifndef</code> wrapper, and give them a name. Basically, what we’re saying to the preprocessor here is that if this name hasn’t already been defined, defined it and include this code, but if it’s already defined then skip this.</p>
 </section>
 <section id="includes" class="level3">
 <h3 class="anchored" data-anchor-id="includes">Includes</h3>
 <p>The third line in <code>src/cfunc.h</code> is:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stddef.h&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stddef.h&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This allows for the inclusion of a file from <a href="https://en.wikipedia.org/wiki/C_standard_library">the C standard library</a>, which has a few different variables included. The key one for us here is <code>size_t</code>, which is commonly used for iterating over items in arrays - we need this as we’ll be including a <code>for</code> loop in the definition of our function.</p>
 </section>
 <section id="the-preprocessor" class="level3">
@@ -235,7 +238,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <section id="declarations" class="level3">
 <h3 class="anchored" data-anchor-id="declarations">Declarations</h3>
 <p>So, the declaration for the function in the example looks like this</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> my_c_sum<span class="op">(</span><span class="dt">const</span> <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> <span class="dt">size_t</span> n<span class="op">);</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> my_c_sum<span class="op">(</span><span class="dt">const</span> <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> <span class="dt">size_t</span> n<span class="op">);</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>In words, this means that:</p>
 <ul>
 <li>it is a function which returns an object of type double</li>
@@ -252,9 +255,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <h3 class="anchored" data-anchor-id="source-file">Source file</h3>
 <p>Source files contain the body of the function, sometimes called the implementation.</p>
 <p>The code in the book chapter goes on to show the content of the file <code>src/cfuncs.c</code>. The first line of this file is:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"cfuns.h"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">"cfuns.h"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This is including the header file we discussed above. The rest of the code in the source file contains the definition of <code>my_c_sum</code>:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* computes the sum of all elements in an array x of size n */</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* computes the sum of all elements in an array x of size n */</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="dt">double</span> my_c_sum<span class="op">(</span><span class="dt">const</span> <span class="dt">double</span><span class="op">*</span> x<span class="op">,</span> <span class="dt">size_t</span> n<span class="op">)</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">double</span> s <span class="op">=</span> <span class="fl">0.0</span><span class="op">;</span></span>
@@ -265,7 +268,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        s <span class="op">+=</span> x<span class="op">[</span>i<span class="op">];</span></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> s<span class="op">;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The function signature here is identical to how it is defined in the header file. The <code>for</code> loop uses the <code>n</code> argument which was passed in to represent the size of the array to loop through. In numerous other languages we’d calculate the size of the array in the body of the function, but in C you cannot have an array of unknown size, and so it must be passed in as a parameter. I think this is to do with how the C compiler allocates memory; more modern C <em>does</em> have the concept of variable-length arrays.</p>
 <p>The chapter goes on to discuss further examples which then show how to include a wrapper which can be called by R. I won’t discuss this here, as the text there is all explained well, and the contents are more specific to R’s C API, and not specifically just C-related topics.</p>
 <p>Here’s a summary of the C-related topics mentioned here:</p>
@@ -336,13 +339,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

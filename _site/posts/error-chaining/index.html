@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Error chaining</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -73,10 +76,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-487a329787825a8dd0a4d58ff3b0bb56.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3497c1b0d03429dc8b8bfbaddbbef5f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -211,7 +214,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <p>When I get a new set of records, I want to do some analysis, and because I’m awesome, I want to do it in R. Unfortunately our regional office input data manually, which is subject to human error. I’ve decided I want to write some R code which automates data import and validation for me.</p>
 <p>I know that Dave in the Birmingham office often inputs the cat’s ages wrong - too little caffeine in the mornings really throws him off his game - but given the fact that the world’s oldest cat was 38, we can safely say that if the data shows an age older than that it’s either an input error or cause to call the Guinness Book of World Records.</p>
 <p>Here’s my initial function with import and basic validation!</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr, <span class="at">warn.conflicts =</span> <span class="cn">FALSE</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rlang)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -239,14 +242,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  data</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>So how does this look if I have perfectly good data?</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create some example data and write to a CSV dile</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create some example data and write to a CSV dile</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cats <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">age =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="fl">0.5</span>, <span class="dv">13</span>), <span class="at">paws =</span> <span class="fu">rep</span>(<span class="dv">4</span>, <span class="dv">3</span>), <span class="at">teeth =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">26</span>, <span class="dv">26</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(cats, <span class="at">file =</span> <span class="st">"cats.csv"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Import data</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"cats.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"cats.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 3 x 3
 ##     age  paws teeth
 ##   &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;
@@ -254,11 +257,11 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 2   0.5     4    26
 ## 3  13       4    26</code></pre>
 <p>And how does this look when I run it on Dave’s dodgy data?</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dave_data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">age =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">200</span>), <span class="at">paws =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>), <span class="at">teeth =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">30</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dave_data <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">age =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">200</span>), <span class="at">paws =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>), <span class="at">teeth =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">30</span>))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(dave_data, <span class="at">file =</span> <span class="st">"dave_data.csv"</span>)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Triggers the error</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"dave_data.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"dave_data.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Error in `import_cat_data()`:
 ## ! Values in `age` must be 38 or less
 ## * Invalid values detected: 200</code></pre>
@@ -266,12 +269,12 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <section id="custom-warning-handling" class="level2">
 <h2 class="anchored" data-anchor-id="custom-warning-handling">Custom warning handling</h2>
 <p>OK, so we’ve covered Dave’s dodgy data, but what other problems do I have in my pipeline? Sometimes Anja in our Wigan branch will send me <code>.tsv.</code> files instead of <code>.csv</code>. I’m not interested in detecting the file type - I just want an error message. So, what does it look like when I try to import that data?</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up tsv file saved as a csv</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up tsv file saved as a csv</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>even_more_cats <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">age =</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">3</span>), <span class="at">paws =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">4</span>), <span class="at">teeth =</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">28</span>))</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>cats_tsv <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">write_tsv</span>(even_more_cats, <span class="at">file =</span> <span class="st">"even_more_cats.csv"</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Import the file</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"even_more_cats.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"even_more_cats.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Warning: Unnamed `col_types` should have the same length as `col_names`. Using
 ## smaller of the two.</code></pre>
 <pre><code>## Warning: 2 parsing failures.
@@ -290,7 +293,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <li>Give myself a little reminder about the cause of the error</li>
 </ol>
 <p>I’ve now wrapped my data import stage in a <code>tryCatch()</code> so I can provide some custom behaviour if this warning appears, via another function I’ve written called <code>handle_cats_import_warning()</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>import_cat_data <span class="ot">&lt;-</span> <span class="cf">function</span>(file){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>import_cat_data <span class="ot">&lt;-</span> <span class="cf">function</span>(file){</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
@@ -316,9 +319,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  data</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The warning helper is below. Basically, it extracts the message from the warning, and if this message matches the one I saw above, I append it with an extra little informational message as a hint about the possible cause. Then I call <code>rlang::abort()</code> to raise an error containing the content of the message. Remember, even if the warning is caused by something else, I still want it to error.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>handle_cats_import_warning <span class="ot">&lt;-</span> <span class="cf">function</span>(w){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>handle_cats_import_warning <span class="ot">&lt;-</span> <span class="cf">function</span>(w){</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  msg <span class="ot">&lt;-</span> <span class="fu">conditionMessage</span>(w)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"Unnamed `col_types` should have the same length as `col_names`."</span>, msg)) {</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    msg <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
@@ -327,14 +330,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  rlang<span class="sc">::</span><span class="fu">abort</span>(msg)</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>So how does this look now?</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"even_more_cats.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"even_more_cats.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Error in `handle_cats_import_warning()`:
 ## ! Unnamed `col_types` should have the same length as `col_names`. Using smaller of the two.
 ## i Is the file you're importing a `.tsv`? Only `.csv' files are accepted.</code></pre>
 <p>It looks OK, but it’s not done yet - you might have noticed that the error is reported as coming from <code>handle_cats_import_warning()</code>. This isn’t quite right - that function is just the warning helper; I want to report the error as coming from <code>import_cat_data()</code>. So how do I do this? Let’s take a quick look at the source of the error - we’ll come back to this later.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rlang<span class="sc">::</span><span class="fu">last_error</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>rlang<span class="sc">::</span><span class="fu">last_error</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## &lt;error/rlang_error&gt;
 ## Error in `handle_cats_import_warning()`:
 ## ! Unnamed `col_types` should have the same length as `col_names`. Using smaller of the two.
@@ -359,7 +362,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <p>You only need to supply call when throwing a condition from a helper function which wouldn’t be relevant to mention in the message.</p>
 </blockquote>
 <p>OK, perfect! So all I need to do is add another parameter to my warning helper function below - this means that wherever I’m calling it from, I can pass in information about the correct environment to report in the error message.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>handle_cats_import_warning <span class="ot">&lt;-</span> <span class="cf">function</span>(w, call){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>handle_cats_import_warning <span class="ot">&lt;-</span> <span class="cf">function</span>(w, call){</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  msg <span class="ot">&lt;-</span> <span class="fu">conditionMessage</span>(w)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">grepl</span>(<span class="st">"Unnamed `col_types` should have the same length as `col_names`."</span>, msg)) {</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    msg <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
@@ -368,9 +371,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  rlang<span class="sc">::</span><span class="fu">abort</span>(msg, <span class="at">call =</span> call)</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Next, I need to update my call to <code>tryCatch()</code> to also incorporate this change, and I use <code>rlang::caller_env()</code> to specify the environment. The parameter <code>n = 4</code> means “go back 4 callers”.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>import_cat_data <span class="ot">&lt;-</span> <span class="cf">function</span>(file){</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>import_cat_data <span class="ot">&lt;-</span> <span class="cf">function</span>(file){</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tryCatch</span>(</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
@@ -398,10 +401,10 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>  data</span>
-<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>I discovered this number through trial and error, but after reading a bit more about the stack trace, I have a better idea about the reason Remember before when I said the function call we wanted to say was the error’s source was five items higher on the stack? In the warning handler above, we call <code>caller_env()</code> one place higher in the stack than <code>handle_cats_import_warning()</code>, and so 5 - 1 = 4.</p>
 <p>So now let’s take a look - is our error message attributed to the right place in the call stack?</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"even_more_cats.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">import_cat_data</span>(<span class="st">"even_more_cats.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Error in `import_cat_data()`:
 ## ! Unnamed `col_types` should have the same length as `col_names`. Using smaller of the two.
 ## i Is the file you're importing a `.tsv`? Only `.csv' files are accepted.</code></pre>
@@ -464,13 +467,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

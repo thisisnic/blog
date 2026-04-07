@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Why is eval parse bad?</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -73,10 +76,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-487a329787825a8dd0a4d58ff3b0bb56.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3497c1b0d03429dc8b8bfbaddbbef5f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -203,12 +206,12 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <p>I was writing Arrow bindings for <code>na.omit</code> and needed a way of applying <code>is.na</code> to every column of a table at once. I’d originally implemented using <code>dplyr::filter</code>, but had failed to realise that Arrow only suggests <code>dplyr</code> but doesn’t import it, and so needed to refactor it.</p>
 <p>Table objects in <code>Arrow</code> have a <code>Filter</code> method, and I knew that a naive implementation would be a for loop which iteratively called <code>Table$Filter(!is.na(column_name))</code> for each column in my table. However, this would be ugly at best and inefficient at worst, and so what I really wanted was to be able to call <code>Table$Filter(!is.na(col1) &amp; !is.na(col2) &amp; ... !is.na(colN))</code> where <code>1</code>…<code>N</code> are my column names.</p>
 <p>An early implementation without <code>dplyr::filter</code> looked like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>filter_text <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"!is.na(tbl$"</span>, <span class="fu">names</span>(tbl), <span class="st">")"</span>, <span class="at">collapse =</span> <span class="st">" &amp; "</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>filter_text <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"!is.na(tbl$"</span>, <span class="fu">names</span>(tbl), <span class="st">")"</span>, <span class="at">collapse =</span> <span class="st">" &amp; "</span>)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>filter <span class="ot">=</span> rlang<span class="sc">::</span><span class="fu">parse_expr</span>(filter_text)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>tbl<span class="sc">$</span><span class="fu">Filter</span>(rlang<span class="sc">::</span><span class="fu">eval_bare</span>(filter))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>tbl<span class="sc">$</span><span class="fu">Filter</span>(rlang<span class="sc">::</span><span class="fu">eval_bare</span>(filter))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>To break this down a bit, I’ll demonstrate a line by line run, using <code>airquality</code> as my input data. Below you can see that we start off with 153 rows.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">=</span> arrow<span class="sc">::</span>Table<span class="sc">$</span><span class="fu">create</span>(airquality)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>tbl</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tbl <span class="ot">=</span> arrow<span class="sc">::</span>Table<span class="sc">$</span><span class="fu">create</span>(airquality)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>tbl</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Table
 ## 153 rows x 6 columns
 ## $Ozone &lt;int32&gt;
@@ -220,19 +223,19 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ##
 ## See $metadata for additional Schema metadata</code></pre>
 <p>If I call <code>na.omit</code> on the <code>airquality</code> data.frame, I’m left with 111 rows.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">na.omit</span>(airquality))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(<span class="fu">na.omit</span>(airquality))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] 111</code></pre>
 <p>So now for the Arrow implementation. I first construct my filter:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>filter_text <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"!is.na(tbl$"</span>, <span class="fu">names</span>(tbl), <span class="st">")"</span>, <span class="at">collapse =</span> <span class="st">" &amp; "</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>filter_text</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>filter_text <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">"!is.na(tbl$"</span>, <span class="fu">names</span>(tbl), <span class="st">")"</span>, <span class="at">collapse =</span> <span class="st">" &amp; "</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>filter_text</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "!is.na(tbl$Ozone) &amp; !is.na(tbl$Solar.R) &amp; !is.na(tbl$Wind) &amp; !is.na(tbl$Temp) &amp; !is.na(tbl$Month) &amp; !is.na(tbl$Day)"</code></pre>
 <p>I then convert the string to an expression.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>filter <span class="ot">=</span> rlang<span class="sc">::</span><span class="fu">parse_expr</span>(filter_text)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>filter</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>filter <span class="ot">=</span> rlang<span class="sc">::</span><span class="fu">parse_expr</span>(filter_text)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>filter</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## !is.na(tbl$Ozone) &amp; !is.na(tbl$Solar.R) &amp; !is.na(tbl$Wind) &amp;
 ##     !is.na(tbl$Temp) &amp; !is.na(tbl$Month) &amp; !is.na(tbl$Day)</code></pre>
 <p>Finally, I evaluate the expression:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tbl<span class="sc">$</span><span class="fu">Filter</span>(rlang<span class="sc">::</span><span class="fu">eval_bare</span>(filter))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>tbl<span class="sc">$</span><span class="fu">Filter</span>(rlang<span class="sc">::</span><span class="fu">eval_bare</span>(filter))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Table
 ## 111 rows x 6 columns
 ## $Ozone &lt;int32&gt;
@@ -251,7 +254,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <li>it may be unclear what’s being evaluated from what environment</li>
 </ul>
 <p>So, my code wasn’t as bad as I thought. However, in another bit of the Arrow codebase I’d seen some pretty nice code written using data masks and environment, and so refactored my code a little to mirror this style.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># paste together the filter function as a character vector</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># paste together the filter function as a character vector</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>filter_text <span class="ot">=</span> <span class="fu">paste0</span>(</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">".data$Filter("</span>,</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste0</span>(<span class="st">"!is.na(.data$"</span>, <span class="fu">names</span>(tbl), <span class="st">")"</span>, <span class="at">collapse =</span> <span class="st">" &amp; "</span>),</span>
@@ -263,13 +266,13 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>filter <span class="ot">=</span> rlang<span class="sc">::</span><span class="fu">parse_expr</span>(filter_text)</span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># tidily evaluate the results, within the data mask</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>rlang<span class="sc">::</span><span class="fu">eval_tidy</span>(filter,  rlang<span class="sc">::</span><span class="fu">new_data_mask</span>(rlang<span class="sc">::</span><span class="fu">env</span>(<span class="at">.data =</span> tbl)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>rlang<span class="sc">::</span><span class="fu">eval_tidy</span>(filter,  rlang<span class="sc">::</span><span class="fu">new_data_mask</span>(rlang<span class="sc">::</span><span class="fu">env</span>(<span class="at">.data =</span> tbl)))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The above solution is my latest one at time of writing but hasn’t been reviewed or merged yet, so may require further changes. Here, I move in the called to <code>Table$Filter</code> into the filter text, so the whole expression is captured. This now means that I can use the <code>.data</code> pronoun to refer to the dataset, and instead of depending on the fact that a variable called <code>tbl</code> has been passed into my function, can instead manually pass it in when I call <code>rlang::env</code>.</p>
 <p>I’m happier with this solution; whilst it still feels weird to construct calls using strings, at least this way, what is being called against what feels a little cleaner.</p>
 <p>One thing that really helped me work all this out was the <a href="https://raw.githubusercontent.com/rstudio/cheatsheets/master/tidyeval.pdf"><code>rlang</code> cheatsheet</a>, which is a resource I’d recommend to anyone wrestling with tidy eval.</p>
 <p>[Edited to add below]</p>
 <p>So in the end, after discussing with a colleague, we decided that parsing an expression was still potentially problematic. Although I’d dismissed the possible security concerns, they mentioned that it could be the case that someone has a dodgy column name, and it was unclear whether encapsulating things in their own environment would remove this risk or not. They suggested that I see if I could get <code>purrr</code> to do something useful, and after a little experimentation, here was my eventual solution.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creates a list of ChunkedArrays containing true/false for each value depending</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Creates a list of ChunkedArrays containing true/false for each value depending</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># if it's an NA or not</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>not_na <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(tbl<span class="sc">$</span>columns, <span class="sc">~!</span><span class="fu">is.na</span>(.x))</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -277,13 +280,13 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>not_na_agg <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">reduce</span>(not_na, <span class="st">`</span><span class="at">&amp;</span><span class="st">`</span>)</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># filter only to retrieve rows which match with true</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>tbl<span class="sc">$</span><span class="fu">Filter</span>(not_na_agg)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>tbl<span class="sc">$</span><span class="fu">Filter</span>(not_na_agg)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>As is common in these circumstances, there was a simpler and more aesthetically pleasing solution available that didn’t require parsing of expressions. I’m much happier with the above code - it feels like a much better approach!</p>
 <p>[Edited again!]</p>
 <p>Ultimately we went with a different approach that implemented functionality that already exists in the Arrow package. This approach is even better as, instead of evaluating <code>!is.na</code> on each column of data and combining them, we instead build an expression that is evaluated against the dataset.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>not_na <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(tbl<span class="sc">$</span>columns, <span class="sc">~</span>arrow<span class="sc">:::</span><span class="fu">build_array_expression</span>(<span class="st">"is_valid"</span>, .x))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>not_na <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(tbl<span class="sc">$</span>columns, <span class="sc">~</span>arrow<span class="sc">:::</span><span class="fu">build_array_expression</span>(<span class="st">"is_valid"</span>, .x))</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>not_na_agg <span class="ot">&lt;-</span> <span class="fu">Reduce</span>(<span class="st">"&amp;"</span>, not_na)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>tbl<span class="sc">$</span><span class="fu">Filter</span>(arrow<span class="sc">:::</span><span class="fu">eval_array_expression</span>(not_na_agg))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>tbl<span class="sc">$</span><span class="fu">Filter</span>(arrow<span class="sc">:::</span><span class="fu">eval_array_expression</span>(not_na_agg))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Table
 ## 111 rows x 6 columns
 ## $Ozone &lt;int32&gt;
@@ -349,13 +352,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

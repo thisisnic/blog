@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.9.35">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,6 +11,9 @@
 
 <title>Type inference in readr and arrow</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -73,10 +76,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-487a329787825a8dd0a4d58ff3b0bb56.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-3497c1b0d03429dc8b8bfbaddbbef5f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -253,19 +256,19 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <li>Binary</li>
 </ul>
 <p>Note that if you use <code>arrow::read_csv_arrow()</code> with parameter <code>as_data_frame = TRUE</code> (the default), the Arrow data types are then converted to R data types.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>simple_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>), <span class="at">z =</span> <span class="fu">c</span>(<span class="fl">1.1</span>, <span class="fl">2.2</span>, <span class="fl">3.3</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>simple_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"c"</span>), <span class="at">z =</span> <span class="fu">c</span>(<span class="fl">1.1</span>, <span class="fl">2.2</span>, <span class="fl">3.3</span>))</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(simple_data, <span class="st">"simple_data.csv"</span>)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># columns are arrow's int64, string, and double (aka float64) types</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"simple_data.csv"</span>, <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"simple_data.csv"</span>, <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Table
 ## 3 rows x 3 columns
 ## $x &lt;int64&gt;
 ## $y &lt;string&gt;
 ## $z &lt;double&gt;</code></pre>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># columns converted to R's integer, character, and double types</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"simple_data.csv"</span>, <span class="at">as_data_frame =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># columns converted to R's integer, character, and double types</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"simple_data.csv"</span>, <span class="at">as_data_frame =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 3 x 3
 ##       x y         z
 ##   &lt;int&gt; &lt;chr&gt; &lt;dbl&gt;
@@ -280,16 +283,16 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <h3 class="anchored" data-anchor-id="guessing-integers">Guessing integers</h3>
 <p>In the code for readr, the default setting is for numeric values to always be read in as doubles but never integers. If you want readr to guess that a column may be an integer, you need to read it in as character data, and then call <code>type_convert()</code>. This isn’t necessarily a great workflow though, and in most cases it would make sense to just manually specify the column type instead of having it inferred.</p>
 <p>In arrow, if data can be represented as integers but not doubles, then it will be.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>int_or_dbl <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>int_or_dbl <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>L, <span class="dv">2</span>L, <span class="dv">3</span>L)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(int_or_dbl, <span class="st">"int_or_dbl.csv"</span>)</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">readLines</span>(<span class="st">"int_or_dbl.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">readLines</span>(<span class="st">"int_or_dbl.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## [1] "x" "1" "2" "3"</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># double</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"int_or_dbl.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># double</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"int_or_dbl.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Rows: 3 Columns: 1
 ## -- Column specification --------------------------------------------------------
 ## Delimiter: ","
@@ -303,9 +306,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 1     1
 ## 2     2
 ## 3     3</code></pre>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integer via inference</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integer via inference</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"int_or_dbl.csv"</span>, <span class="at">col_types =</span> <span class="fu">list</span>(<span class="at">.default =</span> <span class="fu">col_character</span>())) <span class="sc">%&gt;%</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">type_convert</span>(<span class="at">guess_integer =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">type_convert</span>(<span class="at">guess_integer =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>##
 ## -- Column specification --------------------------------------------------------
 ## cols(
@@ -317,16 +320,16 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 1     1
 ## 2     2
 ## 3     3</code></pre>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integer via specification</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"int_or_dbl.csv"</span>, <span class="at">col_types =</span> <span class="fu">list</span>(<span class="fu">col_integer</span>()))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integer via specification</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"int_or_dbl.csv"</span>, <span class="at">col_types =</span> <span class="fu">list</span>(<span class="fu">col_integer</span>()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 3 x 1
 ##       x
 ##   &lt;int&gt;
 ## 1     1
 ## 2     2
 ## 3     3</code></pre>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integer via inference</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"int_or_dbl.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integer via inference</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"int_or_dbl.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 3 x 1
 ##       x
 ##   &lt;int&gt;
@@ -337,12 +340,12 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <section id="bit-integers" class="level3">
 <h3 class="anchored" data-anchor-id="bit-integers">32-bit integers</h3>
 <p>Another difference between readr and arrow is the difference between how integers larger than 32 bits are read in. Natively, R can only support 32-bit integers, though it can support 64-bit integers via the <a href="https://cran.r-project.org/web/packages/bit64/index.html">bit64</a> package. If we create a CSV with one column containing the largest integer that R can natively support, and then another column containing that value plus 1, we get different behaviour when we import this data with readr and arrow. In readr, when we enable integer guessing, the smaller value is read in as an integer, and the larger value is read in as a double. However, once we move over to manually specifying column types, we can use <code>vroom::col_big_integer()</code> to use bit64 and get us a large integer column. The arrow package also uses bit64, and its integer guessing results in 64-bit integer via inference.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sixty_four <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">2</span><span class="sc">^</span><span class="dv">31</span> <span class="sc">-</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span><span class="sc">^</span><span class="dv">31</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>sixty_four <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="dv">2</span><span class="sc">^</span><span class="dv">31</span> <span class="sc">-</span> <span class="dv">1</span>, <span class="at">y =</span> <span class="dv">2</span><span class="sc">^</span><span class="dv">31</span>)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(sixty_four, <span class="st">"sixty_four.csv"</span>)</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co"># doubles by default</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"sixty_four.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"sixty_four.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Rows: 1 Columns: 2
 ## -- Column specification --------------------------------------------------------
 ## Delimiter: ","
@@ -354,9 +357,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ##            x          y
 ##        &lt;dbl&gt;      &lt;dbl&gt;
 ## 1 2147483647 2147483648</code></pre>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 32 bit integer or double depending on value size</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 32 bit integer or double depending on value size</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"sixty_four.csv"</span>, <span class="at">col_types =</span> <span class="fu">list</span>(<span class="at">.default =</span> <span class="fu">col_character</span>())) <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">type_convert</span>(<span class="at">guess_integer =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">type_convert</span>(<span class="at">guess_integer =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>##
 ## -- Column specification --------------------------------------------------------
 ## cols(
@@ -367,17 +370,17 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ##            x          y
 ##        &lt;int&gt;      &lt;dbl&gt;
 ## 1 2147483647 2147483648</code></pre>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integers by specification</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integers by specification</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sixty_four.csv"</span>,</span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_types =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">col_integer</span>(), <span class="at">y =</span> vroom<span class="sc">::</span><span class="fu">col_big_integer</span>())</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 1 x 2
 ##            x          y
 ##        &lt;int&gt;    &lt;int64&gt;
 ## 1 2147483647 2147483648</code></pre>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integers by inference</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"sixty_four.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># integers by inference</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"sixty_four.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 1 x 2
 ##            x          y
 ##        &lt;int&gt;    &lt;int64&gt;
@@ -386,14 +389,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <section id="the-number-parsing-strategy" class="level3">
 <h3 class="anchored" data-anchor-id="the-number-parsing-strategy">The “number” parsing strategy</h3>
 <p>One really cool feature in readr is the “number” parsing strategy. This allows values which have been stored as character data with commas to separate the thousands to be read in as doubles. This is not supported in arrow.</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>number_type <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>number_type <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"1,000"</span>, <span class="st">"1,250"</span>)</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(number_type, <span class="st">"number_type.csv"</span>)</span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># double type, but parsed in as number in column spec shown below</span></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"number_type.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"number_type.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Rows: 2 Columns: 1
 ## -- Column specification --------------------------------------------------------
 ## Delimiter: ","
@@ -406,8 +409,8 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ##   &lt;dbl&gt;
 ## 1  1000
 ## 2  1250</code></pre>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in as character data in Arrow</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"number_type.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read in as character data in Arrow</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"number_type.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 2 x 1
 ##   x
 ##   &lt;chr&gt;
@@ -418,14 +421,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <h3 class="anchored" data-anchor-id="dictionariesfactors">Dictionaries/Factors</h3>
 <p>Anyone who’s been around long enough might remember that R’s native CSV reading function <code>read.csv()</code> had a default setting of importing character columns as factors (I definitely have <code>read.csv(..., stringAsFactors=FALSE)</code> carved into a groove in some dark corner of my memory). This default was changed in version 4.0.0, released in April 2020, reflecting the fact that in most cases users want their string data to be imported as characters unless otherwise specified. Still, some datasets contain character data which users do want to import as factors. In readr, this can be controlled by manually specifying the column as a factor</p>
 <p>In arrow, if you don’t want to individually specify column types, you can set up an option to import character columns as dictionaries (the Arrow equivalent of factors), which are converted into factors.</p>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>dict_type <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>dict_type <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">c</span>(<span class="st">"yes"</span>, <span class="st">"no"</span>, <span class="st">"yes"</span>, <span class="st">"no"</span>)</span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(dict_type, <span class="st">"dict_type.csv"</span>)</span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># character data</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"dict_type.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"dict_type.csv"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Rows: 4 Columns: 1
 ## -- Column specification --------------------------------------------------------
 ## Delimiter: ","
@@ -440,8 +443,8 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 2 no
 ## 3 yes
 ## 4 no</code></pre>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># factor data</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"dict_type.csv"</span>, <span class="at">col_types =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">col_factor</span>()))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># factor data</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"dict_type.csv"</span>, <span class="at">col_types =</span> <span class="fu">list</span>(<span class="at">x =</span> <span class="fu">col_factor</span>()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 4 x 1
 ##   x
 ##   &lt;fct&gt;
@@ -449,9 +452,9 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 2 no
 ## 3 yes
 ## 4 no</code></pre>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up the option. there's an open ticket to make this code a bit nicer to read.</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set up the option. there's an open ticket to make this code a bit nicer to read.</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>auto_dict_option <span class="ot">&lt;-</span> arrow<span class="sc">::</span>CsvConvertOptions<span class="sc">$</span><span class="fu">create</span>(<span class="at">auto_dict_encode =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"dict_type.csv"</span>, <span class="at">convert_options =</span> auto_dict_option)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"dict_type.csv"</span>, <span class="at">convert_options =</span> auto_dict_option)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 4 x 1
 ##   x
 ##   &lt;fct&gt;
@@ -463,10 +466,10 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <section id="custom-logicalboolean-values" class="level3">
 <h3 class="anchored" data-anchor-id="custom-logicalboolean-values">Custom logical/boolean values</h3>
 <p>Another slightly niche but potentially useful piece of functionality available in arrow is the ability to customise which values can be parsed as logical/boolean type and how they translate to <code>TRUE</code>/<code>FALSE</code>. This can be achieved by setting some custom conversion options.</p>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>alternative_true_false <span class="ot">&lt;-</span> arrow<span class="sc">::</span>CsvConvertOptions<span class="sc">$</span><span class="fu">create</span>(</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>alternative_true_false <span class="ot">&lt;-</span> arrow<span class="sc">::</span>CsvConvertOptions<span class="sc">$</span><span class="fu">create</span>(</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">false_values =</span> <span class="st">"no"</span>, <span class="at">true_values =</span> <span class="st">"yes"</span></span>
 <span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"dict_type.csv"</span>, <span class="at">convert_options =</span> alternative_true_false)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"dict_type.csv"</span>, <span class="at">convert_options =</span> alternative_true_false)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 4 x 1
 ##   x
 ##   &lt;lgl&gt;
@@ -480,11 +483,11 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="using-schemas-for-manual-control-of-data-types">Using schemas for manual control of data types</h2>
 <p>Although relying on the reader itself to guess your column types can work well, what if you want more precise control?</p>
 <p>In readr, you can use the <code>col_types</code> parameter to specify column types. You can use the same parameter in arrow to use R type specifications.</p>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>given_types <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>given_types <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>), <span class="at">y =</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>))</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">write_csv</span>(given_types, <span class="st">"given_types.csv"</span>)</span>
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"given_types.csv"</span>, <span class="at">col_types =</span> <span class="fu">list</span>(<span class="fu">col_integer</span>(), <span class="fu">col_double</span>()))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"given_types.csv"</span>, <span class="at">col_types =</span> <span class="fu">list</span>(<span class="fu">col_integer</span>(), <span class="fu">col_double</span>()))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 3 x 2
 ##       x     y
 ##   &lt;int&gt; &lt;dbl&gt;
@@ -492,7 +495,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 2     2     5
 ## 3     3     6</code></pre>
 <p>You can also use this shortcode specification. Here, “i” means integer and “d” means double.</p>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"given_types.csv"</span>, <span class="at">col_types =</span> <span class="st">"id"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"given_types.csv"</span>, <span class="at">col_types =</span> <span class="st">"id"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 3 x 2
 ##       x     y
 ##   &lt;int&gt; &lt;dbl&gt;
@@ -501,7 +504,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 3     3     6</code></pre>
 <p>In arrow you can use the shortcodes (though not the <code>col_*()</code> functions), but you must specify the column names.</p>
 <p>We skip the first row as our data has a header row - this is the same behaviour as when we use both names and types in <code>readr::read_csv()</code> which then assumes that the header row is data if we don’t skip it.</p>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"given_types.csv"</span>, <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">col_types =</span> <span class="st">"id"</span>, <span class="at">skip =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"given_types.csv"</span>, <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"x"</span>, <span class="st">"y"</span>), <span class="at">col_types =</span> <span class="st">"id"</span>, <span class="at">skip =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 3 x 2
 ##       x     y
 ##   &lt;int&gt; &lt;dbl&gt;
@@ -509,16 +512,16 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 ## 2     2     5
 ## 3     3     6</code></pre>
 <p>What if you want to use Arrow types instead of R types though? In this case, you need to use a schema. I won’t go into detail here, but in short, schemas are lists of fields, each of which contain a field name and a data type. You can specify a schema like this:</p>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this gives the same result as before - because our Arrow data has been converted to the relevant R type</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"given_types.csv"</span>, <span class="at">schema =</span> <span class="fu">schema</span>(<span class="at">x =</span> <span class="fu">int8</span>(), <span class="at">y =</span> <span class="fu">float32</span>()), <span class="at">skip =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this gives the same result as before - because our Arrow data has been converted to the relevant R type</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"given_types.csv"</span>, <span class="at">schema =</span> <span class="fu">schema</span>(<span class="at">x =</span> <span class="fu">int8</span>(), <span class="at">y =</span> <span class="fu">float32</span>()), <span class="at">skip =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## # A tibble: 3 x 2
 ##       x     y
 ##   &lt;int&gt; &lt;dbl&gt;
 ## 1     1     4
 ## 2     2     5
 ## 3     3     6</code></pre>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BUT, if you don't read it in as a data frame you'll see the Arrow type</span></span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"given_types.csv"</span>, <span class="at">schema =</span> <span class="fu">schema</span>(<span class="at">x =</span> <span class="fu">int8</span>(), <span class="at">y =</span> <span class="fu">float32</span>()), <span class="at">skip =</span> <span class="dv">1</span>, <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co"># BUT, if you don't read it in as a data frame you'll see the Arrow type</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"given_types.csv"</span>, <span class="at">schema =</span> <span class="fu">schema</span>(<span class="at">x =</span> <span class="fu">int8</span>(), <span class="at">y =</span> <span class="fu">float32</span>()), <span class="at">skip =</span> <span class="dv">1</span>, <span class="at">as_data_frame =</span> <span class="cn">FALSE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <pre><code>## Table
 ## 3 rows x 2 columns
 ## $x &lt;int8&gt;
@@ -591,13 +594,14 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
