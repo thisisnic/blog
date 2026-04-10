@@ -301,116 +301,417 @@
     "text": "Step 7: refine\nThis is the step that I’m still at now. Whilst coding the map, my design changed to take into account the capabilities of Shiny and Leaflet. Originally I’d planned to use Shiny’s animated slider to scroll through the different years, but it became quickly apparent that this would render too slowly to be visually appealing. Although I offset some of this slowness by using the leafletProxy function to only redraw the coloured tiles but keep the underlying map, there was still some delay.\nWith the resources I’ve linked to above and the occasional bit of Googling when things don’t quite work as expected, it’s fairly easy to get up and running making interactive maps with Shiny and Leaflet, so give it a go!\nClick here to view source code on GitHub.\n[Edited to add: I’ve been thinking about how I’d improve my code, and came to the conclusion that whilst this functions as a good introduction to a number of topics, if my goal was solely to create a choropleth of an area, I’d use something more lightweight than Leaflet to accomplish this.]"
   },
   {
-    "objectID": "posts/llm-issue-triage/index.html",
-    "href": "posts/llm-issue-triage/index.html",
-    "title": "LLM-Assisted Issue Triage for Open Source Maintainers",
+    "objectID": "posts/socialmediagen/index.html",
+    "href": "posts/socialmediagen/index.html",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
     "section": "",
-    "text": "In this post, I demonstrate how simple LLM tools can be used for open source issue triage."
+    "text": "Writing blog posts is fun, but the next step, getting people to actually read them, can be trickier. I wanted to promote a recent blog post I co-authored for R-Ladies, but coming up with multiple social media posts felt like a bit of a chore.Instead of doing it it manually, I decided to automate the process by building a Shiny app that generates social media content using large language models (LLMs). It was a fun little project, and could even be useful for others too!"
   },
   {
-    "objectID": "posts/llm-issue-triage/index.html#background",
-    "href": "posts/llm-issue-triage/index.html#background",
-    "title": "LLM-Assisted Issue Triage for Open Source Maintainers",
-    "section": "Background",
-    "text": "Background\nThe Apache Arrow repository contains multiple implementations of Arrow. Both Python and R implementations are wrappers around the C++ implementation. Although many developers work across multiple languages, triage of new issues tends to be done by individuals more aligned to an individual language.\nWe use labels in the Apache arrow repository to identify which implementation an issue relates to. Our issue creation workflow does make users select a component (e.g. “Python”, “R”, “C++” etc), but on occasion, new issues are opened by users via a different route with the component label missing.\nThe problem here is that many maintainers will filter issues by component and so unlabeled issues can end up completely ignored. The problem that I want to solve here is whether we can automatically classify issues by component by passing the text in the issue to an LLM, so that we can potentially automate labelling of new issues so they get responded to appropriately."
+    "objectID": "posts/socialmediagen/index.html#the-solution-a-shiny-app-powered-by-ai",
+    "href": "posts/socialmediagen/index.html#the-solution-a-shiny-app-powered-by-ai",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "The Solution: A Shiny App Powered by AI",
+    "text": "The Solution: A Shiny App Powered by AI\nThe app does the following:\n\nTakes a GitHub Markdown link as input.\nLets users specify hashtags, the number of posts to generate, and whether or not to use emojis.\nAllows selection of tone (e.g., serious, playful, informative).\nCalls Google’s Gemini API via the ellmer package to generate social media posts promotinhg the blog post.\n\n\nWhy ellmer and the Gemini API?\nThe ellmer package was released last year, and is a delightfully straightforward way to directly call LLMs from R. Google’s Gemini API, in particular, offers a generous free tier - up to 15 requests per minute, which was more than enough for my needs."
   },
   {
-    "objectID": "posts/llm-issue-triage/index.html#loading-the-data",
-    "href": "posts/llm-issue-triage/index.html#loading-the-data",
-    "title": "LLM-Assisted Issue Triage for Open Source Maintainers",
-    "section": "Loading the data",
-    "text": "Loading the data\nThe first thing that I need to do is get hold of the data. I wrote a script that retrieves issues from the GitHub API and caches them in Parquet files. Parquet is an excellent format for this because it is efficient for storage in terms of space, and unlike CSV files allows nested columns. This means that when you retrieve data from an API in JSON format there’s potentially less work to do to get it into a good state for storage.\nHere’s a quick preview of the dataset.\n\nThe important column here for us is the labels column, which is a list column containing 0 or more labels. R, Python, and C++ issues all have labels like “Component: Python”. Although the issue titles have the component at the start of their title and also included in their body, this is automatically added based on the label, so isn’t helpful to our problem.\nMy plan is to extract a subset of C++/Python/R component tickets, remove the autogenerated “component” label that gets added to the body of the ticket, and see if I can get an LLM to classify the component based on the content of the issue body.\nLet’s extract a subset of ~30 of each.\n\nlibrary(dplyr)\ntarget_labels &lt;- c(\"Component: C++\", \"Component: R\", \"Component: Python\")\n\nissues_with_components &lt;- data |&gt;\n    select(number, title, body, labels) |&gt;\n    # make sure we match our target label\n    filter(purrr::map_lgl(labels, ~ any(.x %in% target_labels))) |&gt;\n    # make sure we have code in the PR body\n    filter(stringr::str_detect(body, \"```\")) |&gt;\n    # create new column containing only component labels\n    mutate(component = purrr::map(labels, ~ .x[.x %in% target_labels])) |&gt;\n    # filter to only keep rows where we have a single component\n    filter(purrr::map_int(component, length) == 1) |&gt;\n    # convert from list to character column\n    mutate(component = purrr::map_chr(component, 1)) |&gt;\n    # Remove \"Component prefix\"\n    mutate(component = stringr::str_remove(component, \"Component: \")) |&gt;\n    # Remove the bit in the body where the \"component\" has been auto-appended\n    mutate(body = stringr::str_remove(body, \"### Component\\\\(s\\\\).*$\"))\n\nI want to create a smaller data set to test the LLM classification on simply because I don’t have any idea at this point on how long it’ll take or how much it’ll cost. The next step is to create a dataset containing 30 issues from each component.\nI’ll store this intermediate version to work with later too.\n\nr_issues &lt;- issues_with_components |&gt;\n    filter(component == \"R\") \n\npython_issues &lt;- issues_with_components |&gt;\n    filter(component == \"Python\") \n\ncpp_issues &lt;- issues_with_components |&gt;\n    filter(component == \"C++\") \n\nissues_dataset &lt;- bind_rows(\n    r_issues |&gt; slice_head(n = 30),\n    python_issues |&gt; slice_head(n = 30),\n    cpp_issues |&gt; slice_head(n = 30)\n)\n\n# shuffle the dataset\nissues_dataset &lt;- issues_dataset |&gt;\n     slice_sample(prop = 1)\n\n\n\n# A tibble: 90 × 5\n   number title                                           body  labels component\n    &lt;dbl&gt; &lt;chr&gt;                                           &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    \n 1  49129 \"[R] Compilation fails when Parquet support is… \"###… &lt;chr&gt;  R        \n 2  47801 \"[Python][CI] Remove use of CMAKE_POLICY_VERSI… \"###… &lt;chr&gt;  Python   \n 3  49222 \"[Python] data loss converting to Table from p… \"###… &lt;chr&gt;  Python   \n 4  48265 \"[Python][GPU] Numba interop tests broken by N… \"###… &lt;chr&gt;  Python   \n 5  43336 \"[R] stringr binding for `str_starts` fails ba… \"###… &lt;chr&gt;  R        \n 6  48349 \"[Python] Support array indices in pc.list_ele… \"###… &lt;chr&gt;  Python   \n 7  44306 \"[R] please write unregister_scalar_function a… \"###… &lt;chr&gt;  R        \n 8  47698 \"pc.subtract_checked(x, x) with x as pa.array(… \"###… &lt;chr&gt;  Python   \n 9  48832 \"[R] arrow::write_parquet error with zero-leng… \"###… &lt;chr&gt;  R        \n10  45314 \"[R] arrow R package: multiple replacement dis… \"###… &lt;chr&gt;  R        \n# ℹ 80 more rows"
+    "objectID": "posts/socialmediagen/index.html#how-it-works",
+    "href": "posts/socialmediagen/index.html#how-it-works",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "How It Works",
+    "text": "How It Works\nThe app is simple:\n\nEnter the GitHub Markdown file link (or other text source).\nSet your preferences—hashtags, emojis, tone, and how many posts to generate.\nClick generate, and it spits out a bunch of posts.\nCopy and paste into your social media scheduler.\n\nUnder the hood, it builds a prompt using the user’s inputs and calls the Gemini API. The response is formatted into platform-appropriate posts, making it much easier to schedule across different social networks.\n\n\n\nPreview of the app"
   },
   {
-    "objectID": "posts/llm-issue-triage/index.html#llm-classification",
-    "href": "posts/llm-issue-triage/index.html#llm-classification",
-    "title": "LLM-Assisted Issue Triage for Open Source Maintainers",
-    "section": "LLM classification",
-    "text": "LLM classification\nBefore we properly get started, I’m going to have a look at an individual example.\nLet’s have a quick look at the first issue in the data set\n\nissues_dataset |&gt; slice(1)\n\n# A tibble: 1 × 5\n  number title                                            body  labels component\n   &lt;dbl&gt; &lt;chr&gt;                                            &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    \n1  49129 [R] Compilation fails when Parquet support is d… \"###… &lt;chr&gt;  R        \n\n\nOk, so I can see from the title that it’s an R function. I’ll paste it below so you can see it.\n\n\n\n\n\n\nNoteFirst issue body\n\n\n\n\n\n\n\n### Describe the bug, including details regarding any error messages, version, and platform.\n\nWhen building the R bindings with Parquet support disabled (`ARROW_R_WITH_PARQUET` not defined), compilation fails with errors about undeclared 'parquet' identifiers in arrowExports.cpp.\n\nThe issue occurs because Parquet-related code in dataset.cpp and arrowExports.cpp lacks proper preprocessor guards. Specifically:\n\n1. In arrowExports.cpp (line ~1871), the function declaration for `dataset___ParquetFileWriteOptions__update` uses `parquet::WriterProperties` and `parquet::ArrowWriterProperties` types without checking if `ARROW_R_WITH_PARQUET` is defined.\n\n2. In dataset.cpp, Parquet-related includes and function implementations are not guarded by `ARROW_R_WITH_PARQUET` checks.\n\nCompilation error:\n\n```\narrowExports.cpp:1871:131: error: use of undeclared identifier 'parquet'\n```\n\nVersion: 23.0.0\nPlatform: Linux\n\n### Component(s)\n\nR\n\n\n\n\n\nAnd now let’s try classifying it. Here I’m going to start a new conversation, and then use structured output so that I can determine the exact response type I get from the LLM. In this case I’m using enumerated values so I can guarantee that we get one of the pre-specified values back and nothing else.\n\nlibrary(ellmer)\nchat &lt;- chat_anthropic()\n\nUsing model = \"claude-sonnet-4-5-20250929\".\n\ntype_language &lt;- type_enum(values = c(\"Python\", \"C++\", \"R\"), \"The language implementation of Arrow that the issue relates to\")\n\nchat$chat_structured(issues_dataset$body[1], type = type_language)\n\n[1] \"R\"\n\n\nGreat! This was successful so now I’m going to try running it on the rest of the data set. In the above code I just use the default model that ellmer is configured to use, which turned out to be Claude Sonnet 4.5, but actually I want to use the cheapest option to see how well it performs.\nLet’s have a look at which Anthropic models are available to us in ellmer.\n\nmodels_anthropic()\n\n                          id              name created_at cached_input input\n1          claude-sonnet-4-6 Claude Sonnet 4.6 2026-02-17           NA    NA\n2            claude-opus-4-6   Claude Opus 4.6 2026-02-04           NA    NA\n3   claude-opus-4-5-20251101   Claude Opus 4.5 2025-11-24           NA    NA\n4  claude-haiku-4-5-20251001  Claude Haiku 4.5 2025-10-15         0.10  1.00\n5 claude-sonnet-4-5-20250929 Claude Sonnet 4.5 2025-09-29         0.30  3.00\n6   claude-opus-4-1-20250805   Claude Opus 4.1 2025-08-05         1.50 15.00\n7     claude-opus-4-20250514     Claude Opus 4 2025-05-22         1.50 15.00\n8   claude-sonnet-4-20250514   Claude Sonnet 4 2025-05-22         0.30  3.00\n9    claude-3-haiku-20240307    Claude Haiku 3 2024-03-07         0.03  0.25\n  output\n1     NA\n2     NA\n3     NA\n4   5.00\n5  15.00\n6  75.00\n7  75.00\n8  15.00\n9   1.25\n\n\nI’m gonna go for the Haiku model and this time I’m gonna do things a little bit differently to do the classification across the whole data set.\nI could try writing a loop of some sort, but it’ll be slow, and so I’m gonna use the function parallel_chat_structured() so that I can start a new conversation for each individual issue classification task, and run them in parallel so it takes less time.\n\nhaiku_chat &lt;- chat_anthropic(model = \"claude-3-haiku-20240307\")\n\nhaiku_classified &lt;- parallel_chat_structured(\n    chat = haiku_chat,\n    prompts = as.list(issues_dataset$body),\n    type = type_language\n)\n\nI was surprised to see a message “waiting 35s for rate limiting” when it ran but after diving deeper into the Claude developer docs I realised that I’d hit the 50 requests per minute limit. Pretty simple to limit in the function call, but not need as waiting wasn’t a problem.\nI also wanted to check how much it had cost - $0.04 in total, and some of this was earlier experimentation I had done in the process.\n\ntoken_usage()\n\n\n\n   provider                      model    input output cached_input price\n1 Anthropic claude-sonnet-4-5-20250929   3795.0    503            0 $0.02\n2 Anthropic    claude-3-haiku-20240307 136299.5   2996            0 $0.04\n\n\nNow I’d run it successfully with Haiku, I wanted to check the quality of the results. I’m just going to use a very rough measure of how many were a perfect match.\n\nissues_dataset$llm_component &lt;- haiku_classified\nmean(issues_dataset$llm_component == issues_dataset$component, na.rm = TRUE) |&gt; round(2)\n\n[1] 0.97\n\n\nOK, so this is great; 97% accuracy!\nAnd how about the ones it got wrong? Let’s take a look!\n\nissues_dataset |&gt;\n    filter(llm_component != component)\n\n# A tibble: 3 × 6\n  number title                              body  labels component llm_component\n   &lt;dbl&gt; &lt;chr&gt;                              &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;fct&gt;        \n1  47902 [C++][Acero] Add support for `Str… \"###… &lt;chr&gt;  C++       Python       \n2  48761 [C++] Substrait serialised expres… \"###… &lt;chr&gt;  C++       Python       \n3  49214 [C++][Compute] Allow reusing hash… \"###… &lt;chr&gt;  C++       Python       \n\n\nOK, so 3 C++ tickets incorrectly classified as Python. Let’s have a look at each issue body.\n\n\n\n\n\n\nNoteIssue 1 body\n\n\n\n\n\n\n\n### Describe the enhancement requested\n\nSimilarly to #43716, it would be useful to support fields with struct types in joins.\n\nHere is similar pyarrow code to that shared by Anja in the other issue to illustrate this case:\n```\nimport pyarrow as pa\nimport pyarrow.acero as acero\n\n# ---\n\ntable_1 = pa.table({\"a\": [1, 2, 3], \"b\": [\"x\", \"y\", \"z\"]})\ntable_1_node = acero.Declaration(\n    \"table_source\", options=acero.TableSourceNodeOptions(table_1)\n)\n\ntable_2 = pa.table(\n    {\"a\": [1, 2, 3], \"c\": [{\"x\": 1, \"y\": 2}, {\"x\": 2, \"y\": 2}, {\"x\": 3, \"y\": 2}]}\n)\ntable_2_node = acero.Declaration(\n    \"table_source\", options=acero.TableSourceNodeOptions(table_2)\n)\n\nexpected = pa.table(\n    {\n        \"a\": [1, 2, 3],\n        \"b\": [\"x\", \"y\", \"z\"],\n        \"c\": [{\"x\": 1, \"y\": 2}, {\"x\": 2, \"y\": 2}, {\"x\": 3, \"y\": 2}],\n    }\n)\n\n# ---\n\nhash_join_options = acero.HashJoinNodeOptions(\n    \"left outer\", left_keys=[\"a\"], right_keys=[\"a\"]\n)\n\njoin_node = acero.Declaration(\n    \"hashjoin\", options=hash_join_options, inputs=[table_1_node, table_2_node]\n)\n\nresult = join_node.to_table()\n\nassert result == expected\n```\nWhen run, the join operation raises the following error:\n```\n    result = join_node.to_table()\n  File \"pyarrow/_acero.pyx\", line 592, in pyarrow._acero.Declaration.to_table\n  File \"pyarrow/error.pxi\", line 155, in pyarrow.lib.pyarrow_internal_check_status\n  File \"pyarrow/error.pxi\", line 92, in pyarrow.lib.check_status\npyarrow.lib.ArrowInvalid: Data type struct&lt;x: int64, y: int64&gt; is not supported in join non-key field c\n```\n\nI _think_ addressing this may depend on #45001, but I am not positive\n\n### Component(s)\n\nC++\n\n\n\n\n\nOk, so here the issue is the fact that the problem was detected in the Python library, which wraps the C++ library. The user who opened this ticket had a sophisticated enough level of knowledge to understand that link, and so rather than classifying this as an incorrect response, I’d actually probably call this example not typical of where we actually want to apply the model and so just not a good example for our test data set. Most unlabelled tickets come from new users who don’t have a deep understanding of the interplay between the different components. Let’s take a look at another example.\n\n\n\n\n\n\nNoteIssue 2 body\n\n\n\n\n\n\n\n### Describe the bug, including details regarding any error messages, version, and platform.\n\nWhen serialising pyarrow expressions using substrait, the size of the serialised buffer increases exponentially with the number of binary operation clauses in the expression due to extension URIs being repeated again for each nested expression.  \n\nTesting with pyarrow 21.0.0: \n```\n================================================================================\nTesting with 1 OR condition(s)\n================================================================================\nExpression:  (int_col == 1)\nSubstrait size: 201 bytes\nTotal extension URIs: 1\n\n================================================================================\nTesting with 2 OR condition(s)\n================================================================================\nExpression:  ((int_col == 1) or (int_col == 2))\nSubstrait size: 634 bytes\nTotal extension URIs: 5\n\n================================================================================\nTesting with 4 OR condition(s)\n================================================================================\nExpression:  ((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4))\nSubstrait size: 2967 bytes\nTotal extension URIs: 29\n\n================================================================================\nTesting with 6 OR condition(s)\n================================================================================\nExpression:  ((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6))\nSubstrait size: 12017 bytes\nTotal extension URIs: 125\n\n================================================================================\nTesting with 8 OR condition(s)\n================================================================================\nExpression:  ((((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6)) or (int_col == 7)) or (int_col == 8))\nSubstrait size: 48306 bytes\nTotal extension URIs: 509\n\n================================================================================\nTesting with 10 OR condition(s)\n================================================================================\nExpression:  ((((((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6)) or (int_col == 7)) or (int_col == 8)) or (int_col == 9)) or (int_col == 10))\nSubstrait size: 193172 bytes\nTotal extension URIs: 2045\n\n================================================================================\nTesting with 12 OR condition(s)\n================================================================================\nExpression:  ((((((((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6)) or (int_col == 7)) or (int_col == 8)) or (int_col == 9)) or (int_col == 10)) or (int_col == 11)) or (int_col == 12))\nSubstrait size: 772342 bytes\nTotal extension URIs: 8189\n\n================================================================================\nTesting with 14 OR condition(s)\n================================================================================\nExpression:  ((((((((((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6)) or (int_col == 7)) or (int_col == 8)) or (int_col == 9)) or (int_col == 10)) or (int_col == 11)) or (int_col == 12)) or (int_col == 13)) or (int_col == 14))\nSubstrait size: 3105111 bytes\nTotal extension URIs: 32765\n\n================================================================================\nSummary:\n================================================================================\n OR Conditions  |  Size (bytes)   |    Size (KB)    | Extension URIs \n----------------------------------------------------------------------\n       1        |       201       |      0.20       |        1       \n       2        |       634       |      0.62       |        5       \n       4        |      2,967      |      2.90       |       29       \n       6        |     12,017      |      11.74      |       125      \n       8        |     48,306      |      47.17      |       509      \n      10        |     193,172     |     188.64      |      2045      \n      12        |     772,342     |     754.24      |      8189      \n      14        |    3,105,111    |     3032.33     |      32765     \n```\n \nSerialization was done by simply: `buf = pyarrow.substrait.serialize_expressions([expr], [\"result\"], schema)`\n\nUnfortunately, it might not be possible to just use `is_in` in the expression for my use-case so that might not be a possible workaround. \n\nWould be nice to know if I am somehow misusing the API which is causing this. Thanks! \n\ncc: @westonpace \n\n### Component(s)\n\nC++\n\n\n\n\n\nAgain, a more complex example, identified in PyArrow but relating to C++.\nAnd the third?\n\n\n\n\n\n\nNoteIssue 3 body\n\n\n\n\n\n\n\n### Describe the enhancement requested\n\n### Problem\n\nThe `is_in` kernel (and other set lookup operations) rebuilds the internal hash table (MemoTable) from `value_set` on **every invocation**, even when `value_set` is identical across calls. There is currently no API to pre-build and reuse the hash table.\n\nThis becomes a significant bottleneck when the same `value_set` is used to filter many arrays (e.g., in a streaming/batch processing pipeline).\n\n### Use Case\n\nIn Ray Data Checkpointing, we want to use `pc.is_in` to perform an anti-join: filtering out already-processed row IDs from each incoming block of data. The checkpoint ID set (`value_set`) is the same across all blocks, but the hash table is rebuilt for every block.\n\n```python\n# value_set is the same across all calls — hash table is rebuilt each time\nfor block in blocks:\n    membership = pc.is_in(block[\"id\"], value_set=checkpoint_ids)\n    filtered = block.filter(pc.invert(membership))\n```\n\nWith 100M checkpoint IDs and 20 blocks, the hash table construction alone takes **~250s** (extrapolating from #36059 benchmarks), doing identical work 20 times.\n\n### Benchmark\n\nBuilding on the benchmarks from #36059, the cost of rebuilding becomes clear when multiplied across calls:\n\n```python\nimport pyarrow as pa\nimport pyarrow.compute as pc\nimport numpy as np\n\nvalue_set = pa.array(np.arange(10_000_000))\nblocks = [pa.array(np.random.choice(np.arange(1000), 100)) for _ in range(20)]\n\n# Current: ~25s total (rebuilds hash table 20 times)\nfor block in blocks:\n    pc.is_in(block, value_set)\n\n# Ideal: ~1.3s (build once, probe 20 times)\n```\n\n### Proposed API\n\n**Option A — Prepared/materialized value set object:**\n\n```python\n# Build hash table once\nlookup = pc.SetLookup(value_set)  # or pc.prepare_set(value_set)\n\n# Reuse across calls — probes only, no rebuild\nfor block in blocks:\n    mask = lookup.is_in(block)\n```\n\n**Option B — Caching in SetLookupOptions:**\n\n```python\noptions = pc.SetLookupOptions(value_set, cache=True)\n\n# First call builds hash table; subsequent calls reuse it\nfor block in blocks:\n    mask = pc.is_in(block, options=options)\n```\n\n**Option C — Lower-level hash set exposure:**\n\n```python\nhash_set = pc.HashSet(value_set)  # builds MemoTable\n\nfor block in blocks:\n    mask = hash_set.is_in(block)\n    # or: mask = pc.is_in(block, options=pc.SetLookupOptions(hash_set))\n```\n\n### Impact\n\nThis would benefit any workload that probes the same set repeatedly:\n\n- Streaming anti-joins / semi-joins\n- Incremental processing (checkpoint filtering)\n- Repeated dictionary lookups\n- Any ETL pipeline filtering against a static blocklist/allowlist\n\n### Related\n\n- #36059 — Performance of building up HashTable (MemoTable) in `is_in` kernel (addressed MemoTable speed, but not reuse)\n\n\n### Component(s)\n\nC++\n\n\n\n\n\nSame again!\nGiven that these kinds of issues are typically reported by more experienced contributors and don’t end up going unlabelled anyway, we could justifiably deem them to be poor examples for the task at hand and so claim 100% accuracy here.\nI’m calling this experiment a success and my next steps are to see if I can deploy this or something similar to help with other aspects of Apache Arrow maintenance. The main thing I took from this is how accessible LLM-powered tooling has become and how simple it has been to use for an otherwise manual task.\nI’ve just finished writing a course about how to work with ellmer and extract tidy data from text, and create chatbots; if this is something you’re interested in learning about with step-by-step tutorials, you can find my course at: https://www.aifordatapeople.com/courses/llms-in-r."
+    "objectID": "posts/socialmediagen/index.html#deployment-considerations",
+    "href": "posts/socialmediagen/index.html#deployment-considerations",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "Deployment Considerations",
+    "text": "Deployment Considerations\nRight now, the app runs locally, and users need to enter their own Gemini API key as an evironment variable. This prevents abuse of a shared key, but it also makes the app a bit more DIY. I’m considering deploying it on Posit Connect Cloud or a similar service in the future. The trick will be allowing users to bring their own API keys while keeping things secure.\nAnother thought: supporting multiple AI models so users can plug in API keys for different services like OpenAI’s ChatGPT or Anthropic’s Claude."
   },
   {
-    "objectID": "blog.html",
-    "href": "blog.html",
-    "title": "Blog",
+    "objectID": "posts/socialmediagen/index.html#future-ideas",
+    "href": "posts/socialmediagen/index.html#future-ideas",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "Future Ideas",
+    "text": "Future Ideas\nSome things I’d love to add:\n\nMore refined prompts tailored to different platforms (e.g., longer for LinkedIn, punchier for Bluesky).\nSuggested images to go with posts."
+  },
+  {
+    "objectID": "posts/socialmediagen/index.html#try-it-yourself",
+    "href": "posts/socialmediagen/index.html#try-it-yourself",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "Try It Yourself!",
+    "text": "Try It Yourself!\nWant to give it a go? You can find the repo here: https://github.com/thisisnic/socialmediagen"
+  },
+  {
+    "objectID": "posts/socialmediagen/index.html#wrapping-up",
+    "href": "posts/socialmediagen/index.html#wrapping-up",
+    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
+    "section": "Wrapping Up",
+    "text": "Wrapping Up\nThis was a fun little side project that turned out to be actually useful - I’m going to be using it to promote this blog post!\nI’d love to hear if you have any ideas for improvements—hit me up if you try it out!"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
     "section": "",
-    "text": "LLM-Assisted Issue Triage for Open Source Maintainers\n\n\n\nR\n\nLLMs\n\n\n\n\n\n\n\n\n\nMar 6, 2026\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nAI Tooling and Open Source\n\n\n\nAI\n\n\n\n\n\n\n\n\n\nJan 27, 2026\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nUsing ChatGPT as a Code Tutor: A One-Hour Learning Experiment\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nAug 3, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nIterating on an app to create social media posts generating package using {shiny} and {ellmer}\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 17, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nGenerating social media posts to promote blog posts with {shiny} and {ellmer}\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 14, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoring R Package Updates with Github Actions\n\n\n\nR\n\nGitHub Actions\n\n\n\n\n\n\n\n\n\nDec 28, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nDebugging\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 4, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nThree Goats in a Raincoat\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 3, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nType inference in readr and arrow\n\n\n\nR\n\nArrow\n\n\n\n\n\n\n\n\n\nNov 21, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nArrow New Feature Showcase: show_exec_plan()\n\n\n\nR\n\nArrow\n\n\n\n\n\n\n\n\n\nAug 26, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nCustomising pkgdown with a version selector\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 15, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nError chaining\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 9, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nOpen Source Developer Apprenticeship - 9 months in\n\n\n\nR\n\nArrow\n\nCareer\n\n\n\n\n\n\n\n\n\nJan 23, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\nR\n\nPython\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Month at Ursa Computing\n\n\n\nR\n\nArrow\n\nCareer\n\n\n\n\n\n\n\n\n\nMay 13, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nWhy is eval parse bad?\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 20, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nThree Valued Logic\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 17, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps to Becoming a Tidyverse Contributor\n\n\n\nR\n\n\n\n\n\n\n\n\n\nNov 28, 2018\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nScraping rstudio::conf 2018 Abstracts\n\n\n\nR\n\n\n\n\n\n\n\n\n\nAug 22, 2018\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nComparing R packages using packagemetrics\n\n\n\nR\n\n\n\n\n\n\n\n\n\nJul 31, 2018\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nPop-up to confirm action in Shiny\n\n\n\nR\n\nShiny\n\n\n\n\n\n\n\n\n\nAug 16, 2016\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nGetting started with Leaflet in Shiny - interactive map apps\n\n\n\nR\n\nShiny\n\n\n\n\n\n\n\n\n\nApr 28, 2016\n\n\nNic Crane\n\n\n\n\n\nNo matching items"
+    "text": "Nic Crane is an R educator and consultant who loves to experiment with LLMs and AI. They are also one of the maintainers of the Arrow R package and co-author of Scaling Up with R and Arrow."
   },
   {
-    "objectID": "projects.html",
-    "href": "projects.html",
-    "title": "Past Work",
+    "objectID": "about.html#short-bio-for-speaker-profiles",
+    "href": "about.html#short-bio-for-speaker-profiles",
+    "title": "About Me",
     "section": "",
-    "text": "A selection of consulting projects I’ve worked on."
+    "text": "Nic Crane is an R educator and consultant who loves to experiment with LLMs and AI. They are also one of the maintainers of the Arrow R package and co-author of Scaling Up with R and Arrow."
   },
   {
-    "objectID": "projects.html#supporting-genomic-medicine-in-the-nhs",
-    "href": "projects.html#supporting-genomic-medicine-in-the-nhs",
-    "title": "Past Work",
-    "section": "Supporting Genomic Medicine in the NHS",
-    "text": "Supporting Genomic Medicine in the NHS\n\n\n\n\n\nI contributed to a modular Shiny application used in the national rollout of genomic testing within the NHS, building on the 100,000 Genomes Project. It let operational staff, lab teams, and programme managers track genomic samples and view key metrics without needing to interact directly with backend systems.\n\nUI and server logic across multiple Shiny sub-apps\nIntegration with APIs and SQL databases\nInteractive visualisations using plotly, visNetwork, sunburstR and other htmlwidget packages\nProfiling, refactoring, and scaling reactive code for performance\n\nThe app was built to support a national rollout and continues to be used across NHS teams."
-  },
-  {
-    "objectID": "projects.html#scoping-a-large-scale-sas-to-r-migration",
-    "href": "projects.html#scoping-a-large-scale-sas-to-r-migration",
-    "title": "Past Work",
-    "section": "Scoping a Large-Scale SAS to R Migration",
-    "text": "Scoping a Large-Scale SAS to R Migration\n\n\nI audited a large SAS codebase to help a client understand the feasibility and risk profile of migrating to R. The codebase was business-critical and had grown organically over many years.\n\nStatic code analysis of SAS codebase to estimate size and complexity\nIdentified areas where statistical methods or parameter defaults might behave differently in R\nDelivered a scoped migration plan to help inform budget, risk, and staffing decisions\n\nThe audit helped the client avoid assumptions about direct conversion and provided a structured way to evaluate next steps."
-  },
-  {
-    "objectID": "projects.html#refactoring-a-legacy-shiny-app",
-    "href": "projects.html#refactoring-a-legacy-shiny-app",
-    "title": "Past Work",
-    "section": "Refactoring a Legacy Shiny App",
-    "text": "Refactoring a Legacy Shiny App\n\n\n\n\n\nI led a team within a large organisation responsible for maintaining an internal Shiny app used to manage R package installation requests. The codebase had become increasingly fragile and hard to maintain, with tightly coupled logic and growing technical debt.\n\nRefactored reactive logic to simplify control flow and heavily modularised code\nIntroduced testing strategies and CI workflows\nImproved onboarding for new developers by making the codebase easier to understand\n\nThe changes made the application significantly more maintainable and safer to extend, reducing development time considerably.\n\n\n\nInterested in working together? Get in touch."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Nic Crane",
+    "objectID": "courses.html",
+    "href": "courses.html",
+    "title": "Courses",
     "section": "",
-    "text": "I’m an open source developer, and R educator and consultant.\nThings I’ve been working on lately:\n🏹 Maintaining Apache Arrow\n📚 Co-authoring “Scaling Up with Arrow and R”\n🤖 Building courses teaching people how to work with LLMs in data science\nGet in touch if you’d like to work together."
+    "text": "Learn how to use Large Language Models in R with the ellmer package. Extract tidy data from messy text, and create your own chatbot!\n\n\n\n\n\n\n\n\nA comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.\nThe course covers:\n\nML foundations with tidymodels: model evaluation, resampling, tuning, preprocessing\nRegression and classification models including neural networks\nModel deployment with vetiver and orbital\nWorking with LLMs using ellmer\nRetrieval-augmented generation (RAG) for building apps with your own data\n\nAimed at R users comfortable with the tidyverse who want to build and deploy ML and LLM applications."
   },
   {
-    "objectID": "index.html#hi-im-nic",
-    "href": "index.html#hi-im-nic",
-    "title": "Nic Crane",
+    "objectID": "courses.html#online-courses",
+    "href": "courses.html#online-courses",
+    "title": "Courses",
     "section": "",
-    "text": "I’m an open source developer, and R educator and consultant.\nThings I’ve been working on lately:\n🏹 Maintaining Apache Arrow\n📚 Co-authoring “Scaling Up with Arrow and R”\n🤖 Building courses teaching people how to work with LLMs in data science\nGet in touch if you’d like to work together."
+    "text": "Learn how to use Large Language Models in R with the ellmer package. Extract tidy data from messy text, and create your own chatbot!\n\n\n\n\n\n\n\n\nA comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.\nThe course covers:\n\nML foundations with tidymodels: model evaluation, resampling, tuning, preprocessing\nRegression and classification models including neural networks\nModel deployment with vetiver and orbital\nWorking with LLMs using ellmer\nRetrieval-augmented generation (RAG) for building apps with your own data\n\nAimed at R users comfortable with the tidyverse who want to build and deploy ML and LLM applications."
   },
   {
-    "objectID": "index.html#what-people-say",
-    "href": "index.html#what-people-say",
-    "title": "Nic Crane",
-    "section": "What People Say",
-    "text": "What People Say\n“I recently attended Nic’s training course on using AI with R. This was my first hands-on experience at interacting with AI agents through R and Nic walked us through from step 0 (pre-course preparation including setting up API keys), interacting with agents within the IDE and programmatically, setting up system prompts and then presenting latest developments at passing information into agents and formatting returned information. This is a topic where things are developing quickly, and Nic managed to walk the fine line between basic concepts and introducing the ‘latest greatest’. This was a good course and it certainly helped me ‘cross the threshold’ into using AI with R.”\n— Mike Smith, Senior Director Statistics, Pfizer\n“I had the privilege of attending Nic Crane’s ‘Big Data in R with Arrow’ workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic’s workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn.”\n— Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene"
+    "objectID": "courses.html#live-courses",
+    "href": "courses.html#live-courses",
+    "title": "Courses",
+    "section": "Live courses",
+    "text": "Live courses\n\nBig Data in R with Arrow and Parquet\nLearn Arrow and Parquet to make large-scale analysis fast, reliable, and reproducible.\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace, but it’s not uncommon to hit a wall when data gets too big for your R session. CSVs end up taking forever to load, and even when they do, analyses grind to a halt. This course shows you how to handle big data in R using open, modern tools.\n\n\nWhat you’ll learn\n\nAnalyse larger-than-memory data without learning new syntax: Use {arrow} with {dplyr} to query millions of rows without crashing R\nExercise fine control over data types to avoid common large data pipeline problems\nConvert messy CSVs into space-saving, shareable Parquet files\nOptimise Arrow datasets to take full advantage of your hardware\nBuild reproducible workflows using formats and tools designed for long-term reliability\n\n\n\nBook a workshop\nThere are no public dates currently scheduled. If you’re interested in attending a future session or booking private training for your team, get in touch at nic@ncdatalabs.com.\n\n\nWho is this course for?\nThis course assumes you have basic knowledge of dplyr syntax. It’s for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow\n\n\n\nTestimonials\n\n“I had the privilege of attending Nic Crane’s ‘Big Data in R with Arrow’ workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic’s workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn.”\n— Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene"
   },
   {
-    "objectID": "talks/user2025/index.html",
-    "href": "talks/user2025/index.html",
-    "title": "Experimenting with LLM Applications in R",
+    "objectID": "learn-arrow.html",
+    "href": "learn-arrow.html",
+    "title": "Learn Arrow",
     "section": "",
-    "text": "Large language models (LLMs) are surprisingly easy to use and at their core, they’re just an API call away. But how do you go from calling a model to actually building something useful?\nIn this talk, I share my experiences creating and deploying LLM-powered applications in R. I walk through different approaches I’ve tried, from incorporating LLMs into Shiny apps, improving my R code, and experimenting with different models and deployment options. Along the way, I highlight what worked, what didn’t, and what I learned in the process.\nWhether you’re curious about integrating LLMs into your own projects or just want to see what’s possible, this session offers a practical look at building with LLMs in R without the hype.\nPresented at useR! 2025."
+    "text": "Resources for learning how to work with larger-than-memory data in R using Arrow and Parquet:"
   },
   {
-    "objectID": "talks/londonr/index.html",
-    "href": "talks/londonr/index.html",
-    "title": "Ten Steps To Becoming A Tidyverse Contributor",
-    "section": "",
-    "text": "A talk about getting involved in open source!\nSlides here"
+    "objectID": "learn-arrow.html#the-book",
+    "href": "learn-arrow.html#the-book",
+    "title": "Learn Arrow",
+    "section": "The Book",
+    "text": "The Book\n\n\n\n\n\n\nScaling Up with R and Arrow is available to read online for free at arrowrbook.com. I wrote it with Jonathan Keane and Neal Richardson, and it covers everything from getting started with Arrow to optimising large-scale data workflows."
   },
   {
-    "objectID": "talks/positconf2024_2/index.html",
-    "href": "talks/positconf2024_2/index.html",
-    "title": "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail",
-    "section": "",
-    "text": "A talk on Arrow that Alenka Frim and I wrote and presented at posit::conf 2024.\nhttps://docs.google.com/presentation/d/1ViXduR7CNrz_9QFDk5snAlD3tFJpJs156-UEBxCHiks/edit?usp=sharing"
+    "objectID": "learn-arrow.html#private-training",
+    "href": "learn-arrow.html#private-training",
+    "title": "Learn Arrow",
+    "section": "Private Training",
+    "text": "Private Training\nI also deliver private workshops for teams. If you’d like to discuss training for your organisation, email me at nic@ncdatalabs.com."
   },
   {
-    "objectID": "talks/nyhackr/index.html",
-    "href": "talks/nyhackr/index.html",
-    "title": "Efficiently Engineering Bigger Data with Arrow",
+    "objectID": "learn-arrow.html#webinar-slides",
+    "href": "learn-arrow.html#webinar-slides",
+    "title": "Learn Arrow",
+    "section": "R Consortium Webinar Slides",
+    "text": "R Consortium Webinar Slides\nI presented an introduction to Arrow at an R Consortium webinar.\nWatch the webinar on YouTube\nDownload slides (PDF)"
+  },
+  {
+    "objectID": "contact.html",
+    "href": "contact.html",
+    "title": "Contact Me",
     "section": "",
-    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
+    "text": "Loading…"
+  },
+  {
+    "objectID": "talks/shinyinprod2025/index.html",
+    "href": "talks/shinyinprod2025/index.html",
+    "title": "htmlwidgets Are a Secret Sauce in R",
+    "section": "",
+    "text": "htmlwidgets quietly power some of the most compelling Shiny apps out there, but writing them from scratch can be fiddly and time-consuming. In this talk, we kick things off by taking an audience-sourced ingredient list and asking a large language model to whip up a fresh htmlwidget. Then we plate up a version we prepared earlier - also model-generated - but chopped, seasoned, and finished with our own touches. Along the way, we explore how LLMs can assist in crafting htmlwidgets that reflect your flavour of R - from tidy eval to package structure - rather than sticking to a bland house style.\nPresented with Charlotte Hadley at Shiny in Production 2025."
+  },
+  {
+    "objectID": "talks/rstudioconf2019/index.html",
+    "href": "talks/rstudioconf2019/index.html",
+    "title": "The future’s Shiny: Pioneering genomic medicine in R",
+    "section": "",
+    "text": "Shiny's expanding capabilities are rapidly transforming how it is used in an enterprise. This talk details the creation of a large-scale application, supporting hundreds of concurrent users, making use of the future and promises packages. The 100,000 genomes project is an ambitious exercise that follows on from the Human Genome Project - aiming to put the UK at the forefront of genomic medicine, with the NHS as the first health service in the world to offer precision medicine to patients with rare diseases and cancer. Data is at the heart of this project; not only the outputs of the genomic sequencing, but vast amounts of metadata used to track progress against the 100,000 genome target and the status and path of each case through the sample tracking pipeline. In order to make this data readily available to stakeholders, Shiny was used to create an application containing multiple interactive dashboards. A scaled-up version of the app is being rolled out in early 2019 to a much larger audience to support the National Genomics Informatics Service, with the challenge of creating a complex app capable of supporting so many users without grinding to a halt. In this talk, I will explain why Shiny was the obvious technology choice for this task, and discuss the design decisions which enabled this project’s success."
+  },
+  {
+    "objectID": "talks/rstudioconf2022/index.html",
+    "href": "talks/rstudioconf2022/index.html",
+    "title": "What they forgot to teach you about becoming an open source contributor",
+    "section": "",
+    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
+  },
+  {
+    "objectID": "talks/positconf2025/index.html",
+    "href": "talks/positconf2025/index.html",
+    "title": "Hacking Productivity with LLMs",
+    "section": "",
+    "text": "Over the past 18 months, I’ve used large language models (LLMs) in a series of experiments to improve my productivity as a developer on open source projects in R. I wanted to see if these tools could help with the repetitive, frustrating, or time-consuming parts of development, freeing me up to focus on the interesting problems. The results were mixed: some of these experiments were wildly successful, but others were clear failures.\nIn this talk, I share what worked, what didn’t, and what I learned - exploring the kinds of tasks LLMs are good for and where they fall short, how to use LLMs to build lasting skills, and why in some cases, investing in human connection pays off more than AI assistance.\nPresented at posit::conf(2025)."
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html",
+    "href": "drafts/querychat-shiny/index.html",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "",
+    "text": "I was excited to see the release of the querychat package on CRAN recently. I first noticed this package on Posit’s GitHub, and was really curious to see what it did. In short, it lets you ask questions to a chatbot which then generates SQL and queries a data frame or database connection to answer your question."
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#reproducibility-through-sql",
+    "href": "drafts/querychat-shiny/index.html#reproducibility-through-sql",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "Reproducibility through SQL",
+    "text": "Reproducibility through SQL\nquerychat a really exciting and powerful tool because it allows you to overcome some of the key issues with using LLMs for data analysis. LLMs are pretty poor at many tasks to do with numbers, and in a data analysis context we need results which we can rely on, understand where they come from, and can be reproduced by others.\nWe can’t just feed our tabular data into an LLM and expect to get helpful results back, but querychat helps overcome some of these issues - we now have code that we can run again and get the same answers every time, and if we can trust that the generated SQL properly answers the question we asked, we now have something we can depend on more easily.\nHow this works is pretty neat; under the hood, querychat uses DuckDB; data frames are converted into DuckDB tables which can then be queried using SQL."
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#the-schema",
+    "href": "drafts/querychat-shiny/index.html#the-schema",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "The schema",
+    "text": "The schema\nquerychat generates a system prompt; the default one contains instructions on how to generate the required SQL, and some information about the database schema. In the case of mtcars, the schema looks like this:\nYou have access to a DuckDB SQL database with the following schema:\n\n&lt;database_schema&gt;\nTable: mtcars\nColumns:\n- mpg (FLOAT)\n  Range: 10.4 to 33.9\n- cyl (FLOAT)\n  Range: 4 to 8\n- disp (FLOAT)\n  Range: 71.1 to 472\n- hp (FLOAT)\n  Range: 52 to 335\n- drat (FLOAT)\n  Range: 2.76 to 4.93\n- wt (FLOAT)\n  Range: 1.513 to 5.424\n- qsec (FLOAT)\n  Range: 14.5 to 22.9\n- vs (FLOAT)\n  Range: 0 to 1\n- am (FLOAT)\n  Range: 0 to 1\n- gear (FLOAT)\n  Range: 3 to 5\n- carb (FLOAT)\n  Range: 1 to 8\n&lt;/database_schema&gt;\nIt contains column names, types, and value ranges, but crucially doesn’t contain our full dataset."
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#filtering-the-data",
+    "href": "drafts/querychat-shiny/index.html#filtering-the-data",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "Filtering the data",
+    "text": "Filtering the data\nYou can create the simplest possible app by calling the querychat_app() function.\n\nlibrary(querychat)\n\nquerychat_app(mtcars)\n\n\nWhen data is filtered, the SQL necessary to select a subset is generated, and the data displayed in the app is updated.\nThis doesn’t require access to the underlying data; just the schema so that appropriate queries can be generated based on the available data.\nThis is a simpler kind of query, but we can also perform aggregations, which work a little differently."
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#aggregating-the-data",
+    "href": "drafts/querychat-shiny/index.html#aggregating-the-data",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "Aggregating the data",
+    "text": "Aggregating the data\nWhen querychat has full access to the data (enabled by default), it can perform aggregations, the results of which are passed back to the LLM to to inform answers to questions.\n\nThis is pretty neat, but what if we don’t want to pass this data back to the LLM?\nOne feature of querychat that I like is this ability to enable partial data privacy. We can disable the tool that querychat uses to query the data in this way, only allowing it to perform filtering. We can’t answer as many interesting questions, but still have functionality while only passing the schema to the LLM.\nBy default both “query” and “update” tools are enabled, so setting tools = \"update\" disables the query tool entirely, and enables partial data privacy.\n\nlibrary(querychat)\n\nquerychat_app(mtcars, tools = \"update\")"
+  },
+  {
+    "objectID": "drafts/querychat-shiny/index.html#learn-more",
+    "href": "drafts/querychat-shiny/index.html#learn-more",
+    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "section": "Learn more",
+    "text": "Learn more\nLLMs are going to have a huge impact on how we communicate with and about data, and so the querychat package is a huge step forward in this regard. If you want to learn more, here’s a more detailed post on the Shiny blog by Veerle Eeftink - van Leemput, or check out her video below."
+  },
+  {
+    "objectID": "projects/nhs/index.html",
+    "href": "projects/nhs/index.html",
+    "title": "Supporting Genomic Medicine in the NHS with R and Shiny",
+    "section": "",
+    "text": "I contributed to a modular Shiny application used in the national rollout of genomic testing within the NHS, building on the 100,000 Genomes Project. It let operational staff, lab teams, and programme managers track genomic samples and view key metrics without needing to interact directly with backend systems.\nWhat I worked on: - UI and server logic across multiple Shiny sub-apps - Integration with APIs and SQL databases - Interactive visualisations using plotly, visNetwork, sunburstR and other htmlwidget packages - Profiling, refactoring, and scaling reactive code for performance\nThe app was built to support a national rollout and continues to be used across NHS teams."
+  },
+  {
+    "objectID": "talks.html",
+    "href": "talks.html",
+    "title": "Talks",
+    "section": "",
+    "text": "htmlwidgets Are a Secret Sauce in R\n\n\n\n\n\n\nNic Crane & Charlotte Hadley\n\n\nOct 1, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\nHacking Productivity with LLMs\n\n\n\n\n\n\nNic Crane\n\n\nSep 1, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\nExperimenting with LLM Applications in R\n\n\n\n\n\n\nNic Crane\n\n\nJul 1, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\nMixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail\n\n\n\n\n\n\nNic Crane\n\n\nAug 17, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts-archive/rc/index.html",
+    "href": "posts-archive/rc/index.html",
+    "title": "Recurse Center Return Statement",
+    "section": "",
+    "text": "I spent 3 months earlier this year at Recurse Center in New York. Here’s a summary of the highlights of my time there!"
+  },
+  {
+    "objectID": "posts-archive/rc/index.html#what-is-recurse-center",
+    "href": "posts-archive/rc/index.html#what-is-recurse-center",
+    "title": "Recurse Center Return Statement",
+    "section": "What is Recurse Center?",
+    "text": "What is Recurse Center?\nThe simplest explanation of what Recurse Center is is that it’s like a writer’s retreat but for programmers. Participants have to apply to get in, and there are 3 stages. The first is a written application, followed by a conversational interview, and then a pair programming interview. Generally, the intention is to assess whether you’ll be a good fit for RC. The selection criteria are stated explicitly on the website, but to summarise, they’re looking for self-motivated people who enjoy programming and are pleasant to be around. It’s not about being an amazing programmer; though I met some people with seriously impressive skills there, I also met newer programmers who were enthusiastic and engaged.\nRC can be attended remotely online or in person, but I opted for the in-person experience to get the most out of it. The hub, the in-person location is in Brooklyn, and takes up 2 floors of an office building. The 4th floor is the main floor where people code, socialise, do pair programming, and hang out in the kitchen, presentation space, or the meeting rooms. The 5th floor is the quiet floor where people can do more focused work without interruption.\nRC has a code of conduct, as well as 4 more general social rules:\n\nNo well-actually’s\nNo feigned surprise\nNo backseat driving\nNo subtle -isms\n\n\n\n\nA printed poster of RC’s social rules\n\n\nAs well as social rules about what not to do, there are 3 guiding principles, or self-directives, about what to do:\n\nWork at the edge of your abilities\nBuild your volitional muscles\nLearn generously\n\nThese explicit expectations lead to a fantastic learning environment where some of the more toxic elements that can sometimes be found in tech were avoided, and folks worked on project that really mattered to them and helped other people do the same.\nRecurse Center is a business, and makes its money from recruitment - RC works with partner companies looking for software engineers and similar roles, though admission to RC isn’t predicated on looking for employment via them, and is never pushed on people."
+  },
+  {
+    "objectID": "posts-archive/rc/index.html#why-did-i-go",
+    "href": "posts-archive/rc/index.html#why-did-i-go",
+    "title": "Recurse Center Return Statement",
+    "section": "Why did I go?",
+    "text": "Why did I go?\nWhen I decided to go to RC, I was at the beginning of a career break. I had done some consultancy/contract work early on, but had decided that I needed a proper pause. I had begun working on the book on Arrow that I’m co-authoring, and splitting my attention between the two things wasn’t working well for me. I also wanted some focused learning time - I had a ton of side projects I’d been meaning to work on but had never gotten moving and I felt like this would be a great opportunity to push them forwards.\nMy secondary motivation was how I was feeling at the time. I was lacking confidence in some of my technical skills, and know from experience that the best way to tackle that is learn new things and get things done, to disprove some of the insecurities I was having.\n\n\n\nA cross-stitched piece on the wall at RC with the text “be gay find primes”"
+  },
+  {
+    "objectID": "posts-archive/rc/index.html#what-did-i-intend-to-work-on",
+    "href": "posts-archive/rc/index.html#what-did-i-intend-to-work-on",
+    "title": "Recurse Center Return Statement",
+    "section": "What did I intend to work on?",
+    "text": "What did I intend to work on?\nBefore I went to RC, I had a huge list of potential things to work on. I didn’t plan on doing all of these, but this was my initial brain dump of everything I thought might be useful or interesting in future:\n\nRead “Writing R Extensions”\nDo the course Nand2Tetris to get a better foundation of “lower level stuff”\nLearn C\nLearn more about the finer details of how building R packages work\ncontribute to parsermd so it works for Quarto markdown documents\nfinish the Udacity C++ nanodegree I’d done some of a while ago\nlearn more about the C++ build process\nDo all of the C sessions of CS50\nDo some work on the Arrow book\n\n\n\n\nSome of the retro machines at the RC hub."
+  },
+  {
+    "objectID": "posts-archive/rc/index.html#what-did-i-actually-work-on",
+    "href": "posts-archive/rc/index.html#what-did-i-actually-work-on",
+    "title": "Recurse Center Return Statement",
+    "section": "What did I actually work on?",
+    "text": "What did I actually work on?\nOne of the principles of RC is to use your volitional muscles and work on what interests you rather than things you think you “should” work on. There’s a balance to be struck here, but there was a great exercise early on where we were guided through questions to ask ourselves to work out what was going to be the best things to focus on.\nIn the end, I didn’t get through all of the things on my original list, but had a much more exciting time doing the following things:\n\nwent through most of Nand2Tetris\nplayed around with compilation and decompilation and how compiler flags change the code produced\nplayed with assembly code\nstarting going through the book Crafting Interpreters and plan to do more another time!\nspent lots of time pairing with other people on my and other people’s code and developing a love for pair programming\ndid a few presentations on Nand2Tetris and why it’s such a great course!\nwrote an R-based Quarto markdown parser which implements recursive descent parsing\ndelved into the Quarto codebase and developed a new version of the parser which takes advantage of pandoc instead of doing everything the hard way\n\nAnd alongside this:\n\ndid a ton of writing of the Arrow book I’m co-authoring\nfinished off interviewing for a job I’d applied for at Novartis which I’m super excited to start tomorrow!\nattended 2 days of Carpentries instructor training\nhad regular lessons with a public speaking tutor\nsubmitted and got accepted to co-present a talk to posit::conf\nhanded over arrow maintainership to the fantastic Jon Keane"
+  },
+  {
+    "objectID": "posts-archive/rc/index.html#what-did-i-learn",
+    "href": "posts-archive/rc/index.html#what-did-i-learn",
+    "title": "Recurse Center Return Statement",
+    "section": "What did I learn?",
+    "text": "What did I learn?\n\nlow-level programming concepts felt out of reach for a long time; most docs are aimed at people who already understand the tech being described, there’s a lot of foundational computer science knowledge that is assumed that I didn’t have, and it’s hard to know where to find good learning resources. However, I learned that actually, it isn’t nearly as out of reach as I’d thought and all I really need is to find that one good resource, and have time to explore it. Nand2Tetris is an awesome course!\na solid community of peers is invaluable. I’ve been lucky enough in my career so far to mostly have either a community of peers or excellent mentors, but in future I’m going to aim to make sure I have both, whether that’s via a job role or engaging with wider programming communities more fully.\npair programming is a wonderful thing and is massively underutilised. Pairing shouldn’t only be utilised when there’s a bug, but be a regular practice. It helps share assumptions and norms,\nworking on the things I want to as well as the things I think I should work on is so key to productivity\nto listen to my gut when it comes to my own learning. I have had a frustration for years with public speaking where I know I’m not terrible at it, want to be better, but asking friends and colleagues for feedback often led to (lovely, kind, well-meaning) validation but not the actionable feedback I wanted. Working with a tutor has been amazing for helping me identify my strengths (I convey passion and excitement for my topic, and especially when I teach, really try to connect with my audience) and weaknesses (my natural speaking speed is about 3 times what it should be, and I could work on structuring information better within a talk)\nnot to mistake being limited for time to work on a problem with not being able to solve the problem\n\n\n\n\nSome craft projects which were on display at RC"
+  },
+  {
+    "objectID": "posts-archive/rc/index.html#conclusion",
+    "href": "posts-archive/rc/index.html#conclusion",
+    "title": "Recurse Center Return Statement",
+    "section": "Conclusion",
+    "text": "Conclusion\nI can honestly describe the 3 months I spent at Recurse Center as the best solid 3 month period of my life. I learned a huge amount about, not only programming, but my own motivation. I made some amazing friends - my fellow RC participants and the faculty there are some of the coolest people I’ve ever met - and will be staying involved in the community in the longer term."
+  },
+  {
+    "objectID": "posts-archive/c_deepr/index.html",
+    "href": "posts-archive/c_deepr/index.html",
+    "title": "Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’",
+    "section": "",
+    "text": "One of my goals for next year is to get a deeper understanding of R’s C API. I’m making a start on this by reading Chapter 14 of Deep R Programming by Marek Gagolewski: “Interfacing compiled code”. It’s a great resource, though the chapter preface states “we assume basic knowledge of the C language”. I do not have this knowledge My C knowledge is fairly limited, and so this blog post will pull out some of the details from that chapter, especially bits where I’ve had to go “wtf is that?!” or remind myself by googling. My current level of C knowledge at the moment is pretty minimal; the main things I know are:\n\nC is a compiled language (as opposed to an interpreted language) and C code needs compiling before it can be run\nA lot of R’s internals are based on C\nC is a statically-type language; this means that variable types are defined when the variable is created and cannot later change other than via explicit manual casting\n\nAnd that’s basically it! I imagine there are other bits I don’t realise I know which I’ve picked up from being an R package maintainer and dabbling in a few C++ tutorials, but I’ll try to explain everything as much as possible. OK, let’s do this!\nThe book chapter provides an example package with a simple C function implemented, and walks us through the code step-by-step. Great!\nSection 14.1.1 starts off with an example of a C function defined in src/cfunc.h. I guess the first thing to note is the location of the file - in the package’s src directory. This is where any compiled code needs to go, typically C or C++ code, or even Fortran if you’re really going old-school.\n\nHeader files and source files\nAnother thing to note here is the file name, which ends in .h. C code can be divided into header files (ending in .h) and source files (ending in .c). Header files contain the function declarations (including variable types) and other things like macros (named bits of code for the pre-processor to work with). They’re sometimes referred to as the interface - they contain information about functions’ inputs and outputs - including the argument names and types.\n\n\nOnce-only includes\nThe first couple of lines of code in the header file contain these lines:\n#ifndef __CFUNS_H\n#define __CFUNS_H\nand the final line is\n#endif\nWhat’s happening here is that, often we can end up with projects containing multiple files, some of which source each other, and include them. We don’t want to end up with duplication of the headers which have been included, otherwise the compiler will raise an error, so we put them in an #ifndef wrapper, and give them a name. Basically, what we’re saying to the preprocessor here is that if this name hasn’t already been defined, defined it and include this code, but if it’s already defined then skip this.\n\n\nIncludes\nThe third line in src/cfunc.h is:\n#include &lt;stddef.h&gt;\nThis allows for the inclusion of a file from the C standard library, which has a few different variables included. The key one for us here is size_t, which is commonly used for iterating over items in arrays - we need this as we’ll be including a for loop in the definition of our function.\n\n\nThe preprocessor\nAbove I casually mentioned the C preprocessor a couple of times without defining it. A succinct and perhaps naive summary is that there are multiple steps in the compilation of C code. One of these phases is preprocessing and it involves things like processing any additional files we’ve said we wanted to include, and replacing macros with their definitions.\n\n\nDeclarations\nSo, the declaration for the function in the example looks like this\ndouble my_c_sum(const double* x, size_t n);\nIn words, this means that:\n\nit is a function which returns an object of type double\nthe function name is my_c_sum\nthe first argument is called x\nx is a pointer to a variable of type double\nx is a const variable, which means it won’t be modified in the body of the function\nthe second argument is called n\nn is of type size_t\n\nThis concept of a pointer just means that x contains the memory address of the double that we pass in, rather than a copy of the values in it. This prevents us from copying the values unnecessarily.\n\n\nSource file\nSource files contain the body of the function, sometimes called the implementation.\nThe code in the book chapter goes on to show the content of the file src/cfuncs.c. The first line of this file is:\n#include \"cfuns.h\"\nThis is including the header file we discussed above. The rest of the code in the source file contains the definition of my_c_sum:\n/* computes the sum of all elements in an array x of size n */\ndouble my_c_sum(const double* x, size_t n)\n{\n    double s = 0.0;\n    for (size_t i = 0; i &lt; n; ++i) {\n        /* this code does not treat potential missing values specially\n           (they are kinds of NaNs); to fix this, add:\n        if (ISNA(x[i])) return NA_REAL;  // #include &lt;R.h&gt;  */\n        s += x[i];\n    }\n    return s;\n}\nThe function signature here is identical to how it is defined in the header file. The for loop uses the n argument which was passed in to represent the size of the array to loop through. In numerous other languages we’d calculate the size of the array in the body of the function, but in C you cannot have an array of unknown size, and so it must be passed in as a parameter. I think this is to do with how the C compiler allocates memory; more modern C does have the concept of variable-length arrays.\nThe chapter goes on to discuss further examples which then show how to include a wrapper which can be called by R. I won’t discuss this here, as the text there is all explained well, and the contents are more specific to R’s C API, and not specifically just C-related topics.\nHere’s a summary of the C-related topics mentioned here:\n\nheader files and source files\nincludes\nonce-only includes\nthe preprocessor\nvariable-length arrays\nconst variables\npointers\nstatically-typed languages\ncompiled and interpreted languages"
+  },
+  {
+    "objectID": "learn-llms.html",
+    "href": "learn-llms.html",
+    "title": "Learn LLMs in R",
+    "section": "",
+    "text": "Resources for learning how to work with LLMs in R:\nSign up to my newsletter for the latest in LLMs/AI in R: https://aifordatapeople.beehiiv.com/subscribe"
+  },
+  {
+    "objectID": "learn-llms.html#athlyticz",
+    "href": "learn-llms.html#athlyticz",
+    "title": "Learn LLMs in R",
+    "section": "Athlyticz: ML and LLMs in R",
+    "text": "Athlyticz: ML and LLMs in R\nA comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.\nThe course covers:\n\nML foundations with tidymodels: model evaluation, resampling, tuning, preprocessing\nRegression and classification models including neural networks\nModel deployment with vetiver and orbital\nWorking with LLMs using ellmer\nRetrieval-augmented generation (RAG) for building apps with your own data\n\nAimed at R users comfortable with the tidyverse who want to build and deploy ML and LLM applications.\nSign up at Athlyticz"
+  },
+  {
+    "objectID": "learn-llms.html#self-paced",
+    "href": "learn-llms.html#self-paced",
+    "title": "Learn LLMs in R",
+    "section": "LLMs in R (Self-Paced)",
+    "text": "LLMs in R (Self-Paced)\nLearn to work with large language models in R at your own pace.\nView course"
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html",
+    "href": "posts-archive/clineshiny/index.html",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "",
+    "text": "As a fun bit of prep for Appsilon’s upcoming AI-Powered Shiny Hackathon on March 22, 2025, I decided to do a practice run using Cline, an AI coding assistant. My goal was to see how AI can help or hinder the development of a Shiny application.\nI decided to see where I could get in an hour today, and this blog post discusses my experience, highlighting the capabilities, quirks, and costs of using AI for R and Shiny app development."
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#the-hackathon-challenge",
+    "href": "posts-archive/clineshiny/index.html#the-hackathon-challenge",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "📌 The Hackathon Challenge",
+    "text": "📌 The Hackathon Challenge\nThe hackathon is judged on:\n\nHow well the app meets the challenge objectives\nAdditional features built\nUI design and user experience\nCode clarity and maintainability\n\nThe details of the hackathon will be revealed on the day, so I decided to try to come up with a small task which may have some things in common - creating a Shiny app which visualises and analyses a dataset."
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#data-acquisition-nyc-open-data",
+    "href": "posts-archive/clineshiny/index.html#data-acquisition-nyc-open-data",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "📂 Data Acquisition: NYC Open Data",
+    "text": "📂 Data Acquisition: NYC Open Data\nI decided to take a look at NYC Open Data and within that, my partner and I agreed that the restaurant health inspection dataset looks the most interesting.\nNYC Open Data provides APIs and browser-based tools for exploring datasets. Instead of using APIs, I opted to download the datasets manually for simplicity.\n\nInspection Results Dataset (120MB CSV)\nData Dictionary (Excel file)\nAdditional Documentation (Word file)\n\nAt this point, I didn’t check the documentation—I wanted to see how much Cline could figure out on its own."
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#enter-cline-ai-coding-assistant",
+    "href": "posts-archive/clineshiny/index.html#enter-cline-ai-coding-assistant",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🛠️ Enter Cline: AI Coding Assistant",
+    "text": "🛠️ Enter Cline: AI Coding Assistant\nCline is an AI-powered coding tool that integrates into VS Code and Positron. It autonomously creates and edits files, executes commands, and interacts with code, all while asking for user approval at each step.\n\n🔹 Key Features of Cline:\n\nPlan Mode: Outlines a roadmap before execution\nAct Mode: Runs code when switched to execution mode\nTransparent Cost Tracking: Displays API usage and expenses\n\nI started with a broad prompt:\n\n‘Using all of the resources in the data directory, take a look at the data, and come up with some ideas for interesting analyses, such as “which restaurants have the worst health scores but remain very popular” - focus on what is available in the data and what is unexpected and humorous’\n\nCline responded by:\n\nListing the available files and guessing their contents\nAsking for permission to read each file\nSuccessfully reading the Word doc\nTrying (and failing) to read the Excel file\n\n\n\n\nCline File Summary"
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#data-exploration-and-analysis",
+    "href": "posts-archive/clineshiny/index.html#data-exploration-and-analysis",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🔍 Data Exploration and Analysis",
+    "text": "🔍 Data Exploration and Analysis\nCline wanted to open the full 120MB dataset but since the file was large, my partner mentioned that there might be costs associated with sending data to the AI. I mentioned this to Cline, and so it opted instead to sample the first few rows.\nAfter some failed attempts with PowerShell, I nudged it toward using R instead, which worked much better.\n\n\n\nPowerShell Issue\n\n\nI really like how the responses are in a human-readable format while planning actions to take, so that I could see the equivalent of its line of thought. It had proposed analyses such as:\n\nIdentifying popular restaurants with poor health scores\nAnalysing violation trends across neighborhoods\nExamining seasonal variations in health violations\n\nSome ideas sounded interesting, but others were a bit off. This reflected the trend I’d seen in chatGPT where unless prompted to do otherwise, a large number of ideas are returned; some more useful than others.\nI pressed it on some of them, at which point it was able to propose alternatives. There was still a great deal of input needed from me to decide which idea would be the most sensible to go with.\n\n\n\nInspection Proxy Popularity Question"
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#building-the-shiny-app",
+    "href": "posts-archive/clineshiny/index.html#building-the-shiny-app",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🎨 Building the Shiny App",
+    "text": "🎨 Building the Shiny App\nWith the analysis ideas outlined, I instructed Cline to build a Shiny app to visualise the insights.\n\n\n\nInitial R Code Approach\n\n\n\n🔹 What Cline Generated:\n\nA UI with slider inputs\nBar charts using the viridis color palette\nIcons for different metrics\n\nIssue #1:\n\nCline overused Plotly, adding unnecessary complexity.\nI switched most plots back to ggplot2 for clarity.\n\nIssue #2:\n\nSome colors were misleading—viridis was applied without meaning, making bars look color-coded incorrectly.\n\nIssue #3:\nThe app was all in one huge file - so I asked Cline to make it more modular, again, remaining vague to see what it did."
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#the-app-itself",
+    "href": "posts-archive/clineshiny/index.html#the-app-itself",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "📊 The App Itself",
+    "text": "📊 The App Itself\nThe main page of the app itself can be seen below. It looks pretty decent, right?\n Except for that it kinda wasn’t! This overview page was fine, but the individual subpages were suffering from all sorts of issues, from truncated output in DT outputs, to it being unclear what some plots were trying to show. With some time and effort I could have unpicked it, but at this point I was wondering if it would have been quicker to code from scratch."
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#refactoring-and-modularisation",
+    "href": "posts-archive/clineshiny/index.html#refactoring-and-modularisation",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🏗️ Refactoring and Modularisation",
+    "text": "🏗️ Refactoring and Modularisation\nAt this point Cline split the app into ui.R, server.R and a few other supporting files, though not as modular as I’d have liked. I tried again, this time seeing if it would use the {golem} framework - with much more success.\nCline successfully:\n✅ Created a new Golem project directory\n✅ Structured the app as an R package\n✅ Included a DESCRIPTION file\nHowever, I had to manually fix some file paths to make everything work.\n\n\n\nRefactoring with Golem"
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#the-cost-of-ai-assistance",
+    "href": "posts-archive/clineshiny/index.html#the-cost-of-ai-assistance",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "💰 The Cost of AI Assistance",
+    "text": "💰 The Cost of AI Assistance\nCline provides a breakdown of API costs per request. After one hour of work, I had spent:\n💰 $3 total\nInterestingly, some human-like responses cost more than code generation! For example, a single conceptual AI response cost $0.17, more than some entire code snippets.\n\n\n\nCost Breakdown"
+  },
+  {
+    "objectID": "posts-archive/clineshiny/index.html#final-thoughts-ais-role-in-shiny-development",
+    "href": "posts-archive/clineshiny/index.html#final-thoughts-ais-role-in-shiny-development",
+    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "section": "🏁 Final Thoughts: AI’s Role in Shiny Development",
+    "text": "🏁 Final Thoughts: AI’s Role in Shiny Development\nThis experiment showed me a few important things:\n\nVague prompts get mixed results\nAI is better at writing code than about making decisions about data science and how best to represent data\nCosts can add up quickly and being strategic about which aspects to use Cline for feels like the best way forward\n\nThis made me really reflect on the role of AI here. On an app development team, would you rather have 1 person who does it all, or a team of people with different specialisations? I think the latter would work better, for the hackathon itself, I’m going to experiment with a few different approaches such as:\n\nSetting up the app structure myself in advance, and getting Cline to fill in the gaps based on what’s already there\nGPT product manager - putting together a prompt around constructing really well-defined requirements, and using that to help me tightly define what is being created before passing those requirements onto an AI like Cline to create them\ndesigning any plots myself - there may be ways to improve on what was generated here today, but representing data in a human-understandable form might just be best done by humans\n\nI’m looking forward to Saturday’s hackathon - good luck to everyone else participating and I’m super excited to see what comes out of it! 🚀"
+  },
+  {
+    "objectID": "posts-archive/2023wrapup/index.html",
+    "href": "posts-archive/2023wrapup/index.html",
+    "title": "Reflections on 2023",
+    "section": "",
+    "text": "Here’s a summary of my highlights of 2023!"
+  },
+  {
+    "objectID": "posts-archive/2023wrapup/index.html#arrow-positconf-workshop",
+    "href": "posts-archive/2023wrapup/index.html#arrow-positconf-workshop",
+    "title": "Reflections on 2023",
+    "section": "Arrow posit::conf workshop",
+    "text": "Arrow posit::conf workshop\nThe biggest professional achievement for me was having the privilege of being invited to co-present a workshop with Steph Hazlitt about Arrow at posit::conf. Steph is fantastic to work with, and while writing and delivering the workshop was hard work, it paid off in the end - we received really positive feedback from attendees. The experience reignited my passion for teaching, and desire to develop those skills. I’ve applied for Carpentries instructor training, which I’m still waiting to hear back about, and I’m excited to also be working with Steph on creating a 2 hour version of the workshop, which we’re planning on teaching at user events in 2024.\n\n\n\nHanging out with some awesome people at posit::conf 2023!"
+  },
+  {
+    "objectID": "posts-archive/2023wrapup/index.html#arrow-r-maintenance-bot",
+    "href": "posts-archive/2023wrapup/index.html#arrow-r-maintenance-bot",
+    "title": "Reflections on 2023",
+    "section": "Arrow R Maintenance bot",
+    "text": "Arrow R Maintenance bot\nAnother project I enjoyed working on was creating the Arrow maintenance bot. It pulls data from the GitHub API, aggregates the relevant bits, and then posts it to a Zulip channel (though also works for Slack). It was an itch I’d wanted to scratch for a long time, as I’d previously got this information by clicking on various bookmarks every so often whenever I remembered. The output is shown in the screenshot below; basically, it summarises new bug tickets which need investigating, investigated bugs which need a fix, and open PRs which may need reviewing. \nThere are more aspects of arrow maintenance which I’d love to automate and pull together in dashboard form - I’ve been discussing this with a friend, and I hope we find the time to work on this in 2024!"
+  },
+  {
+    "objectID": "posts-archive/2023wrapup/index.html#arrow-maintenance-and-book",
+    "href": "posts-archive/2023wrapup/index.html#arrow-maintenance-and-book",
+    "title": "Reflections on 2023",
+    "section": "Arrow maintenance and book",
+    "text": "Arrow maintenance and book\nIn January, I became the official package maintainer on CRAN. It took my some time to get my head around this; it’s a daunting responsibility, and in reality I’m part of a wider team, all of whom play an important part.\nThe amount of time I’ve been able to spend on Arrow has dropped significantly since I left Voltron Data, though I’m hoping to be able to spend more time this year on it. I feel like my focus will shift a little, away from code, and more towards encouraging new contributors, as well as teaching people how to use the package.\nMost excitingly though, is the book which I am co-authoring! This is taking up the main chunk of my Arrow-related time, but the aim is to have the manuscript submitted to the publishers by summer, if not sooner."
+  },
+  {
+    "objectID": "posts-archive/2023wrapup/index.html#c",
+    "href": "posts-archive/2023wrapup/index.html#c",
+    "title": "Reflections on 2023",
+    "section": "C++",
+    "text": "C++\nHaving interacted with bits of C++ code while working on Arrow, I decided to spend time learning C++ more formally. I’ve generally found this tricky - frankly, higher-level languages seem to have more engaging content out there. I made a start on the Udacity C++ Nanodegree, which I completed over half of, but was limited on time and so paused this - I plan to pick it up again next year though. I also tried a more practical approach, and decided to make a PR to the Arrow C++ codebase - one of the PRs I am most proud of this year is this one, adding support for the Substrait cast expression. It was hard, though most of the complexity came from peripheral tasks, like working out how to run the code interactively in the debugger."
+  },
+  {
+    "objectID": "posts-archive/2023wrapup/index.html#joining-the-rladies-global-team",
+    "href": "posts-archive/2023wrapup/index.html#joining-the-rladies-global-team",
+    "title": "Reflections on 2023",
+    "section": "Joining the RLadies Global team",
+    "text": "Joining the RLadies Global team\nI spent some time thinking about how I could engage more with the wider R community, and so I volunteered to join the RLadies global team, helping set up new chapters on meetup.com. I’ve not done much here yet, but am delighted to be part of the organisation, and hope to be able to help out more in 2024"
+  },
+  {
+    "objectID": "posts-archive/2023wrapup/index.html#career-break-and-plans-for-2024-recurse-center",
+    "href": "posts-archive/2023wrapup/index.html#career-break-and-plans-for-2024-recurse-center",
+    "title": "Reflections on 2023",
+    "section": "Career break and plans for 2024 (Recurse Center!)",
+    "text": "Career break and plans for 2024 (Recurse Center!)\nLast, but absolutely not least, is my decision to take a career break. After leaving Voltron Data, I’d been working part-time in a contractor capacity, alongside working on the Arrow book, but I decided I wanted to narrow my focus and take some time out for me.\nI’m taking a break and spending the next couple of months focusing on writing. Once most of the book is done, I plan to spend more time on my open source work in general, which will involve teaching and talking about Arrow, as well as pushing forward a few side projects.\nThe most exciting news I’ve had this year is that I applied to the Recurse Center a few weeks ago. RC is like a writer’s retreat for programmers, and attendees spend 12 weeks together working on programming problems of their choice. I want to get to grips with R’s internals, and learn about the C API, as well as levelling up my C++ skills in general. I’m delighted to say that I was accepted to attend this morning, and will be joining the spring batch in late March! I’ve got a ton of ideas for projects I want to work on, but will have to see how much time I ultimately end up having.\nLonger-term - I don’t know. Ultimately, I’d love to get paid to work on open source again, but those opportunities are few and far between. I also have some professional goals I’d like to hit before I’m going to be in the right headspace to engage with this too - between writing the book and my plans for Recurse Center, I’ll be there pretty soon.\nThis year has been a real rollercoaster, but I’m extremely grateful to all my friends and mentors who have helped me during this time."
+  },
+  {
+    "objectID": "projects/refactoring/index.html",
+    "href": "projects/refactoring/index.html",
+    "title": "Refactoring a Legacy Shiny App for Maintainability",
+    "section": "",
+    "text": "I led a team within a large organisation responsible for maintaining an internal Shiny app used to manage R package installation requests. The codebase had become increasingly fragile and hard to maintain, with tightly coupled logic and growing technical debt.\nWhat I worked on: - Refactored reactive logic to simplify control flow and heavily modularised code to support maintainability - Introduced testing strategies and CI workflows - Improved onboarding for new developers by making the codebase easier to understand\nThe changes made the application significantly more maintainable and safer to extend as the team evolved, reducing development time considerably."
+  },
+  {
+    "objectID": "projects/migration/index.html",
+    "href": "projects/migration/index.html",
+    "title": "Scoping a Large-Scale SAS to R Migration",
+    "section": "",
+    "text": "As part of a consultancy engagement, I audited a large SAS codebase to help a client understand the feasibility and risk profile of migrating to R. The codebase was business-critical and had grown organically over many years.\nWhat I worked on: - Static code analysis of SAS codebase to estimate size and complexity (e.g. SQL-style vs. custom PROC logic) - Identified areas where statistical methods or parameter defaults might behave differently in R - Delivered a scoped migration plan to help inform budget, risk, and staffing decisions\nThe audit helped the client avoid assumptions about direct conversion and provided a structured way to evaluate next steps."
   },
   {
     "objectID": "drafts/how-im-using-ai-on-arrow/index.html",
@@ -490,417 +791,151 @@
     "text": "What are you still unsure about, and what do you want to try next?\n🤖 Summary: The next frontier they are interested in is agentic help, but only under close supervision. They are curious about issue triage, bug reproduction, and especially stale-PR work where a model could narrow down a subset of work for a human to finish. At the same time, they are still unsure how far AI can responsibly extend their reach into areas like C++ without creating extra burden for other maintainers.\n\nOne of the things that I want to try next is if I can have some agentic things running on a loop so that maybe it could be like a triage agent, so when an issue is opened it could grab a copy of the R package in a Docker container or some isolated environment and see if it can replicate the bug.\n\n\nOr it could look for stale PRs that are almost ready to be merged. In fact, that second one is the more important one for me because then it keeps the human in the loop. Because what I can do there is get an idea of if there’s much actual work to do to finish off some PR which has been abandoned, and if there isn’t then I can have it guide me to doing it. And the whole point is here I don’t trust it enough to go off on its own, but helping me figure out a subset of work and then having close supervision at that point is quite cool.\n\n\nI want to use it to help me contribute to areas other than R so like C++, but I don’t know if I’m at the point where I’m going to be asking the right questions enough that my contribution is genuinely worthwhile and isn’t just putting a necessary burden on other maintainers. When I get things wrong I don’t know why they’re wrong, and so I want to figure out what that relevant level of knowledge is to be able to do this kind of thing.\n\n\nI’m also curious to see if I can get it to autonomously do the whole triage process and draft PRs that fix minor bugs, for me to then review, but the real question for me there is if it will take more time to put something together that does that well than it would just do the work myself, and again I’m not sure about that."
   },
   {
-    "objectID": "projects/migration/index.html",
-    "href": "projects/migration/index.html",
-    "title": "Scoping a Large-Scale SAS to R Migration",
+    "objectID": "talks/nyhackr/index.html",
+    "href": "talks/nyhackr/index.html",
+    "title": "Efficiently Engineering Bigger Data with Arrow",
     "section": "",
-    "text": "As part of a consultancy engagement, I audited a large SAS codebase to help a client understand the feasibility and risk profile of migrating to R. The codebase was business-critical and had grown organically over many years.\nWhat I worked on: - Static code analysis of SAS codebase to estimate size and complexity (e.g. SQL-style vs. custom PROC logic) - Identified areas where statistical methods or parameter defaults might behave differently in R - Delivered a scoped migration plan to help inform budget, risk, and staffing decisions\nThe audit helped the client avoid assumptions about direct conversion and provided a structured way to evaluate next steps."
+    "text": "Data analysis pipelines with larger-than-memory data are becoming more and more commonplace. There are often blurred lines between data science and data engineering, and knowing a bit of both is a sure-fire way to make your life easier when working with big datasets. In this talk, I will give an overview of the arrow R package and best practices for getting the most out of your data when working with bigger datasets. I’ll demo the dplyr interface to arrow, and give you some tips and tricks for getting the most out of arrow’s functionality, as well as applying data engineering principles to speed things up even more."
   },
   {
-    "objectID": "projects/refactoring/index.html",
-    "href": "projects/refactoring/index.html",
-    "title": "Refactoring a Legacy Shiny App for Maintainability",
+    "objectID": "talks/positconf2024_2/index.html",
+    "href": "talks/positconf2024_2/index.html",
+    "title": "Mixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail",
     "section": "",
-    "text": "I led a team within a large organisation responsible for maintaining an internal Shiny app used to manage R package installation requests. The codebase had become increasingly fragile and hard to maintain, with tightly coupled logic and growing technical debt.\nWhat I worked on: - Refactored reactive logic to simplify control flow and heavily modularised code to support maintainability - Introduced testing strategies and CI workflows - Improved onboarding for new developers by making the codebase easier to understand\nThe changes made the application significantly more maintainable and safer to extend as the team evolved, reducing development time considerably."
+    "text": "A talk on Arrow that Alenka Frim and I wrote and presented at posit::conf 2024.\nhttps://docs.google.com/presentation/d/1ViXduR7CNrz_9QFDk5snAlD3tFJpJs156-UEBxCHiks/edit?usp=sharing"
   },
   {
-    "objectID": "posts-archive/2023wrapup/index.html",
-    "href": "posts-archive/2023wrapup/index.html",
-    "title": "Reflections on 2023",
+    "objectID": "talks/londonr/index.html",
+    "href": "talks/londonr/index.html",
+    "title": "Ten Steps To Becoming A Tidyverse Contributor",
     "section": "",
-    "text": "Here’s a summary of my highlights of 2023!"
+    "text": "A talk about getting involved in open source!\nSlides here"
   },
   {
-    "objectID": "posts-archive/2023wrapup/index.html#arrow-positconf-workshop",
-    "href": "posts-archive/2023wrapup/index.html#arrow-positconf-workshop",
-    "title": "Reflections on 2023",
-    "section": "Arrow posit::conf workshop",
-    "text": "Arrow posit::conf workshop\nThe biggest professional achievement for me was having the privilege of being invited to co-present a workshop with Steph Hazlitt about Arrow at posit::conf. Steph is fantastic to work with, and while writing and delivering the workshop was hard work, it paid off in the end - we received really positive feedback from attendees. The experience reignited my passion for teaching, and desire to develop those skills. I’ve applied for Carpentries instructor training, which I’m still waiting to hear back about, and I’m excited to also be working with Steph on creating a 2 hour version of the workshop, which we’re planning on teaching at user events in 2024.\n\n\n\nHanging out with some awesome people at posit::conf 2023!"
-  },
-  {
-    "objectID": "posts-archive/2023wrapup/index.html#arrow-r-maintenance-bot",
-    "href": "posts-archive/2023wrapup/index.html#arrow-r-maintenance-bot",
-    "title": "Reflections on 2023",
-    "section": "Arrow R Maintenance bot",
-    "text": "Arrow R Maintenance bot\nAnother project I enjoyed working on was creating the Arrow maintenance bot. It pulls data from the GitHub API, aggregates the relevant bits, and then posts it to a Zulip channel (though also works for Slack). It was an itch I’d wanted to scratch for a long time, as I’d previously got this information by clicking on various bookmarks every so often whenever I remembered. The output is shown in the screenshot below; basically, it summarises new bug tickets which need investigating, investigated bugs which need a fix, and open PRs which may need reviewing. \nThere are more aspects of arrow maintenance which I’d love to automate and pull together in dashboard form - I’ve been discussing this with a friend, and I hope we find the time to work on this in 2024!"
-  },
-  {
-    "objectID": "posts-archive/2023wrapup/index.html#arrow-maintenance-and-book",
-    "href": "posts-archive/2023wrapup/index.html#arrow-maintenance-and-book",
-    "title": "Reflections on 2023",
-    "section": "Arrow maintenance and book",
-    "text": "Arrow maintenance and book\nIn January, I became the official package maintainer on CRAN. It took my some time to get my head around this; it’s a daunting responsibility, and in reality I’m part of a wider team, all of whom play an important part.\nThe amount of time I’ve been able to spend on Arrow has dropped significantly since I left Voltron Data, though I’m hoping to be able to spend more time this year on it. I feel like my focus will shift a little, away from code, and more towards encouraging new contributors, as well as teaching people how to use the package.\nMost excitingly though, is the book which I am co-authoring! This is taking up the main chunk of my Arrow-related time, but the aim is to have the manuscript submitted to the publishers by summer, if not sooner."
-  },
-  {
-    "objectID": "posts-archive/2023wrapup/index.html#c",
-    "href": "posts-archive/2023wrapup/index.html#c",
-    "title": "Reflections on 2023",
-    "section": "C++",
-    "text": "C++\nHaving interacted with bits of C++ code while working on Arrow, I decided to spend time learning C++ more formally. I’ve generally found this tricky - frankly, higher-level languages seem to have more engaging content out there. I made a start on the Udacity C++ Nanodegree, which I completed over half of, but was limited on time and so paused this - I plan to pick it up again next year though. I also tried a more practical approach, and decided to make a PR to the Arrow C++ codebase - one of the PRs I am most proud of this year is this one, adding support for the Substrait cast expression. It was hard, though most of the complexity came from peripheral tasks, like working out how to run the code interactively in the debugger."
-  },
-  {
-    "objectID": "posts-archive/2023wrapup/index.html#joining-the-rladies-global-team",
-    "href": "posts-archive/2023wrapup/index.html#joining-the-rladies-global-team",
-    "title": "Reflections on 2023",
-    "section": "Joining the RLadies Global team",
-    "text": "Joining the RLadies Global team\nI spent some time thinking about how I could engage more with the wider R community, and so I volunteered to join the RLadies global team, helping set up new chapters on meetup.com. I’ve not done much here yet, but am delighted to be part of the organisation, and hope to be able to help out more in 2024"
-  },
-  {
-    "objectID": "posts-archive/2023wrapup/index.html#career-break-and-plans-for-2024-recurse-center",
-    "href": "posts-archive/2023wrapup/index.html#career-break-and-plans-for-2024-recurse-center",
-    "title": "Reflections on 2023",
-    "section": "Career break and plans for 2024 (Recurse Center!)",
-    "text": "Career break and plans for 2024 (Recurse Center!)\nLast, but absolutely not least, is my decision to take a career break. After leaving Voltron Data, I’d been working part-time in a contractor capacity, alongside working on the Arrow book, but I decided I wanted to narrow my focus and take some time out for me.\nI’m taking a break and spending the next couple of months focusing on writing. Once most of the book is done, I plan to spend more time on my open source work in general, which will involve teaching and talking about Arrow, as well as pushing forward a few side projects.\nThe most exciting news I’ve had this year is that I applied to the Recurse Center a few weeks ago. RC is like a writer’s retreat for programmers, and attendees spend 12 weeks together working on programming problems of their choice. I want to get to grips with R’s internals, and learn about the C API, as well as levelling up my C++ skills in general. I’m delighted to say that I was accepted to attend this morning, and will be joining the spring batch in late March! I’ve got a ton of ideas for projects I want to work on, but will have to see how much time I ultimately end up having.\nLonger-term - I don’t know. Ultimately, I’d love to get paid to work on open source again, but those opportunities are few and far between. I also have some professional goals I’d like to hit before I’m going to be in the right headspace to engage with this too - between writing the book and my plans for Recurse Center, I’ll be there pretty soon.\nThis year has been a real rollercoaster, but I’m extremely grateful to all my friends and mentors who have helped me during this time."
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html",
-    "href": "posts-archive/clineshiny/index.html",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
+    "objectID": "talks/user2025/index.html",
+    "href": "talks/user2025/index.html",
+    "title": "Experimenting with LLM Applications in R",
     "section": "",
-    "text": "As a fun bit of prep for Appsilon’s upcoming AI-Powered Shiny Hackathon on March 22, 2025, I decided to do a practice run using Cline, an AI coding assistant. My goal was to see how AI can help or hinder the development of a Shiny application.\nI decided to see where I could get in an hour today, and this blog post discusses my experience, highlighting the capabilities, quirks, and costs of using AI for R and Shiny app development."
+    "text": "Large language models (LLMs) are surprisingly easy to use and at their core, they’re just an API call away. But how do you go from calling a model to actually building something useful?\nIn this talk, I share my experiences creating and deploying LLM-powered applications in R. I walk through different approaches I’ve tried, from incorporating LLMs into Shiny apps, improving my R code, and experimenting with different models and deployment options. Along the way, I highlight what worked, what didn’t, and what I learned in the process.\nWhether you’re curious about integrating LLMs into your own projects or just want to see what’s possible, this session offers a practical look at building with LLMs in R without the hype.\nPresented at useR! 2025."
   },
   {
-    "objectID": "posts-archive/clineshiny/index.html#the-hackathon-challenge",
-    "href": "posts-archive/clineshiny/index.html#the-hackathon-challenge",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "📌 The Hackathon Challenge",
-    "text": "📌 The Hackathon Challenge\nThe hackathon is judged on:\n\nHow well the app meets the challenge objectives\nAdditional features built\nUI design and user experience\nCode clarity and maintainability\n\nThe details of the hackathon will be revealed on the day, so I decided to try to come up with a small task which may have some things in common - creating a Shiny app which visualises and analyses a dataset."
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html#data-acquisition-nyc-open-data",
-    "href": "posts-archive/clineshiny/index.html#data-acquisition-nyc-open-data",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "📂 Data Acquisition: NYC Open Data",
-    "text": "📂 Data Acquisition: NYC Open Data\nI decided to take a look at NYC Open Data and within that, my partner and I agreed that the restaurant health inspection dataset looks the most interesting.\nNYC Open Data provides APIs and browser-based tools for exploring datasets. Instead of using APIs, I opted to download the datasets manually for simplicity.\n\nInspection Results Dataset (120MB CSV)\nData Dictionary (Excel file)\nAdditional Documentation (Word file)\n\nAt this point, I didn’t check the documentation—I wanted to see how much Cline could figure out on its own."
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html#enter-cline-ai-coding-assistant",
-    "href": "posts-archive/clineshiny/index.html#enter-cline-ai-coding-assistant",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "🛠️ Enter Cline: AI Coding Assistant",
-    "text": "🛠️ Enter Cline: AI Coding Assistant\nCline is an AI-powered coding tool that integrates into VS Code and Positron. It autonomously creates and edits files, executes commands, and interacts with code, all while asking for user approval at each step.\n\n🔹 Key Features of Cline:\n\nPlan Mode: Outlines a roadmap before execution\nAct Mode: Runs code when switched to execution mode\nTransparent Cost Tracking: Displays API usage and expenses\n\nI started with a broad prompt:\n\n‘Using all of the resources in the data directory, take a look at the data, and come up with some ideas for interesting analyses, such as “which restaurants have the worst health scores but remain very popular” - focus on what is available in the data and what is unexpected and humorous’\n\nCline responded by:\n\nListing the available files and guessing their contents\nAsking for permission to read each file\nSuccessfully reading the Word doc\nTrying (and failing) to read the Excel file\n\n\n\n\nCline File Summary"
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html#data-exploration-and-analysis",
-    "href": "posts-archive/clineshiny/index.html#data-exploration-and-analysis",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "🔍 Data Exploration and Analysis",
-    "text": "🔍 Data Exploration and Analysis\nCline wanted to open the full 120MB dataset but since the file was large, my partner mentioned that there might be costs associated with sending data to the AI. I mentioned this to Cline, and so it opted instead to sample the first few rows.\nAfter some failed attempts with PowerShell, I nudged it toward using R instead, which worked much better.\n\n\n\nPowerShell Issue\n\n\nI really like how the responses are in a human-readable format while planning actions to take, so that I could see the equivalent of its line of thought. It had proposed analyses such as:\n\nIdentifying popular restaurants with poor health scores\nAnalysing violation trends across neighborhoods\nExamining seasonal variations in health violations\n\nSome ideas sounded interesting, but others were a bit off. This reflected the trend I’d seen in chatGPT where unless prompted to do otherwise, a large number of ideas are returned; some more useful than others.\nI pressed it on some of them, at which point it was able to propose alternatives. There was still a great deal of input needed from me to decide which idea would be the most sensible to go with.\n\n\n\nInspection Proxy Popularity Question"
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html#building-the-shiny-app",
-    "href": "posts-archive/clineshiny/index.html#building-the-shiny-app",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "🎨 Building the Shiny App",
-    "text": "🎨 Building the Shiny App\nWith the analysis ideas outlined, I instructed Cline to build a Shiny app to visualise the insights.\n\n\n\nInitial R Code Approach\n\n\n\n🔹 What Cline Generated:\n\nA UI with slider inputs\nBar charts using the viridis color palette\nIcons for different metrics\n\nIssue #1:\n\nCline overused Plotly, adding unnecessary complexity.\nI switched most plots back to ggplot2 for clarity.\n\nIssue #2:\n\nSome colors were misleading—viridis was applied without meaning, making bars look color-coded incorrectly.\n\nIssue #3:\nThe app was all in one huge file - so I asked Cline to make it more modular, again, remaining vague to see what it did."
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html#the-app-itself",
-    "href": "posts-archive/clineshiny/index.html#the-app-itself",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "📊 The App Itself",
-    "text": "📊 The App Itself\nThe main page of the app itself can be seen below. It looks pretty decent, right?\n Except for that it kinda wasn’t! This overview page was fine, but the individual subpages were suffering from all sorts of issues, from truncated output in DT outputs, to it being unclear what some plots were trying to show. With some time and effort I could have unpicked it, but at this point I was wondering if it would have been quicker to code from scratch."
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html#refactoring-and-modularisation",
-    "href": "posts-archive/clineshiny/index.html#refactoring-and-modularisation",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "🏗️ Refactoring and Modularisation",
-    "text": "🏗️ Refactoring and Modularisation\nAt this point Cline split the app into ui.R, server.R and a few other supporting files, though not as modular as I’d have liked. I tried again, this time seeing if it would use the {golem} framework - with much more success.\nCline successfully:\n✅ Created a new Golem project directory\n✅ Structured the app as an R package\n✅ Included a DESCRIPTION file\nHowever, I had to manually fix some file paths to make everything work.\n\n\n\nRefactoring with Golem"
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html#the-cost-of-ai-assistance",
-    "href": "posts-archive/clineshiny/index.html#the-cost-of-ai-assistance",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "💰 The Cost of AI Assistance",
-    "text": "💰 The Cost of AI Assistance\nCline provides a breakdown of API costs per request. After one hour of work, I had spent:\n💰 $3 total\nInterestingly, some human-like responses cost more than code generation! For example, a single conceptual AI response cost $0.17, more than some entire code snippets.\n\n\n\nCost Breakdown"
-  },
-  {
-    "objectID": "posts-archive/clineshiny/index.html#final-thoughts-ais-role-in-shiny-development",
-    "href": "posts-archive/clineshiny/index.html#final-thoughts-ais-role-in-shiny-development",
-    "title": "Exploring AI-Powered Shiny App Development with Cline and Positron",
-    "section": "🏁 Final Thoughts: AI’s Role in Shiny Development",
-    "text": "🏁 Final Thoughts: AI’s Role in Shiny Development\nThis experiment showed me a few important things:\n\nVague prompts get mixed results\nAI is better at writing code than about making decisions about data science and how best to represent data\nCosts can add up quickly and being strategic about which aspects to use Cline for feels like the best way forward\n\nThis made me really reflect on the role of AI here. On an app development team, would you rather have 1 person who does it all, or a team of people with different specialisations? I think the latter would work better, for the hackathon itself, I’m going to experiment with a few different approaches such as:\n\nSetting up the app structure myself in advance, and getting Cline to fill in the gaps based on what’s already there\nGPT product manager - putting together a prompt around constructing really well-defined requirements, and using that to help me tightly define what is being created before passing those requirements onto an AI like Cline to create them\ndesigning any plots myself - there may be ways to improve on what was generated here today, but representing data in a human-understandable form might just be best done by humans\n\nI’m looking forward to Saturday’s hackathon - good luck to everyone else participating and I’m super excited to see what comes out of it! 🚀"
-  },
-  {
-    "objectID": "learn-llms.html",
-    "href": "learn-llms.html",
-    "title": "Learn LLMs in R",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Nic Crane",
     "section": "",
-    "text": "Resources for learning how to work with LLMs in R:\nSign up to my newsletter for the latest in LLMs/AI in R: https://aifordatapeople.beehiiv.com/subscribe"
+    "text": "I’m an open source developer, and R educator and consultant.\nThings I’ve been working on lately:\n🏹 Maintaining Apache Arrow\n📚 Co-authoring “Scaling Up with Arrow and R”\n🤖 Building courses teaching people how to work with LLMs in data science\nGet in touch if you’d like to work together."
   },
   {
-    "objectID": "learn-llms.html#athlyticz",
-    "href": "learn-llms.html#athlyticz",
-    "title": "Learn LLMs in R",
-    "section": "Athlyticz: ML and LLMs in R",
-    "text": "Athlyticz: ML and LLMs in R\nA comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.\nThe course covers:\n\nML foundations with tidymodels: model evaluation, resampling, tuning, preprocessing\nRegression and classification models including neural networks\nModel deployment with vetiver and orbital\nWorking with LLMs using ellmer\nRetrieval-augmented generation (RAG) for building apps with your own data\n\nAimed at R users comfortable with the tidyverse who want to build and deploy ML and LLM applications.\nSign up at Athlyticz"
-  },
-  {
-    "objectID": "learn-llms.html#self-paced",
-    "href": "learn-llms.html#self-paced",
-    "title": "Learn LLMs in R",
-    "section": "LLMs in R (Self-Paced)",
-    "text": "LLMs in R (Self-Paced)\nLearn to work with large language models in R at your own pace.\nView course"
-  },
-  {
-    "objectID": "posts-archive/c_deepr/index.html",
-    "href": "posts-archive/c_deepr/index.html",
-    "title": "Explaining the C bits at the start of ‘Deep R Programming Ch14: Interfacing compiled code’",
+    "objectID": "index.html#hi-im-nic",
+    "href": "index.html#hi-im-nic",
+    "title": "Nic Crane",
     "section": "",
-    "text": "One of my goals for next year is to get a deeper understanding of R’s C API. I’m making a start on this by reading Chapter 14 of Deep R Programming by Marek Gagolewski: “Interfacing compiled code”. It’s a great resource, though the chapter preface states “we assume basic knowledge of the C language”. I do not have this knowledge My C knowledge is fairly limited, and so this blog post will pull out some of the details from that chapter, especially bits where I’ve had to go “wtf is that?!” or remind myself by googling. My current level of C knowledge at the moment is pretty minimal; the main things I know are:\n\nC is a compiled language (as opposed to an interpreted language) and C code needs compiling before it can be run\nA lot of R’s internals are based on C\nC is a statically-type language; this means that variable types are defined when the variable is created and cannot later change other than via explicit manual casting\n\nAnd that’s basically it! I imagine there are other bits I don’t realise I know which I’ve picked up from being an R package maintainer and dabbling in a few C++ tutorials, but I’ll try to explain everything as much as possible. OK, let’s do this!\nThe book chapter provides an example package with a simple C function implemented, and walks us through the code step-by-step. Great!\nSection 14.1.1 starts off with an example of a C function defined in src/cfunc.h. I guess the first thing to note is the location of the file - in the package’s src directory. This is where any compiled code needs to go, typically C or C++ code, or even Fortran if you’re really going old-school.\n\nHeader files and source files\nAnother thing to note here is the file name, which ends in .h. C code can be divided into header files (ending in .h) and source files (ending in .c). Header files contain the function declarations (including variable types) and other things like macros (named bits of code for the pre-processor to work with). They’re sometimes referred to as the interface - they contain information about functions’ inputs and outputs - including the argument names and types.\n\n\nOnce-only includes\nThe first couple of lines of code in the header file contain these lines:\n#ifndef __CFUNS_H\n#define __CFUNS_H\nand the final line is\n#endif\nWhat’s happening here is that, often we can end up with projects containing multiple files, some of which source each other, and include them. We don’t want to end up with duplication of the headers which have been included, otherwise the compiler will raise an error, so we put them in an #ifndef wrapper, and give them a name. Basically, what we’re saying to the preprocessor here is that if this name hasn’t already been defined, defined it and include this code, but if it’s already defined then skip this.\n\n\nIncludes\nThe third line in src/cfunc.h is:\n#include &lt;stddef.h&gt;\nThis allows for the inclusion of a file from the C standard library, which has a few different variables included. The key one for us here is size_t, which is commonly used for iterating over items in arrays - we need this as we’ll be including a for loop in the definition of our function.\n\n\nThe preprocessor\nAbove I casually mentioned the C preprocessor a couple of times without defining it. A succinct and perhaps naive summary is that there are multiple steps in the compilation of C code. One of these phases is preprocessing and it involves things like processing any additional files we’ve said we wanted to include, and replacing macros with their definitions.\n\n\nDeclarations\nSo, the declaration for the function in the example looks like this\ndouble my_c_sum(const double* x, size_t n);\nIn words, this means that:\n\nit is a function which returns an object of type double\nthe function name is my_c_sum\nthe first argument is called x\nx is a pointer to a variable of type double\nx is a const variable, which means it won’t be modified in the body of the function\nthe second argument is called n\nn is of type size_t\n\nThis concept of a pointer just means that x contains the memory address of the double that we pass in, rather than a copy of the values in it. This prevents us from copying the values unnecessarily.\n\n\nSource file\nSource files contain the body of the function, sometimes called the implementation.\nThe code in the book chapter goes on to show the content of the file src/cfuncs.c. The first line of this file is:\n#include \"cfuns.h\"\nThis is including the header file we discussed above. The rest of the code in the source file contains the definition of my_c_sum:\n/* computes the sum of all elements in an array x of size n */\ndouble my_c_sum(const double* x, size_t n)\n{\n    double s = 0.0;\n    for (size_t i = 0; i &lt; n; ++i) {\n        /* this code does not treat potential missing values specially\n           (they are kinds of NaNs); to fix this, add:\n        if (ISNA(x[i])) return NA_REAL;  // #include &lt;R.h&gt;  */\n        s += x[i];\n    }\n    return s;\n}\nThe function signature here is identical to how it is defined in the header file. The for loop uses the n argument which was passed in to represent the size of the array to loop through. In numerous other languages we’d calculate the size of the array in the body of the function, but in C you cannot have an array of unknown size, and so it must be passed in as a parameter. I think this is to do with how the C compiler allocates memory; more modern C does have the concept of variable-length arrays.\nThe chapter goes on to discuss further examples which then show how to include a wrapper which can be called by R. I won’t discuss this here, as the text there is all explained well, and the contents are more specific to R’s C API, and not specifically just C-related topics.\nHere’s a summary of the C-related topics mentioned here:\n\nheader files and source files\nincludes\nonce-only includes\nthe preprocessor\nvariable-length arrays\nconst variables\npointers\nstatically-typed languages\ncompiled and interpreted languages"
+    "text": "I’m an open source developer, and R educator and consultant.\nThings I’ve been working on lately:\n🏹 Maintaining Apache Arrow\n📚 Co-authoring “Scaling Up with Arrow and R”\n🤖 Building courses teaching people how to work with LLMs in data science\nGet in touch if you’d like to work together."
   },
   {
-    "objectID": "posts-archive/rc/index.html",
-    "href": "posts-archive/rc/index.html",
-    "title": "Recurse Center Return Statement",
+    "objectID": "index.html#what-people-say",
+    "href": "index.html#what-people-say",
+    "title": "Nic Crane",
+    "section": "What People Say",
+    "text": "What People Say\n“I recently attended Nic’s training course on using AI with R. This was my first hands-on experience at interacting with AI agents through R and Nic walked us through from step 0 (pre-course preparation including setting up API keys), interacting with agents within the IDE and programmatically, setting up system prompts and then presenting latest developments at passing information into agents and formatting returned information. This is a topic where things are developing quickly, and Nic managed to walk the fine line between basic concepts and introducing the ‘latest greatest’. This was a good course and it certainly helped me ‘cross the threshold’ into using AI with R.”\n— Mike Smith, Senior Director Statistics, Pfizer\n“I had the privilege of attending Nic Crane’s ‘Big Data in R with Arrow’ workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic’s workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn.”\n— Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene"
+  },
+  {
+    "objectID": "projects.html",
+    "href": "projects.html",
+    "title": "Past Work",
     "section": "",
-    "text": "I spent 3 months earlier this year at Recurse Center in New York. Here’s a summary of the highlights of my time there!"
+    "text": "A selection of consulting projects I’ve worked on."
   },
   {
-    "objectID": "posts-archive/rc/index.html#what-is-recurse-center",
-    "href": "posts-archive/rc/index.html#what-is-recurse-center",
-    "title": "Recurse Center Return Statement",
-    "section": "What is Recurse Center?",
-    "text": "What is Recurse Center?\nThe simplest explanation of what Recurse Center is is that it’s like a writer’s retreat but for programmers. Participants have to apply to get in, and there are 3 stages. The first is a written application, followed by a conversational interview, and then a pair programming interview. Generally, the intention is to assess whether you’ll be a good fit for RC. The selection criteria are stated explicitly on the website, but to summarise, they’re looking for self-motivated people who enjoy programming and are pleasant to be around. It’s not about being an amazing programmer; though I met some people with seriously impressive skills there, I also met newer programmers who were enthusiastic and engaged.\nRC can be attended remotely online or in person, but I opted for the in-person experience to get the most out of it. The hub, the in-person location is in Brooklyn, and takes up 2 floors of an office building. The 4th floor is the main floor where people code, socialise, do pair programming, and hang out in the kitchen, presentation space, or the meeting rooms. The 5th floor is the quiet floor where people can do more focused work without interruption.\nRC has a code of conduct, as well as 4 more general social rules:\n\nNo well-actually’s\nNo feigned surprise\nNo backseat driving\nNo subtle -isms\n\n\n\n\nA printed poster of RC’s social rules\n\n\nAs well as social rules about what not to do, there are 3 guiding principles, or self-directives, about what to do:\n\nWork at the edge of your abilities\nBuild your volitional muscles\nLearn generously\n\nThese explicit expectations lead to a fantastic learning environment where some of the more toxic elements that can sometimes be found in tech were avoided, and folks worked on project that really mattered to them and helped other people do the same.\nRecurse Center is a business, and makes its money from recruitment - RC works with partner companies looking for software engineers and similar roles, though admission to RC isn’t predicated on looking for employment via them, and is never pushed on people."
+    "objectID": "projects.html#supporting-genomic-medicine-in-the-nhs",
+    "href": "projects.html#supporting-genomic-medicine-in-the-nhs",
+    "title": "Past Work",
+    "section": "Supporting Genomic Medicine in the NHS",
+    "text": "Supporting Genomic Medicine in the NHS\n\n\n\n\n\nI contributed to a modular Shiny application used in the national rollout of genomic testing within the NHS, building on the 100,000 Genomes Project. It let operational staff, lab teams, and programme managers track genomic samples and view key metrics without needing to interact directly with backend systems.\n\nUI and server logic across multiple Shiny sub-apps\nIntegration with APIs and SQL databases\nInteractive visualisations using plotly, visNetwork, sunburstR and other htmlwidget packages\nProfiling, refactoring, and scaling reactive code for performance\n\nThe app was built to support a national rollout and continues to be used across NHS teams."
   },
   {
-    "objectID": "posts-archive/rc/index.html#why-did-i-go",
-    "href": "posts-archive/rc/index.html#why-did-i-go",
-    "title": "Recurse Center Return Statement",
-    "section": "Why did I go?",
-    "text": "Why did I go?\nWhen I decided to go to RC, I was at the beginning of a career break. I had done some consultancy/contract work early on, but had decided that I needed a proper pause. I had begun working on the book on Arrow that I’m co-authoring, and splitting my attention between the two things wasn’t working well for me. I also wanted some focused learning time - I had a ton of side projects I’d been meaning to work on but had never gotten moving and I felt like this would be a great opportunity to push them forwards.\nMy secondary motivation was how I was feeling at the time. I was lacking confidence in some of my technical skills, and know from experience that the best way to tackle that is learn new things and get things done, to disprove some of the insecurities I was having.\n\n\n\nA cross-stitched piece on the wall at RC with the text “be gay find primes”"
+    "objectID": "projects.html#scoping-a-large-scale-sas-to-r-migration",
+    "href": "projects.html#scoping-a-large-scale-sas-to-r-migration",
+    "title": "Past Work",
+    "section": "Scoping a Large-Scale SAS to R Migration",
+    "text": "Scoping a Large-Scale SAS to R Migration\n\n\nI audited a large SAS codebase to help a client understand the feasibility and risk profile of migrating to R. The codebase was business-critical and had grown organically over many years.\n\nStatic code analysis of SAS codebase to estimate size and complexity\nIdentified areas where statistical methods or parameter defaults might behave differently in R\nDelivered a scoped migration plan to help inform budget, risk, and staffing decisions\n\nThe audit helped the client avoid assumptions about direct conversion and provided a structured way to evaluate next steps."
   },
   {
-    "objectID": "posts-archive/rc/index.html#what-did-i-intend-to-work-on",
-    "href": "posts-archive/rc/index.html#what-did-i-intend-to-work-on",
-    "title": "Recurse Center Return Statement",
-    "section": "What did I intend to work on?",
-    "text": "What did I intend to work on?\nBefore I went to RC, I had a huge list of potential things to work on. I didn’t plan on doing all of these, but this was my initial brain dump of everything I thought might be useful or interesting in future:\n\nRead “Writing R Extensions”\nDo the course Nand2Tetris to get a better foundation of “lower level stuff”\nLearn C\nLearn more about the finer details of how building R packages work\ncontribute to parsermd so it works for Quarto markdown documents\nfinish the Udacity C++ nanodegree I’d done some of a while ago\nlearn more about the C++ build process\nDo all of the C sessions of CS50\nDo some work on the Arrow book\n\n\n\n\nSome of the retro machines at the RC hub."
+    "objectID": "projects.html#refactoring-a-legacy-shiny-app",
+    "href": "projects.html#refactoring-a-legacy-shiny-app",
+    "title": "Past Work",
+    "section": "Refactoring a Legacy Shiny App",
+    "text": "Refactoring a Legacy Shiny App\n\n\n\n\n\nI led a team within a large organisation responsible for maintaining an internal Shiny app used to manage R package installation requests. The codebase had become increasingly fragile and hard to maintain, with tightly coupled logic and growing technical debt.\n\nRefactored reactive logic to simplify control flow and heavily modularised code\nIntroduced testing strategies and CI workflows\nImproved onboarding for new developers by making the codebase easier to understand\n\nThe changes made the application significantly more maintainable and safer to extend, reducing development time considerably.\n\n\n\nInterested in working together? Get in touch."
   },
   {
-    "objectID": "posts-archive/rc/index.html#what-did-i-actually-work-on",
-    "href": "posts-archive/rc/index.html#what-did-i-actually-work-on",
-    "title": "Recurse Center Return Statement",
-    "section": "What did I actually work on?",
-    "text": "What did I actually work on?\nOne of the principles of RC is to use your volitional muscles and work on what interests you rather than things you think you “should” work on. There’s a balance to be struck here, but there was a great exercise early on where we were guided through questions to ask ourselves to work out what was going to be the best things to focus on.\nIn the end, I didn’t get through all of the things on my original list, but had a much more exciting time doing the following things:\n\nwent through most of Nand2Tetris\nplayed around with compilation and decompilation and how compiler flags change the code produced\nplayed with assembly code\nstarting going through the book Crafting Interpreters and plan to do more another time!\nspent lots of time pairing with other people on my and other people’s code and developing a love for pair programming\ndid a few presentations on Nand2Tetris and why it’s such a great course!\nwrote an R-based Quarto markdown parser which implements recursive descent parsing\ndelved into the Quarto codebase and developed a new version of the parser which takes advantage of pandoc instead of doing everything the hard way\n\nAnd alongside this:\n\ndid a ton of writing of the Arrow book I’m co-authoring\nfinished off interviewing for a job I’d applied for at Novartis which I’m super excited to start tomorrow!\nattended 2 days of Carpentries instructor training\nhad regular lessons with a public speaking tutor\nsubmitted and got accepted to co-present a talk to posit::conf\nhanded over arrow maintainership to the fantastic Jon Keane"
-  },
-  {
-    "objectID": "posts-archive/rc/index.html#what-did-i-learn",
-    "href": "posts-archive/rc/index.html#what-did-i-learn",
-    "title": "Recurse Center Return Statement",
-    "section": "What did I learn?",
-    "text": "What did I learn?\n\nlow-level programming concepts felt out of reach for a long time; most docs are aimed at people who already understand the tech being described, there’s a lot of foundational computer science knowledge that is assumed that I didn’t have, and it’s hard to know where to find good learning resources. However, I learned that actually, it isn’t nearly as out of reach as I’d thought and all I really need is to find that one good resource, and have time to explore it. Nand2Tetris is an awesome course!\na solid community of peers is invaluable. I’ve been lucky enough in my career so far to mostly have either a community of peers or excellent mentors, but in future I’m going to aim to make sure I have both, whether that’s via a job role or engaging with wider programming communities more fully.\npair programming is a wonderful thing and is massively underutilised. Pairing shouldn’t only be utilised when there’s a bug, but be a regular practice. It helps share assumptions and norms,\nworking on the things I want to as well as the things I think I should work on is so key to productivity\nto listen to my gut when it comes to my own learning. I have had a frustration for years with public speaking where I know I’m not terrible at it, want to be better, but asking friends and colleagues for feedback often led to (lovely, kind, well-meaning) validation but not the actionable feedback I wanted. Working with a tutor has been amazing for helping me identify my strengths (I convey passion and excitement for my topic, and especially when I teach, really try to connect with my audience) and weaknesses (my natural speaking speed is about 3 times what it should be, and I could work on structuring information better within a talk)\nnot to mistake being limited for time to work on a problem with not being able to solve the problem\n\n\n\n\nSome craft projects which were on display at RC"
-  },
-  {
-    "objectID": "posts-archive/rc/index.html#conclusion",
-    "href": "posts-archive/rc/index.html#conclusion",
-    "title": "Recurse Center Return Statement",
-    "section": "Conclusion",
-    "text": "Conclusion\nI can honestly describe the 3 months I spent at Recurse Center as the best solid 3 month period of my life. I learned a huge amount about, not only programming, but my own motivation. I made some amazing friends - my fellow RC participants and the faculty there are some of the coolest people I’ve ever met - and will be staying involved in the community in the longer term."
-  },
-  {
-    "objectID": "talks.html",
-    "href": "talks.html",
-    "title": "Talks",
+    "objectID": "blog.html",
+    "href": "blog.html",
+    "title": "Blog",
     "section": "",
-    "text": "htmlwidgets Are a Secret Sauce in R\n\n\n\n\n\n\nNic Crane & Charlotte Hadley\n\n\nOct 1, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\nHacking Productivity with LLMs\n\n\n\n\n\n\nNic Crane\n\n\nSep 1, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\nExperimenting with LLM Applications in R\n\n\n\n\n\n\nNic Crane\n\n\nJul 1, 2025\n\n\n\n\n\n\n\n\n\n\n\n\n\nMixing R, Python, and Quarto: Crafting the Perfect Open Source Cocktail\n\n\n\n\n\n\nNic Crane\n\n\nAug 17, 2024\n\n\n\n\n\n\n\n\n\n\n\n\n\nEfficiently Engineering Bigger Data with Arrow\n\n\n\n\n\n\nNic Crane\n\n\nAug 29, 2023\n\n\n\n\n\n\n\n\n\n\n\n\n\nWhat they forgot to teach you about becoming an open source contributor\n\n\n\n\n\n\nNic Crane\n\n\nJul 27, 2022\n\n\n\n\n\n\n\n\n\n\n\n\n\nThe future’s Shiny: Pioneering genomic medicine in R\n\n\n\n\n\n\nNic Crane\n\n\nJan 17, 2019\n\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps To Becoming A Tidyverse Contributor\n\n\n\n\n\n\nNic Crane\n\n\nNov 27, 2018\n\n\n\n\n\n\nNo matching items"
+    "text": "How I Used Claude Code to Implement {dplyr} Functions in {arrow}\n\n\n\nAI\n\nR\n\nArrow\n\n\n\n\n\n\n\n\n\nApr 10, 2026\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nLLM-Assisted Issue Triage for Open Source Maintainers\n\n\n\nR\n\nLLMs\n\n\n\n\n\n\n\n\n\nMar 6, 2026\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nAI Tooling and Open Source\n\n\n\nAI\n\n\n\n\n\n\n\n\n\nJan 27, 2026\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nUsing ChatGPT as a Code Tutor: A One-Hour Learning Experiment\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nAug 3, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nIterating on an app to create social media posts generating package using {shiny} and {ellmer}\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 17, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nGenerating social media posts to promote blog posts with {shiny} and {ellmer}\n\n\n\nR\n\nAI\n\n\n\n\n\n\n\n\n\nFeb 14, 2025\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMonitoring R Package Updates with Github Actions\n\n\n\nR\n\nGitHub Actions\n\n\n\n\n\n\n\n\n\nDec 28, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nDebugging\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 4, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nThree Goats in a Raincoat\n\n\n\nR\n\n\n\n\n\n\n\n\n\nOct 3, 2023\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nType inference in readr and arrow\n\n\n\nR\n\nArrow\n\n\n\n\n\n\n\n\n\nNov 21, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nArrow New Feature Showcase: show_exec_plan()\n\n\n\nR\n\nArrow\n\n\n\n\n\n\n\n\n\nAug 26, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nCustomising pkgdown with a version selector\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 15, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nError chaining\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 9, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nOpen Source Developer Apprenticeship - 9 months in\n\n\n\nR\n\nArrow\n\nCareer\n\n\n\n\n\n\n\n\n\nJan 23, 2022\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\nR\n\nPython\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nR package documentation - what makes a good example?\n\n\n\nR\n\n\n\n\n\n\n\n\n\nMay 18, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nMy First Month at Ursa Computing\n\n\n\nR\n\nArrow\n\nCareer\n\n\n\n\n\n\n\n\n\nMay 13, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nWhy is eval parse bad?\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 20, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nThree Valued Logic\n\n\n\nR\n\n\n\n\n\n\n\n\n\nApr 17, 2021\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nTen Steps to Becoming a Tidyverse Contributor\n\n\n\nR\n\n\n\n\n\n\n\n\n\nNov 28, 2018\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nScraping rstudio::conf 2018 Abstracts\n\n\n\nR\n\n\n\n\n\n\n\n\n\nAug 22, 2018\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nComparing R packages using packagemetrics\n\n\n\nR\n\n\n\n\n\n\n\n\n\nJul 31, 2018\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nPop-up to confirm action in Shiny\n\n\n\nR\n\nShiny\n\n\n\n\n\n\n\n\n\nAug 16, 2016\n\n\nNic Crane\n\n\n\n\n\n\n\n\n\n\n\n\nGetting started with Leaflet in Shiny - interactive map apps\n\n\n\nR\n\nShiny\n\n\n\n\n\n\n\n\n\nApr 28, 2016\n\n\nNic Crane\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "projects/nhs/index.html",
-    "href": "projects/nhs/index.html",
-    "title": "Supporting Genomic Medicine in the NHS with R and Shiny",
+    "objectID": "posts/llm-issue-triage/index.html",
+    "href": "posts/llm-issue-triage/index.html",
+    "title": "LLM-Assisted Issue Triage for Open Source Maintainers",
     "section": "",
-    "text": "I contributed to a modular Shiny application used in the national rollout of genomic testing within the NHS, building on the 100,000 Genomes Project. It let operational staff, lab teams, and programme managers track genomic samples and view key metrics without needing to interact directly with backend systems.\nWhat I worked on: - UI and server logic across multiple Shiny sub-apps - Integration with APIs and SQL databases - Interactive visualisations using plotly, visNetwork, sunburstR and other htmlwidget packages - Profiling, refactoring, and scaling reactive code for performance\nThe app was built to support a national rollout and continues to be used across NHS teams."
+    "text": "In this post, I demonstrate how simple LLM tools can be used for open source issue triage."
   },
   {
-    "objectID": "drafts/querychat-shiny/index.html",
-    "href": "drafts/querychat-shiny/index.html",
-    "title": "Exploring querychat: talk to your data in a Shiny app",
+    "objectID": "posts/llm-issue-triage/index.html#background",
+    "href": "posts/llm-issue-triage/index.html#background",
+    "title": "LLM-Assisted Issue Triage for Open Source Maintainers",
+    "section": "Background",
+    "text": "Background\nThe Apache Arrow repository contains multiple implementations of Arrow. Both Python and R implementations are wrappers around the C++ implementation. Although many developers work across multiple languages, triage of new issues tends to be done by individuals more aligned to an individual language.\nWe use labels in the Apache arrow repository to identify which implementation an issue relates to. Our issue creation workflow does make users select a component (e.g. “Python”, “R”, “C++” etc), but on occasion, new issues are opened by users via a different route with the component label missing.\nThe problem here is that many maintainers will filter issues by component and so unlabeled issues can end up completely ignored. The problem that I want to solve here is whether we can automatically classify issues by component by passing the text in the issue to an LLM, so that we can potentially automate labelling of new issues so they get responded to appropriately."
+  },
+  {
+    "objectID": "posts/llm-issue-triage/index.html#loading-the-data",
+    "href": "posts/llm-issue-triage/index.html#loading-the-data",
+    "title": "LLM-Assisted Issue Triage for Open Source Maintainers",
+    "section": "Loading the data",
+    "text": "Loading the data\nThe first thing that I need to do is get hold of the data. I wrote a script that retrieves issues from the GitHub API and caches them in Parquet files. Parquet is an excellent format for this because it is efficient for storage in terms of space, and unlike CSV files allows nested columns. This means that when you retrieve data from an API in JSON format there’s potentially less work to do to get it into a good state for storage.\nHere’s a quick preview of the dataset.\n\nThe important column here for us is the labels column, which is a list column containing 0 or more labels. R, Python, and C++ issues all have labels like “Component: Python”. Although the issue titles have the component at the start of their title and also included in their body, this is automatically added based on the label, so isn’t helpful to our problem.\nMy plan is to extract a subset of C++/Python/R component tickets, remove the autogenerated “component” label that gets added to the body of the ticket, and see if I can get an LLM to classify the component based on the content of the issue body.\nLet’s extract a subset of ~30 of each.\n\nlibrary(dplyr)\ntarget_labels &lt;- c(\"Component: C++\", \"Component: R\", \"Component: Python\")\n\nissues_with_components &lt;- data |&gt;\n    select(number, title, body, labels) |&gt;\n    # make sure we match our target label\n    filter(purrr::map_lgl(labels, ~ any(.x %in% target_labels))) |&gt;\n    # make sure we have code in the PR body\n    filter(stringr::str_detect(body, \"```\")) |&gt;\n    # create new column containing only component labels\n    mutate(component = purrr::map(labels, ~ .x[.x %in% target_labels])) |&gt;\n    # filter to only keep rows where we have a single component\n    filter(purrr::map_int(component, length) == 1) |&gt;\n    # convert from list to character column\n    mutate(component = purrr::map_chr(component, 1)) |&gt;\n    # Remove \"Component prefix\"\n    mutate(component = stringr::str_remove(component, \"Component: \")) |&gt;\n    # Remove the bit in the body where the \"component\" has been auto-appended\n    mutate(body = stringr::str_remove(body, \"### Component\\\\(s\\\\).*$\"))\n\nI want to create a smaller data set to test the LLM classification on simply because I don’t have any idea at this point on how long it’ll take or how much it’ll cost. The next step is to create a dataset containing 30 issues from each component.\nI’ll store this intermediate version to work with later too.\n\nr_issues &lt;- issues_with_components |&gt;\n    filter(component == \"R\") \n\npython_issues &lt;- issues_with_components |&gt;\n    filter(component == \"Python\") \n\ncpp_issues &lt;- issues_with_components |&gt;\n    filter(component == \"C++\") \n\nissues_dataset &lt;- bind_rows(\n    r_issues |&gt; slice_head(n = 30),\n    python_issues |&gt; slice_head(n = 30),\n    cpp_issues |&gt; slice_head(n = 30)\n)\n\n# shuffle the dataset\nissues_dataset &lt;- issues_dataset |&gt;\n     slice_sample(prop = 1)\n\n\n\n# A tibble: 90 × 5\n   number title                                           body  labels component\n    &lt;dbl&gt; &lt;chr&gt;                                           &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    \n 1  49129 \"[R] Compilation fails when Parquet support is… \"###… &lt;chr&gt;  R        \n 2  47801 \"[Python][CI] Remove use of CMAKE_POLICY_VERSI… \"###… &lt;chr&gt;  Python   \n 3  49222 \"[Python] data loss converting to Table from p… \"###… &lt;chr&gt;  Python   \n 4  48265 \"[Python][GPU] Numba interop tests broken by N… \"###… &lt;chr&gt;  Python   \n 5  43336 \"[R] stringr binding for `str_starts` fails ba… \"###… &lt;chr&gt;  R        \n 6  48349 \"[Python] Support array indices in pc.list_ele… \"###… &lt;chr&gt;  Python   \n 7  44306 \"[R] please write unregister_scalar_function a… \"###… &lt;chr&gt;  R        \n 8  47698 \"pc.subtract_checked(x, x) with x as pa.array(… \"###… &lt;chr&gt;  Python   \n 9  48832 \"[R] arrow::write_parquet error with zero-leng… \"###… &lt;chr&gt;  R        \n10  45314 \"[R] arrow R package: multiple replacement dis… \"###… &lt;chr&gt;  R        \n# ℹ 80 more rows"
+  },
+  {
+    "objectID": "posts/llm-issue-triage/index.html#llm-classification",
+    "href": "posts/llm-issue-triage/index.html#llm-classification",
+    "title": "LLM-Assisted Issue Triage for Open Source Maintainers",
+    "section": "LLM classification",
+    "text": "LLM classification\nBefore we properly get started, I’m going to have a look at an individual example.\nLet’s have a quick look at the first issue in the data set\n\nissues_dataset |&gt; slice(1)\n\n# A tibble: 1 × 5\n  number title                                            body  labels component\n   &lt;dbl&gt; &lt;chr&gt;                                            &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    \n1  49129 [R] Compilation fails when Parquet support is d… \"###… &lt;chr&gt;  R        \n\n\nOk, so I can see from the title that it’s an R function. I’ll paste it below so you can see it.\n\n\n\n\n\n\nNoteFirst issue body\n\n\n\n\n\n\n\n### Describe the bug, including details regarding any error messages, version, and platform.\n\nWhen building the R bindings with Parquet support disabled (`ARROW_R_WITH_PARQUET` not defined), compilation fails with errors about undeclared 'parquet' identifiers in arrowExports.cpp.\n\nThe issue occurs because Parquet-related code in dataset.cpp and arrowExports.cpp lacks proper preprocessor guards. Specifically:\n\n1. In arrowExports.cpp (line ~1871), the function declaration for `dataset___ParquetFileWriteOptions__update` uses `parquet::WriterProperties` and `parquet::ArrowWriterProperties` types without checking if `ARROW_R_WITH_PARQUET` is defined.\n\n2. In dataset.cpp, Parquet-related includes and function implementations are not guarded by `ARROW_R_WITH_PARQUET` checks.\n\nCompilation error:\n\n```\narrowExports.cpp:1871:131: error: use of undeclared identifier 'parquet'\n```\n\nVersion: 23.0.0\nPlatform: Linux\n\n### Component(s)\n\nR\n\n\n\n\n\nAnd now let’s try classifying it. Here I’m going to start a new conversation, and then use structured output so that I can determine the exact response type I get from the LLM. In this case I’m using enumerated values so I can guarantee that we get one of the pre-specified values back and nothing else.\n\nlibrary(ellmer)\nchat &lt;- chat_anthropic()\n\nUsing model = \"claude-sonnet-4-5-20250929\".\n\ntype_language &lt;- type_enum(values = c(\"Python\", \"C++\", \"R\"), \"The language implementation of Arrow that the issue relates to\")\n\nchat$chat_structured(issues_dataset$body[1], type = type_language)\n\n[1] \"R\"\n\n\nGreat! This was successful so now I’m going to try running it on the rest of the data set. In the above code I just use the default model that ellmer is configured to use, which turned out to be Claude Sonnet 4.5, but actually I want to use the cheapest option to see how well it performs.\nLet’s have a look at which Anthropic models are available to us in ellmer.\n\nmodels_anthropic()\n\n                          id              name created_at cached_input input\n1          claude-sonnet-4-6 Claude Sonnet 4.6 2026-02-17           NA    NA\n2            claude-opus-4-6   Claude Opus 4.6 2026-02-04           NA    NA\n3   claude-opus-4-5-20251101   Claude Opus 4.5 2025-11-24           NA    NA\n4  claude-haiku-4-5-20251001  Claude Haiku 4.5 2025-10-15         0.10  1.00\n5 claude-sonnet-4-5-20250929 Claude Sonnet 4.5 2025-09-29         0.30  3.00\n6   claude-opus-4-1-20250805   Claude Opus 4.1 2025-08-05         1.50 15.00\n7     claude-opus-4-20250514     Claude Opus 4 2025-05-22         1.50 15.00\n8   claude-sonnet-4-20250514   Claude Sonnet 4 2025-05-22         0.30  3.00\n9    claude-3-haiku-20240307    Claude Haiku 3 2024-03-07         0.03  0.25\n  output\n1     NA\n2     NA\n3     NA\n4   5.00\n5  15.00\n6  75.00\n7  75.00\n8  15.00\n9   1.25\n\n\nI’m gonna go for the Haiku model and this time I’m gonna do things a little bit differently to do the classification across the whole data set.\nI could try writing a loop of some sort, but it’ll be slow, and so I’m gonna use the function parallel_chat_structured() so that I can start a new conversation for each individual issue classification task, and run them in parallel so it takes less time.\n\nhaiku_chat &lt;- chat_anthropic(model = \"claude-3-haiku-20240307\")\n\nhaiku_classified &lt;- parallel_chat_structured(\n    chat = haiku_chat,\n    prompts = as.list(issues_dataset$body),\n    type = type_language\n)\n\nI was surprised to see a message “waiting 35s for rate limiting” when it ran but after diving deeper into the Claude developer docs I realised that I’d hit the 50 requests per minute limit. Pretty simple to limit in the function call, but not need as waiting wasn’t a problem.\nI also wanted to check how much it had cost - $0.04 in total, and some of this was earlier experimentation I had done in the process.\n\ntoken_usage()\n\n\n\n   provider                      model    input output cached_input price\n1 Anthropic claude-sonnet-4-5-20250929   3795.0    503            0 $0.02\n2 Anthropic    claude-3-haiku-20240307 136299.5   2996            0 $0.04\n\n\nNow I’d run it successfully with Haiku, I wanted to check the quality of the results. I’m just going to use a very rough measure of how many were a perfect match.\n\nissues_dataset$llm_component &lt;- haiku_classified\nmean(issues_dataset$llm_component == issues_dataset$component, na.rm = TRUE) |&gt; round(2)\n\n[1] 0.97\n\n\nOK, so this is great; 97% accuracy!\nAnd how about the ones it got wrong? Let’s take a look!\n\nissues_dataset |&gt;\n    filter(llm_component != component)\n\n# A tibble: 3 × 6\n  number title                              body  labels component llm_component\n   &lt;dbl&gt; &lt;chr&gt;                              &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;     &lt;fct&gt;        \n1  47902 [C++][Acero] Add support for `Str… \"###… &lt;chr&gt;  C++       Python       \n2  48761 [C++] Substrait serialised expres… \"###… &lt;chr&gt;  C++       Python       \n3  49214 [C++][Compute] Allow reusing hash… \"###… &lt;chr&gt;  C++       Python       \n\n\nOK, so 3 C++ tickets incorrectly classified as Python. Let’s have a look at each issue body.\n\n\n\n\n\n\nNoteIssue 1 body\n\n\n\n\n\n\n\n### Describe the enhancement requested\n\nSimilarly to #43716, it would be useful to support fields with struct types in joins.\n\nHere is similar pyarrow code to that shared by Anja in the other issue to illustrate this case:\n```\nimport pyarrow as pa\nimport pyarrow.acero as acero\n\n# ---\n\ntable_1 = pa.table({\"a\": [1, 2, 3], \"b\": [\"x\", \"y\", \"z\"]})\ntable_1_node = acero.Declaration(\n    \"table_source\", options=acero.TableSourceNodeOptions(table_1)\n)\n\ntable_2 = pa.table(\n    {\"a\": [1, 2, 3], \"c\": [{\"x\": 1, \"y\": 2}, {\"x\": 2, \"y\": 2}, {\"x\": 3, \"y\": 2}]}\n)\ntable_2_node = acero.Declaration(\n    \"table_source\", options=acero.TableSourceNodeOptions(table_2)\n)\n\nexpected = pa.table(\n    {\n        \"a\": [1, 2, 3],\n        \"b\": [\"x\", \"y\", \"z\"],\n        \"c\": [{\"x\": 1, \"y\": 2}, {\"x\": 2, \"y\": 2}, {\"x\": 3, \"y\": 2}],\n    }\n)\n\n# ---\n\nhash_join_options = acero.HashJoinNodeOptions(\n    \"left outer\", left_keys=[\"a\"], right_keys=[\"a\"]\n)\n\njoin_node = acero.Declaration(\n    \"hashjoin\", options=hash_join_options, inputs=[table_1_node, table_2_node]\n)\n\nresult = join_node.to_table()\n\nassert result == expected\n```\nWhen run, the join operation raises the following error:\n```\n    result = join_node.to_table()\n  File \"pyarrow/_acero.pyx\", line 592, in pyarrow._acero.Declaration.to_table\n  File \"pyarrow/error.pxi\", line 155, in pyarrow.lib.pyarrow_internal_check_status\n  File \"pyarrow/error.pxi\", line 92, in pyarrow.lib.check_status\npyarrow.lib.ArrowInvalid: Data type struct&lt;x: int64, y: int64&gt; is not supported in join non-key field c\n```\n\nI _think_ addressing this may depend on #45001, but I am not positive\n\n### Component(s)\n\nC++\n\n\n\n\n\nOk, so here the issue is the fact that the problem was detected in the Python library, which wraps the C++ library. The user who opened this ticket had a sophisticated enough level of knowledge to understand that link, and so rather than classifying this as an incorrect response, I’d actually probably call this example not typical of where we actually want to apply the model and so just not a good example for our test data set. Most unlabelled tickets come from new users who don’t have a deep understanding of the interplay between the different components. Let’s take a look at another example.\n\n\n\n\n\n\nNoteIssue 2 body\n\n\n\n\n\n\n\n### Describe the bug, including details regarding any error messages, version, and platform.\n\nWhen serialising pyarrow expressions using substrait, the size of the serialised buffer increases exponentially with the number of binary operation clauses in the expression due to extension URIs being repeated again for each nested expression.  \n\nTesting with pyarrow 21.0.0: \n```\n================================================================================\nTesting with 1 OR condition(s)\n================================================================================\nExpression:  (int_col == 1)\nSubstrait size: 201 bytes\nTotal extension URIs: 1\n\n================================================================================\nTesting with 2 OR condition(s)\n================================================================================\nExpression:  ((int_col == 1) or (int_col == 2))\nSubstrait size: 634 bytes\nTotal extension URIs: 5\n\n================================================================================\nTesting with 4 OR condition(s)\n================================================================================\nExpression:  ((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4))\nSubstrait size: 2967 bytes\nTotal extension URIs: 29\n\n================================================================================\nTesting with 6 OR condition(s)\n================================================================================\nExpression:  ((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6))\nSubstrait size: 12017 bytes\nTotal extension URIs: 125\n\n================================================================================\nTesting with 8 OR condition(s)\n================================================================================\nExpression:  ((((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6)) or (int_col == 7)) or (int_col == 8))\nSubstrait size: 48306 bytes\nTotal extension URIs: 509\n\n================================================================================\nTesting with 10 OR condition(s)\n================================================================================\nExpression:  ((((((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6)) or (int_col == 7)) or (int_col == 8)) or (int_col == 9)) or (int_col == 10))\nSubstrait size: 193172 bytes\nTotal extension URIs: 2045\n\n================================================================================\nTesting with 12 OR condition(s)\n================================================================================\nExpression:  ((((((((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6)) or (int_col == 7)) or (int_col == 8)) or (int_col == 9)) or (int_col == 10)) or (int_col == 11)) or (int_col == 12))\nSubstrait size: 772342 bytes\nTotal extension URIs: 8189\n\n================================================================================\nTesting with 14 OR condition(s)\n================================================================================\nExpression:  ((((((((((((((int_col == 1) or (int_col == 2)) or (int_col == 3)) or (int_col == 4)) or (int_col == 5)) or (int_col == 6)) or (int_col == 7)) or (int_col == 8)) or (int_col == 9)) or (int_col == 10)) or (int_col == 11)) or (int_col == 12)) or (int_col == 13)) or (int_col == 14))\nSubstrait size: 3105111 bytes\nTotal extension URIs: 32765\n\n================================================================================\nSummary:\n================================================================================\n OR Conditions  |  Size (bytes)   |    Size (KB)    | Extension URIs \n----------------------------------------------------------------------\n       1        |       201       |      0.20       |        1       \n       2        |       634       |      0.62       |        5       \n       4        |      2,967      |      2.90       |       29       \n       6        |     12,017      |      11.74      |       125      \n       8        |     48,306      |      47.17      |       509      \n      10        |     193,172     |     188.64      |      2045      \n      12        |     772,342     |     754.24      |      8189      \n      14        |    3,105,111    |     3032.33     |      32765     \n```\n \nSerialization was done by simply: `buf = pyarrow.substrait.serialize_expressions([expr], [\"result\"], schema)`\n\nUnfortunately, it might not be possible to just use `is_in` in the expression for my use-case so that might not be a possible workaround. \n\nWould be nice to know if I am somehow misusing the API which is causing this. Thanks! \n\ncc: @westonpace \n\n### Component(s)\n\nC++\n\n\n\n\n\nAgain, a more complex example, identified in PyArrow but relating to C++.\nAnd the third?\n\n\n\n\n\n\nNoteIssue 3 body\n\n\n\n\n\n\n\n### Describe the enhancement requested\n\n### Problem\n\nThe `is_in` kernel (and other set lookup operations) rebuilds the internal hash table (MemoTable) from `value_set` on **every invocation**, even when `value_set` is identical across calls. There is currently no API to pre-build and reuse the hash table.\n\nThis becomes a significant bottleneck when the same `value_set` is used to filter many arrays (e.g., in a streaming/batch processing pipeline).\n\n### Use Case\n\nIn Ray Data Checkpointing, we want to use `pc.is_in` to perform an anti-join: filtering out already-processed row IDs from each incoming block of data. The checkpoint ID set (`value_set`) is the same across all blocks, but the hash table is rebuilt for every block.\n\n```python\n# value_set is the same across all calls — hash table is rebuilt each time\nfor block in blocks:\n    membership = pc.is_in(block[\"id\"], value_set=checkpoint_ids)\n    filtered = block.filter(pc.invert(membership))\n```\n\nWith 100M checkpoint IDs and 20 blocks, the hash table construction alone takes **~250s** (extrapolating from #36059 benchmarks), doing identical work 20 times.\n\n### Benchmark\n\nBuilding on the benchmarks from #36059, the cost of rebuilding becomes clear when multiplied across calls:\n\n```python\nimport pyarrow as pa\nimport pyarrow.compute as pc\nimport numpy as np\n\nvalue_set = pa.array(np.arange(10_000_000))\nblocks = [pa.array(np.random.choice(np.arange(1000), 100)) for _ in range(20)]\n\n# Current: ~25s total (rebuilds hash table 20 times)\nfor block in blocks:\n    pc.is_in(block, value_set)\n\n# Ideal: ~1.3s (build once, probe 20 times)\n```\n\n### Proposed API\n\n**Option A — Prepared/materialized value set object:**\n\n```python\n# Build hash table once\nlookup = pc.SetLookup(value_set)  # or pc.prepare_set(value_set)\n\n# Reuse across calls — probes only, no rebuild\nfor block in blocks:\n    mask = lookup.is_in(block)\n```\n\n**Option B — Caching in SetLookupOptions:**\n\n```python\noptions = pc.SetLookupOptions(value_set, cache=True)\n\n# First call builds hash table; subsequent calls reuse it\nfor block in blocks:\n    mask = pc.is_in(block, options=options)\n```\n\n**Option C — Lower-level hash set exposure:**\n\n```python\nhash_set = pc.HashSet(value_set)  # builds MemoTable\n\nfor block in blocks:\n    mask = hash_set.is_in(block)\n    # or: mask = pc.is_in(block, options=pc.SetLookupOptions(hash_set))\n```\n\n### Impact\n\nThis would benefit any workload that probes the same set repeatedly:\n\n- Streaming anti-joins / semi-joins\n- Incremental processing (checkpoint filtering)\n- Repeated dictionary lookups\n- Any ETL pipeline filtering against a static blocklist/allowlist\n\n### Related\n\n- #36059 — Performance of building up HashTable (MemoTable) in `is_in` kernel (addressed MemoTable speed, but not reuse)\n\n\n### Component(s)\n\nC++\n\n\n\n\n\nSame again!\nGiven that these kinds of issues are typically reported by more experienced contributors and don’t end up going unlabelled anyway, we could justifiably deem them to be poor examples for the task at hand and so claim 100% accuracy here.\nI’m calling this experiment a success and my next steps are to see if I can deploy this or something similar to help with other aspects of Apache Arrow maintenance. The main thing I took from this is how accessible LLM-powered tooling has become and how simple it has been to use for an otherwise manual task.\nI’ve just finished writing a course about how to work with ellmer and extract tidy data from text, and create chatbots; if this is something you’re interested in learning about with step-by-step tutorials, you can find my course at: https://www.aifordatapeople.com/courses/llms-in-r."
+  },
+  {
+    "objectID": "posts/claude-code-dplyr-arrow/index.html",
+    "href": "posts/claude-code-dplyr-arrow/index.html",
+    "title": "How I Used Claude Code to Implement {dplyr} Functions in {arrow}",
     "section": "",
-    "text": "I was excited to see the release of the querychat package on CRAN recently. I first noticed this package on Posit’s GitHub, and was really curious to see what it did. In short, it lets you ask questions to a chatbot which then generates SQL and queries a data frame or database connection to answer your question."
+    "text": "In this blog post, I explain how I used Claude Code to implement bindings to new dplyr functions in the Arrow R package.\nI found that, while Claude Code generated the code, I still had a lot of the decision-making work as usual to do - reviewing, maintaining readability, and making sure we had enough validation and testing. The difference for me was that I had to do fewer of the tedious aspects of implementation, like stepping through other examples."
   },
   {
-    "objectID": "drafts/querychat-shiny/index.html#reproducibility-through-sql",
-    "href": "drafts/querychat-shiny/index.html#reproducibility-through-sql",
-    "title": "Exploring querychat: talk to your data in a Shiny app",
-    "section": "Reproducibility through SQL",
-    "text": "Reproducibility through SQL\nquerychat a really exciting and powerful tool because it allows you to overcome some of the key issues with using LLMs for data analysis. LLMs are pretty poor at many tasks to do with numbers, and in a data analysis context we need results which we can rely on, understand where they come from, and can be reproduced by others.\nWe can’t just feed our tabular data into an LLM and expect to get helpful results back, but querychat helps overcome some of these issues - we now have code that we can run again and get the same answers every time, and if we can trust that the generated SQL properly answers the question we asked, we now have something we can depend on more easily.\nHow this works is pretty neat; under the hood, querychat uses DuckDB; data frames are converted into DuckDB tables which can then be queried using SQL."
+    "objectID": "posts/claude-code-dplyr-arrow/index.html#background",
+    "href": "posts/claude-code-dplyr-arrow/index.html#background",
+    "title": "How I Used Claude Code to Implement {dplyr} Functions in {arrow}",
+    "section": "Background",
+    "text": "Background\nThe Arrow R package contains bindings to dplyr functions, which means that users of arrow can work on their data using the same functions they’re used to using in dplyr.\nIn dplyr version 1.2.0, released in February 2026, some new functions were added; one example is recode_values(). You can use it to create a new column by matching values and mapping them to replacements; for example, turning numeric codes into labels. Here’s an example:\n\nlibrary(dplyr)\n\nlikert &lt;- tibble(score = c(1, 3, 5, 2, 4))\n\nlikert |&gt;\n  mutate(\n    category = score |&gt;\n      recode_values(\n        1 ~ \"Strongly disagree\",\n        2 ~ \"Disagree\",\n        3 ~ \"Neutral\",\n        4 ~ \"Agree\",\n        5 ~ \"Strongly agree\"\n      )\n  )\n\n# A tibble: 5 × 2\n  score category         \n  &lt;dbl&gt; &lt;chr&gt;            \n1     1 Strongly disagree\n2     3 Neutral          \n3     5 Strongly agree   \n4     2 Disagree         \n5     4 Agree            \n\n\nI wanted to create bindings to these in Arrow, but they can be fiddly though. In the past, to complete this task, I’ve typically ended up reading the code in the dplyr package, and then stepping through it one line at a time to understand it in depth, and then writing the arrow equivalent. It’s deep work and can be quite time-consuming, depending on how complex it is.\nI wanted to see if I could use Claude Code to simplify this process."
   },
   {
-    "objectID": "drafts/querychat-shiny/index.html#the-schema",
-    "href": "drafts/querychat-shiny/index.html#the-schema",
-    "title": "Exploring querychat: talk to your data in a Shiny app",
-    "section": "The schema",
-    "text": "The schema\nquerychat generates a system prompt; the default one contains instructions on how to generate the required SQL, and some information about the database schema. In the case of mtcars, the schema looks like this:\nYou have access to a DuckDB SQL database with the following schema:\n\n&lt;database_schema&gt;\nTable: mtcars\nColumns:\n- mpg (FLOAT)\n  Range: 10.4 to 33.9\n- cyl (FLOAT)\n  Range: 4 to 8\n- disp (FLOAT)\n  Range: 71.1 to 472\n- hp (FLOAT)\n  Range: 52 to 335\n- drat (FLOAT)\n  Range: 2.76 to 4.93\n- wt (FLOAT)\n  Range: 1.513 to 5.424\n- qsec (FLOAT)\n  Range: 14.5 to 22.9\n- vs (FLOAT)\n  Range: 0 to 1\n- am (FLOAT)\n  Range: 0 to 1\n- gear (FLOAT)\n  Range: 3 to 5\n- carb (FLOAT)\n  Range: 1 to 8\n&lt;/database_schema&gt;\nIt contains column names, types, and value ranges, but crucially doesn’t contain our full dataset."
+    "objectID": "posts/claude-code-dplyr-arrow/index.html#what-i-did",
+    "href": "posts/claude-code-dplyr-arrow/index.html#what-i-did",
+    "title": "How I Used Claude Code to Implement {dplyr} Functions in {arrow}",
+    "section": "What I did",
+    "text": "What I did\n\nCreating an initial version\nI had Claude Code create an initial version. It had access to the following things to help:\n\nAccess to the Arrow codebase (locally)\nAccess to the dplyr codebase (fetched from GitHub via the gh command line application)\nA link to the dplyr blog post announcing the new functions\nAn “Arrow R dev skill” I set up which provides guidance for working with the Arrow R codebase and Arrow repository in general\n\nIt drafted the initial version, but there were a few problems:\n\nThe code turned off the cyclomatic complexity linter - this measures how complex code is and if there is too much complexity (often in nested if conditionals), we’ll get a failure on the checks we run on CI. These checks are important as they keep the code manageable and maintainable.\nWhen skimming through the code, I noticed a lot of duplication. We want code to be modular and not to have too much duplication, as these things make it easier to reason about.\nSome of the produced utility functions were hard to skim-read and had minimal documentation.\n\n\n\nExpanding unit tests\nI didn’t jump straight to resolving these problems, as I first wanted to expand the testing. The more tests we have, the more we can change the produced code automatically without ending up down a rabbit hole that won’t work because we’ve broken some fundamental assumption. To expand the tests, I had Claude read the dplyr tests and examples to see if there were any additions needed.\nThis helped us spot a potential gap in where we validate the user’s input, and so we added the test and updated the code. In doing this, we also saw we needed to handle NA values better, accounting for more edge cases.\n\n\nSimplifying the initial version\nAfter this, it was time to simplify the code. A lot of this is down to individual taste - I skew towards being fairly strict on readability, and code that humans can reason about.\nI want it to be so that a more junior developer could take on a task in this fairly complex codebase and have the best chance of success without overwhelming cognitive load.\nI started by making sure the cyclomatic complexity linting was turned back on, and had Claude refactor some code out into utility functions. They looked a bit weird, though it’s hard to explain why - they had extra parameters which specified the environment in which they were to be executed, and it just felt like the wrong place for them. It was drastically different to the rest of the codebase, and reminded me of how I often have to prompt Claude to be “idiomatic” - write code which fits in.\nOnce this was solved, I prompted Claude to modularise things further, splitting out longer code chunks into individual functions. These utility functions were still a little hard to understand at first glance, and so got Claude to add roxygen headers but using the tag @keywords internal, so they remained just as developer docs and wouldn’t be included in our pkgdown site.\n\n\nFinal tasks\nOnce I was happy with the shape of the code, I did a final manual review, and made sure we had test coverage for all the error conditions. I spotted some duplication in input validation, and so simplified that too."
   },
   {
-    "objectID": "drafts/querychat-shiny/index.html#filtering-the-data",
-    "href": "drafts/querychat-shiny/index.html#filtering-the-data",
-    "title": "Exploring querychat: talk to your data in a Shiny app",
-    "section": "Filtering the data",
-    "text": "Filtering the data\nYou can create the simplest possible app by calling the querychat_app() function.\n\nlibrary(querychat)\n\nquerychat_app(mtcars)\n\n\nWhen data is filtered, the SQL necessary to select a subset is generated, and the data displayed in the app is updated.\nThis doesn’t require access to the underlying data; just the schema so that appropriate queries can be generated based on the available data.\nThis is a simpler kind of query, but we can also perform aggregations, which work a little differently."
+    "objectID": "posts/claude-code-dplyr-arrow/index.html#result",
+    "href": "posts/claude-code-dplyr-arrow/index.html#result",
+    "title": "How I Used Claude Code to Implement {dplyr} Functions in {arrow}",
+    "section": "Result",
+    "text": "Result\n\n\n\n\n\nThis took lots of rounds of manual review myself, but ultimately it meant that there was minimal review from others when I marked it “ready for review”. While I think it’s fine to use AI tools for code changes and PRs like this, this shouldn’t end up adding extra burden for the reviewer, and I wanted to make sure I really had properly read and engaged with the code before passing it onto someone else.\nI’m not naturally good at this and have made tons of “obvious mistakes” in the past on entirely human-generated PRs - sometimes the feels of “being done” with a hard or long-running task is just too appealing. Wanting to avoid “AI laziness”, I made a real effort to tackle this here, and tried techniques like leaving lots of time between working intensely on the code and reviewing it myself. Resetting my mental energy really helped.\nI still found it hard to read every line, but having done so many iterative manual reviews and focusing on testing early gave me confidence that I’d done a proper job of this. Honestly though, the fact I’d worked on this bit of the codebase without AI tools previously really helped."
   },
   {
-    "objectID": "drafts/querychat-shiny/index.html#aggregating-the-data",
-    "href": "drafts/querychat-shiny/index.html#aggregating-the-data",
-    "title": "Exploring querychat: talk to your data in a Shiny app",
-    "section": "Aggregating the data",
-    "text": "Aggregating the data\nWhen querychat has full access to the data (enabled by default), it can perform aggregations, the results of which are passed back to the LLM to to inform answers to questions.\n\nThis is pretty neat, but what if we don’t want to pass this data back to the LLM?\nOne feature of querychat that I like is this ability to enable partial data privacy. We can disable the tool that querychat uses to query the data in this way, only allowing it to perform filtering. We can’t answer as many interesting questions, but still have functionality while only passing the schema to the LLM.\nBy default both “query” and “update” tools are enabled, so setting tools = \"update\" disables the query tool entirely, and enables partial data privacy.\n\nlibrary(querychat)\n\nquerychat_app(mtcars, tools = \"update\")"
-  },
-  {
-    "objectID": "drafts/querychat-shiny/index.html#learn-more",
-    "href": "drafts/querychat-shiny/index.html#learn-more",
-    "title": "Exploring querychat: talk to your data in a Shiny app",
-    "section": "Learn more",
-    "text": "Learn more\nLLMs are going to have a huge impact on how we communicate with and about data, and so the querychat package is a huge step forward in this regard. If you want to learn more, here’s a more detailed post on the Shiny blog by Veerle Eeftink - van Leemput, or check out her video below."
-  },
-  {
-    "objectID": "talks/positconf2025/index.html",
-    "href": "talks/positconf2025/index.html",
-    "title": "Hacking Productivity with LLMs",
-    "section": "",
-    "text": "Over the past 18 months, I’ve used large language models (LLMs) in a series of experiments to improve my productivity as a developer on open source projects in R. I wanted to see if these tools could help with the repetitive, frustrating, or time-consuming parts of development, freeing me up to focus on the interesting problems. The results were mixed: some of these experiments were wildly successful, but others were clear failures.\nIn this talk, I share what worked, what didn’t, and what I learned - exploring the kinds of tasks LLMs are good for and where they fall short, how to use LLMs to build lasting skills, and why in some cases, investing in human connection pays off more than AI assistance.\nPresented at posit::conf(2025)."
-  },
-  {
-    "objectID": "talks/rstudioconf2022/index.html",
-    "href": "talks/rstudioconf2022/index.html",
-    "title": "What they forgot to teach you about becoming an open source contributor",
-    "section": "",
-    "text": "Getting involved in open source is an amazing learning experience and helps you grow your skills as a developer, but to a new contributor there are so many unknown factors about open source projects. In this talk, I’m going to discuss my journey from occasional open source contributor to full time project maintainer, and answer questions such as: what does it look like from the inside of an open-source project? What’s a good way to get involved, and really learn the internals of an R package? How can I navigate the social dynamics of an open source project? How do contributions look entirely different from the point of view of a contributor versus a maintainer?"
-  },
-  {
-    "objectID": "talks/rstudioconf2019/index.html",
-    "href": "talks/rstudioconf2019/index.html",
-    "title": "The future’s Shiny: Pioneering genomic medicine in R",
-    "section": "",
-    "text": "Shiny's expanding capabilities are rapidly transforming how it is used in an enterprise. This talk details the creation of a large-scale application, supporting hundreds of concurrent users, making use of the future and promises packages. The 100,000 genomes project is an ambitious exercise that follows on from the Human Genome Project - aiming to put the UK at the forefront of genomic medicine, with the NHS as the first health service in the world to offer precision medicine to patients with rare diseases and cancer. Data is at the heart of this project; not only the outputs of the genomic sequencing, but vast amounts of metadata used to track progress against the 100,000 genome target and the status and path of each case through the sample tracking pipeline. In order to make this data readily available to stakeholders, Shiny was used to create an application containing multiple interactive dashboards. A scaled-up version of the app is being rolled out in early 2019 to a much larger audience to support the National Genomics Informatics Service, with the challenge of creating a complex app capable of supporting so many users without grinding to a halt. In this talk, I will explain why Shiny was the obvious technology choice for this task, and discuss the design decisions which enabled this project’s success."
-  },
-  {
-    "objectID": "talks/shinyinprod2025/index.html",
-    "href": "talks/shinyinprod2025/index.html",
-    "title": "htmlwidgets Are a Secret Sauce in R",
-    "section": "",
-    "text": "htmlwidgets quietly power some of the most compelling Shiny apps out there, but writing them from scratch can be fiddly and time-consuming. In this talk, we kick things off by taking an audience-sourced ingredient list and asking a large language model to whip up a fresh htmlwidget. Then we plate up a version we prepared earlier - also model-generated - but chopped, seasoned, and finished with our own touches. Along the way, we explore how LLMs can assist in crafting htmlwidgets that reflect your flavour of R - from tidy eval to package structure - rather than sticking to a bland house style.\nPresented with Charlotte Hadley at Shiny in Production 2025."
-  },
-  {
-    "objectID": "contact.html",
-    "href": "contact.html",
-    "title": "Contact Me",
-    "section": "",
-    "text": "Loading…"
-  },
-  {
-    "objectID": "learn-arrow.html",
-    "href": "learn-arrow.html",
-    "title": "Learn Arrow",
-    "section": "",
-    "text": "Resources for learning how to work with larger-than-memory data in R using Arrow and Parquet:"
-  },
-  {
-    "objectID": "learn-arrow.html#the-book",
-    "href": "learn-arrow.html#the-book",
-    "title": "Learn Arrow",
-    "section": "The Book",
-    "text": "The Book\n\n\n\n\n\n\nScaling Up with R and Arrow is available to read online for free at arrowrbook.com. I wrote it with Jonathan Keane and Neal Richardson, and it covers everything from getting started with Arrow to optimising large-scale data workflows."
-  },
-  {
-    "objectID": "learn-arrow.html#private-training",
-    "href": "learn-arrow.html#private-training",
-    "title": "Learn Arrow",
-    "section": "Private Training",
-    "text": "Private Training\nI also deliver private workshops for teams. If you’d like to discuss training for your organisation, email me at nic@ncdatalabs.com."
-  },
-  {
-    "objectID": "learn-arrow.html#webinar-slides",
-    "href": "learn-arrow.html#webinar-slides",
-    "title": "Learn Arrow",
-    "section": "R Consortium Webinar Slides",
-    "text": "R Consortium Webinar Slides\nI presented an introduction to Arrow at an R Consortium webinar.\nWatch the webinar on YouTube\nDownload slides (PDF)"
-  },
-  {
-    "objectID": "courses.html",
-    "href": "courses.html",
-    "title": "Courses",
-    "section": "",
-    "text": "Learn how to use Large Language Models in R with the ellmer package. Extract tidy data from messy text, and create your own chatbot!\n\n\n\n\n\n\n\n\nA comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.\nThe course covers:\n\nML foundations with tidymodels: model evaluation, resampling, tuning, preprocessing\nRegression and classification models including neural networks\nModel deployment with vetiver and orbital\nWorking with LLMs using ellmer\nRetrieval-augmented generation (RAG) for building apps with your own data\n\nAimed at R users comfortable with the tidyverse who want to build and deploy ML and LLM applications."
-  },
-  {
-    "objectID": "courses.html#online-courses",
-    "href": "courses.html#online-courses",
-    "title": "Courses",
-    "section": "",
-    "text": "Learn how to use Large Language Models in R with the ellmer package. Extract tidy data from messy text, and create your own chatbot!\n\n\n\n\n\n\n\n\nA comprehensive course I developed with Christoph Scheuch covering the full journey from machine learning fundamentals to building LLM-powered applications in R.\nThe course covers:\n\nML foundations with tidymodels: model evaluation, resampling, tuning, preprocessing\nRegression and classification models including neural networks\nModel deployment with vetiver and orbital\nWorking with LLMs using ellmer\nRetrieval-augmented generation (RAG) for building apps with your own data\n\nAimed at R users comfortable with the tidyverse who want to build and deploy ML and LLM applications."
-  },
-  {
-    "objectID": "courses.html#live-courses",
-    "href": "courses.html#live-courses",
-    "title": "Courses",
-    "section": "Live courses",
-    "text": "Live courses\n\nBig Data in R with Arrow and Parquet\nLearn Arrow and Parquet to make large-scale analysis fast, reliable, and reproducible.\nData analysis pipelines with larger-than-memory data are becoming more and more commonplace, but it’s not uncommon to hit a wall when data gets too big for your R session. CSVs end up taking forever to load, and even when they do, analyses grind to a halt. This course shows you how to handle big data in R using open, modern tools.\n\n\nWhat you’ll learn\n\nAnalyse larger-than-memory data without learning new syntax: Use {arrow} with {dplyr} to query millions of rows without crashing R\nExercise fine control over data types to avoid common large data pipeline problems\nConvert messy CSVs into space-saving, shareable Parquet files\nOptimise Arrow datasets to take full advantage of your hardware\nBuild reproducible workflows using formats and tools designed for long-term reliability\n\n\n\nBook a workshop\nThere are no public dates currently scheduled. If you’re interested in attending a future session or booking private training for your team, get in touch at nic@ncdatalabs.com.\n\n\nWho is this course for?\nThis course assumes you have basic knowledge of dplyr syntax. It’s for you if you:\n\nwant to learn how to work with tabular data that is too large to fit in memory using existing R and tidyverse syntax implemented in Arrow\nwant to learn about Parquet and other file formats that are powerful alternatives to CSV files\nwant to learn how to engineer your tabular data storage for more performant access and analysis with Apache Arrow\n\n\n\nTestimonials\n\n“I had the privilege of attending Nic Crane’s ‘Big Data in R with Arrow’ workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic’s workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn.”\n— Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About Me",
-    "section": "",
-    "text": "Nic Crane is an R educator and consultant who loves to experiment with LLMs and AI. They are also one of the maintainers of the Arrow R package and co-author of Scaling Up with R and Arrow."
-  },
-  {
-    "objectID": "about.html#short-bio-for-speaker-profiles",
-    "href": "about.html#short-bio-for-speaker-profiles",
-    "title": "About Me",
-    "section": "",
-    "text": "Nic Crane is an R educator and consultant who loves to experiment with LLMs and AI. They are also one of the maintainers of the Arrow R package and co-author of Scaling Up with R and Arrow."
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html",
-    "href": "posts/socialmediagen/index.html",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "",
-    "text": "Writing blog posts is fun, but the next step, getting people to actually read them, can be trickier. I wanted to promote a recent blog post I co-authored for R-Ladies, but coming up with multiple social media posts felt like a bit of a chore.Instead of doing it it manually, I decided to automate the process by building a Shiny app that generates social media content using large language models (LLMs). It was a fun little project, and could even be useful for others too!"
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#the-solution-a-shiny-app-powered-by-ai",
-    "href": "posts/socialmediagen/index.html#the-solution-a-shiny-app-powered-by-ai",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "The Solution: A Shiny App Powered by AI",
-    "text": "The Solution: A Shiny App Powered by AI\nThe app does the following:\n\nTakes a GitHub Markdown link as input.\nLets users specify hashtags, the number of posts to generate, and whether or not to use emojis.\nAllows selection of tone (e.g., serious, playful, informative).\nCalls Google’s Gemini API via the ellmer package to generate social media posts promotinhg the blog post.\n\n\nWhy ellmer and the Gemini API?\nThe ellmer package was released last year, and is a delightfully straightforward way to directly call LLMs from R. Google’s Gemini API, in particular, offers a generous free tier - up to 15 requests per minute, which was more than enough for my needs."
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#how-it-works",
-    "href": "posts/socialmediagen/index.html#how-it-works",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "How It Works",
-    "text": "How It Works\nThe app is simple:\n\nEnter the GitHub Markdown file link (or other text source).\nSet your preferences—hashtags, emojis, tone, and how many posts to generate.\nClick generate, and it spits out a bunch of posts.\nCopy and paste into your social media scheduler.\n\nUnder the hood, it builds a prompt using the user’s inputs and calls the Gemini API. The response is formatted into platform-appropriate posts, making it much easier to schedule across different social networks.\n\n\n\nPreview of the app"
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#deployment-considerations",
-    "href": "posts/socialmediagen/index.html#deployment-considerations",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "Deployment Considerations",
-    "text": "Deployment Considerations\nRight now, the app runs locally, and users need to enter their own Gemini API key as an evironment variable. This prevents abuse of a shared key, but it also makes the app a bit more DIY. I’m considering deploying it on Posit Connect Cloud or a similar service in the future. The trick will be allowing users to bring their own API keys while keeping things secure.\nAnother thought: supporting multiple AI models so users can plug in API keys for different services like OpenAI’s ChatGPT or Anthropic’s Claude."
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#future-ideas",
-    "href": "posts/socialmediagen/index.html#future-ideas",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "Future Ideas",
-    "text": "Future Ideas\nSome things I’d love to add:\n\nMore refined prompts tailored to different platforms (e.g., longer for LinkedIn, punchier for Bluesky).\nSuggested images to go with posts."
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#try-it-yourself",
-    "href": "posts/socialmediagen/index.html#try-it-yourself",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "Try It Yourself!",
-    "text": "Try It Yourself!\nWant to give it a go? You can find the repo here: https://github.com/thisisnic/socialmediagen"
-  },
-  {
-    "objectID": "posts/socialmediagen/index.html#wrapping-up",
-    "href": "posts/socialmediagen/index.html#wrapping-up",
-    "title": "Generating social media posts to promote blog posts with {shiny} and {ellmer}",
-    "section": "Wrapping Up",
-    "text": "Wrapping Up\nThis was a fun little side project that turned out to be actually useful - I’m going to be using it to promote this blog post!\nI’d love to hear if you have any ideas for improvements—hit me up if you try it out!"
+    "objectID": "posts/claude-code-dplyr-arrow/index.html#future-plans",
+    "href": "posts/claude-code-dplyr-arrow/index.html#future-plans",
+    "title": "How I Used Claude Code to Implement {dplyr} Functions in {arrow}",
+    "section": "Future plans",
+    "text": "Future plans\nI have a really exciting new project coming up soon, where I’ll be working on a new codebase, and I don’t plan to use AI for all of it. I’m planning on reading code and writing notes myself, and trying first to fix a few bugs manually to understand the paths through the code, using tools like Claude to help me understand the source rather than to generate it, until I understand it better. I’ll write another blog post on the topic in a few months."
   },
   {
     "objectID": "posts/ursa-computing-first-month/index.html",
