@@ -1,5 +1,14 @@
 [
   {
+    "listing": "/projects/index.html",
+    "items": [
+      "/projects/workshop/index.html",
+      "/projects/refactoring/index.html",
+      "/projects/migration/index.html",
+      "/projects/nhs/index.html"
+    ]
+  },
+  {
     "listing": "/talks.html",
     "items": [
       "/talks/shinyinprod2025/index.html",

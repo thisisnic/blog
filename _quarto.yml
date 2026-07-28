@@ -12,6 +12,8 @@ website:
         file: courses.qmd
       - text: Talks
         file: talks.qmd
+      - text: Client Work
+        file: projects
       - text: Blog
         file: blog.qmd
       - icon: rss

@@ -7,9 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Nic Crane">
-<meta name="dcterms.date" content="2016-04-28">
 
-<title>Getting started with Leaflet in Shiny - interactive map apps – Nic Crane</title>
+<title>ADBC Workshop – Nic Crane</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -88,7 +87,7 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
 <body class="nav-fixed fullcontent quarto-light">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -135,95 +134,59 @@ gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Getting started with Leaflet in Shiny - interactive map apps</h1>
-                                <div class="quarto-categories">
-                <div class="quarto-category">R</div>
-                <div class="quarto-category">Shiny</div>
-              </div>
-                  </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      <div>
-      <div class="quarto-title-meta-heading">Author</div>
-      <div class="quarto-title-meta-contents">
-               <p>Nic Crane </p>
-            </div>
-    </div>
-      
-      <div>
-      <div class="quarto-title-meta-heading">Published</div>
-      <div class="quarto-title-meta-contents">
-        <p class="date">April 28, 2016</p>
-      </div>
-    </div>
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">ADBC Workshop</h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Nic Crane </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
 
 
-<p>Lately I’ve been enjoying learning how to use <a href="http://www.shinyapps.io/">Shiny</a>, and experimenting with making a <a href="https://thisisnic.shinyapps.io/anscombe/">fairly basic app</a>, and wanted to develop my skills further. I’d been looking at an example app from the Shiny website which shows <a href="http://shiny.rstudio.com/gallery/bus-dashboard.html">live bus locations</a> in the US, refreshing at short intervals. It looked fairly complex at first, so I was pretty happy when, within 48 hours I’d managed to recreate <a href="https://thisisnic.shinyapps.io/London-Income-Map/">something of similar complexity</a>, so here’s your guide on how you can quickly get up to speed using interactive reactive maps in Shiny.</p>
-<p><img src="london_income_map.png" class="img-fluid" style="width:50.0%"></p>
-<p>If you follow all of my steps, you will learn:</p>
-<ul>
-<li>The basics of geographic information systems (GIS)</li>
-<li>Spatial mapping in R</li>
-<li>How to use the R pipe (%&gt;%) operator</li>
-<li>How to use some features of the dplyr package</li>
-<li>How to make <a href="https://thisisnic.shinyapps.io/London-Income-Map/">choropleth maps</a></li>
-<li>How to use the <a href="https://rstudio.github.io/leaflet/">Leaflet</a> JavaScript library in R</li>
-</ul>
-<p>Here I’m presuming you already have a reasonable working knowledge of Shiny, and are at least at the point of having created your own app and run some of the examples. I’m also presuming that, like me, you have no prior knowledge of GISs, visualising spatial data, or Leaflet.</p>
-<section id="step-1-really-get-to-know-the-bus-dashboard-example" class="level2">
-<h2 class="anchored" data-anchor-id="step-1-really-get-to-know-the-bus-dashboard-example">Step 1: really get to know the bus dashboard example</h2>
-<p><img src="bus_dashboard.png" class="img-fluid" style="width:50.0%"></p>
-<p>The bus dashboard example can be downloaded here. After playing around with the app in a browser, I printed out all of the code and annotated it with a few different colour pens. I went back and forth, writing notes and drawing diagrams until I understood what all the different components did and how they interacted with each other. This took a few hours, but the time invested was well worth it, as the design of the components of my app later felt pretty easy despite my lack of experience in making complex apps.</p>
+</header>
+
+
+<section id="adbc-workshop" class="level2">
+<h2 class="anchored" data-anchor-id="adbc-workshop">ADBC Workshop</h2>
+<section id="the-client" class="level3">
+<h3 class="anchored" data-anchor-id="the-client">The client</h3>
+<p>Columnar is a startup building drivers, developer tools, and open source infrastructure for ADBC (Arrow Database Connectivity) - a modern replacement for the legacy standards most applications still use to connect to databases. ADBC has already been adopted by the likes of Microsoft, Snowflake, and Databricks, but it sits in a less visible part of the data stack, and many data practitioners haven’t yet come across it. Columnar brought me in to design and deliver a hands-on workshop that would help change that and demonstrate ADBC’s essential role in AI-powered data-intensive workflows.</p>
 </section>
-<section id="step-2-read-up-on-visualising-spatial-data-in-r" class="level2">
-<h2 class="anchored" data-anchor-id="step-2-read-up-on-visualising-spatial-data-in-r">Step 2: read up on visualising spatial data in R</h2>
-<p>Next, go through the <a href="https://cran.r-project.org/doc/contrib/intro-spatial-rl.pdf">Introduction to visualising spatial data in R</a> by Robin Lovelace and James Cheshire, and be sure to run all the code examples. It’s a great introduction to the topic and covers all the relevant background you need, without being verbose. You might want to have a quick read up about geographical mapping systems, but don’t worry too much about in-depth understanding; a basic knowledge of the fact that <a href="https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system">different</a> <a href="https://en.wikipedia.org/wiki/World_Geodetic_System">systems</a> exist will do.</p>
+<section id="approach" class="level3">
+<h3 class="anchored" data-anchor-id="approach">Approach</h3>
+<p>Several factors made this more complex than a typical workshop project. While ADBC documentation is mature, the narrative around ADBC’s importance to AI workflows did not yet exist, and needed to be extracted through discussions and developed iteratively. The audience was broad, and the technology was both language-agnostic and situated in the middle of the data stack, meaning that creating content which resonated with a wide audience presented a unique challenge. The target date for the final workshop was within weeks of project initiation.</p>
+<p>To address these challenges, I ran an initial discovery phase to assess what was feasible for the workshop content and logistics, reducing uncertainty before the main development phase.</p>
+<p>The main phase included a trial run with a smaller audience to ensure that the contents really resonated with the audience, and the narrative landed.</p>
+<p>I constructed demos and exercises centred around both getting started with the core technologies and a realistic scenario: an organisation’s analytics app can’t keep up with operational decisions because the data connectivity layer is too slow and too brittle. This gave the audience something concrete to follow as the session moved through the problems ADBC solves and its technical underpinnings.</p>
+<p>The workshop was presented live to an online international audience.</p>
 </section>
-<section id="step-3-read-up-on-leaflet-for-r" class="level2">
-<h2 class="anchored" data-anchor-id="step-3-read-up-on-leaflet-for-r">Step 3: read up on Leaflet for R</h2>
-<p>The official site of <a href="https://rstudio.github.io/leaflet/">Leaflet for R</a> tells you everything you need to know to get started. You don’t need to read everything here, but as a bare minimum make sure you check out the sections labelled “Introduction”, “The Map Widget”, and “Shiny Integration”.</p>
-</section>
-<section id="step-4-get-some-gis-boundary-files" class="level2">
-<h2 class="anchored" data-anchor-id="step-4-get-some-gis-boundary-files">Step 4: get some GIS boundary files</h2>
-<p>So now you know that the basics, you need some data to work with. We’ll start off with the boundaries for our maps. I had a few false starts and red herrings, but eventually found the boundary file I was after at the <a href="http://data.london.gov.uk/dataset/statistical-gis-boundary-files-london">London Datastore</a>. Once I’d downloaded the data and selected the relevant files, I did a quick plot to check it was what I was after.</p>
-</section>
-<section id="step-5-get-some-data" class="level2">
-<h2 class="anchored" data-anchor-id="step-5-get-some-data">Step 5: get some data</h2>
-<p>Again, I went to the London Datastore, but this time I downloaded data on the average income of tax payers by London borough. This was really easy to merge with my GIS boundary files, using the dplyr package to do SQL-style joins.</p>
-</section>
-<section id="step-6-code" class="level2">
-<h2 class="anchored" data-anchor-id="step-6-code">Step 6: code!</h2>
-<p><img src="code.png" class="img-fluid" style="width:50.0%"></p>
-<p>Finally, it was time to pull it all together. I started off by writing a basic Shiny UI file, with placeholders for content, and then started filling in the different sections. First I added a static map, and then proceeded to adapt my code so that the map would change based on the user’s selections.</p>
-</section>
-<section id="step-7-refine" class="level2">
-<h2 class="anchored" data-anchor-id="step-7-refine">Step 7: refine</h2>
-<p>This is the step that I’m still at now. Whilst coding the map, my design changed to take into account the capabilities of Shiny and Leaflet. Originally I’d planned to use Shiny’s animated slider to scroll through the different years, but it became quickly apparent that this would render too slowly to be visually appealing. Although I offset some of this slowness by using the leafletProxy function to only redraw the coloured tiles but keep the underlying map, there was still some delay.</p>
-<p>With the resources I’ve linked to above and the occasional bit of Googling when things don’t quite work as expected, it’s fairly easy to get up and running making interactive maps with Shiny and Leaflet, so give it a go!</p>
-<p><a href="https://github.com/thisisnic/Shiny-London-Income-Map">Click here to view source code on GitHub.</a></p>
-<p><em>[Edited to add: I’ve been thinking about how I’d improve my code, and came to the conclusion that whilst this functions as a good introduction to a number of topics, if my goal was solely to create a choropleth of an area, I’d use something more lightweight than Leaflet to accomplish this.]</em></p>
+<section id="results" class="level3">
+<h3 class="anchored" data-anchor-id="results">Results</h3>
+<p>Workshop feedback from attendees highlighted the live demos and supporting materials as standouts. I delivered both the reusable workshop materials, and a documented playbook around the setup, enabling Columnar to run the workshop again independently. There was an order of magnitude increase in installs of Columnar’s ADBC tooling during the workshop period.</p>
+<p>&gt; “This project was in great hands with Nic. Nic’s full ownership of the end-to-end process—the learning objectives, the workshop materials, the infrastructure for hands-on exercises, the Zoom logistics, and even the post-workshop surveys—was impressive. Nic was also clear and direct about what was needed to make the workshop a success, from the narrative we were looking to establish to the specific technical requirements, while ensuring that everything we said was technically sound and supported the objectives we were targeting.” - Ian Cook, Columnar CEO.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

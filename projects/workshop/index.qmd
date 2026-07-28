@@ -1,0 +1,29 @@
+---
+title: "ADBC Workshop"
+author: "Nic Crane"
+image: adbc.png
+---
+
+## ADBC Workshop
+
+### The client
+
+Columnar is a startup building drivers, developer tools, and open source infrastructure for ADBC (Arrow Database Connectivity) \- a modern replacement for the legacy standards most applications still use to connect to databases. ADBC has already been adopted by the likes of Microsoft, Snowflake, and Databricks, but it sits in a less visible part of the data stack, and many data practitioners haven’t yet come across it. Columnar brought me in to design and deliver a hands-on workshop that would help change that and demonstrate ADBC’s essential role in AI-powered data-intensive workflows.
+
+### Approach
+
+Several factors made this more complex than a typical workshop project.  While ADBC documentation is mature, the narrative around ADBC’s importance to AI workflows did not yet exist, and needed to be extracted through discussions and developed iteratively.  The audience was broad, and the technology was both language-agnostic and situated in the middle of the data stack, meaning that creating content which resonated with a wide audience presented a unique challenge.  The target date for the final workshop was within weeks of project initiation.
+
+To address these challenges, I ran an initial discovery phase to assess what was feasible for the workshop content and logistics, reducing uncertainty before the main development phase.
+
+The main phase included a trial run with a smaller audience to ensure that the contents really resonated with the audience, and the narrative landed.  
+
+I constructed demos and exercises centred around both getting started with the core technologies and a realistic scenario: an organisation’s analytics app can't keep up with operational decisions because the data connectivity layer is too slow and too brittle. This gave the audience something concrete to follow as the session moved through the problems ADBC solves and its technical underpinnings.  
+
+The workshop was presented live to an online international audience.
+
+### Results
+
+Workshop feedback from attendees highlighted the live demos and supporting materials as standouts.  I delivered both the reusable workshop materials, and a documented playbook around the setup, enabling Columnar to run the workshop again independently.  There was an order of magnitude increase in installs of Columnar's ADBC tooling during the workshop period.
+
+\> "This project was in great hands with Nic. Nic’s full ownership of the end-to-end process—the learning objectives, the workshop materials, the infrastructure for hands-on exercises, the Zoom logistics, and even the post-workshop surveys—was impressive. Nic was also clear and direct about what was needed to make the workshop a success, from the narrative we were looking to establish to the specific technical requirements, while ensuring that everything we said was technically sound and supported the objectives we were targeting." - Ian Cook, Columnar CEO.

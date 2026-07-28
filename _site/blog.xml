@@ -10,7 +10,7 @@
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.9.35</generator>
-<lastBuildDate>Fri, 19 Jun 2026 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sat, 20 Jun 2026 04:00:00 GMT</lastBuildDate>
 <item>
   <title>My Strategies for Using AI to Contribute to Open Source</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -94,7 +94,7 @@
   <category>AI</category>
   <category>Open Source</category>
   <guid>https://niccrane.com/posts/ai-open-source-contribution/</guid>
-  <pubDate>Fri, 19 Jun 2026 23:00:00 GMT</pubDate>
+  <pubDate>Sat, 20 Jun 2026 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/ai-open-source-contribution/manchesterroof.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -1208,7 +1208,7 @@ font-style: inherit;">collect</span>()</span></code></pre></div></div>
   <category>Arrow</category>
   <category>Data Engineering</category>
   <guid>https://niccrane.com/posts/intro-to-parquet/</guid>
-  <pubDate>Mon, 01 Jun 2026 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 02 Jun 2026 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/intro-to-parquet/Apache_Parquet_logo.svg.png" medium="image" type="image/png" height="29" width="144"/>
 </item>
 <item>
@@ -1376,7 +1376,7 @@ font-style: inherit;">"Strongly agree"</span></span>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/claude-code-dplyr-arrow/</guid>
-  <pubDate>Thu, 09 Apr 2026 23:00:00 GMT</pubDate>
+  <pubDate>Fri, 10 Apr 2026 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/claude-code-dplyr-arrow/dplyr_arrow.png" medium="image" type="image/png" height="45" width="144"/>
 </item>
 <item>
@@ -2205,7 +2205,7 @@ C++</code></pre>
   <category>R</category>
   <category>LLMs</category>
   <guid>https://niccrane.com/posts/llm-issue-triage/</guid>
-  <pubDate>Fri, 06 Mar 2026 00:00:00 GMT</pubDate>
+  <pubDate>Fri, 06 Mar 2026 05:00:00 GMT</pubDate>
 </item>
 <item>
   <title>AI Tooling and Open Source</title>
@@ -2283,7 +2283,7 @@ C++</code></pre>
  ]]></description>
   <category>AI</category>
   <guid>https://niccrane.com/posts/ai-tooling-open-source/</guid>
-  <pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate>
+  <pubDate>Tue, 27 Jan 2026 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/ai-tooling-open-source/ai_code_future.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -3093,7 +3093,7 @@ font-style: inherit;">datatable</span>(packages)</span></code></pre></div></div>
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/llms_for_learning/</guid>
-  <pubDate>Sat, 02 Aug 2025 23:00:00 GMT</pubDate>
+  <pubDate>Sun, 03 Aug 2025 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/llms_for_learning/tutor_img.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -3421,7 +3421,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socalmediagen2/</guid>
-  <pubDate>Mon, 17 Feb 2025 00:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 Feb 2025 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socalmediagen2/ellmershiny.png" medium="image" type="image/png" height="172" width="144"/>
 </item>
 <item>
@@ -3495,7 +3495,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socialmediagen/</guid>
-  <pubDate>Fri, 14 Feb 2025 00:00:00 GMT</pubDate>
+  <pubDate>Fri, 14 Feb 2025 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socialmediagen/preview.png" medium="image" type="image/png" height="98" width="144"/>
 </item>
 <item>
@@ -3648,7 +3648,7 @@ on:
   <category>R</category>
   <category>GitHub Actions</category>
   <guid>https://niccrane.com/posts/rwatcher/</guid>
-  <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
+  <pubDate>Thu, 28 Dec 2023 05:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rwatcher/job.png" medium="image" type="image/png" height="117" width="144"/>
 </item>
 <item>
@@ -3676,7 +3676,7 @@ on:
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/debugging/</guid>
-  <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
+  <pubDate>Wed, 04 Oct 2023 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -3730,7 +3730,7 @@ on:
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/goats/</guid>
-  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 03 Oct 2023 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -4573,7 +4573,7 @@ font-style: inherit;">FALSE</span>)</span></code></pre></div></div>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/type-inference/</guid>
-  <pubDate>Mon, 21 Nov 2022 00:00:00 GMT</pubDate>
+  <pubDate>Mon, 21 Nov 2022 05:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Arrow New Feature Showcase: show_exec_plan()</title>
@@ -4663,7 +4663,7 @@ font-style: inherit;">show_exec_plan</span>()</span></code></pre></div></div>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/show-exec-plan/</guid>
-  <pubDate>Thu, 25 Aug 2022 23:00:00 GMT</pubDate>
+  <pubDate>Fri, 26 Aug 2022 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Customising pkgdown with a version selector</title>
@@ -5588,7 +5588,7 @@ font-style: inherit;">;</span></span>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/pkgdown-version-selector/</guid>
-  <pubDate>Thu, 14 Apr 2022 23:00:00 GMT</pubDate>
+  <pubDate>Fri, 15 Apr 2022 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Error chaining</title>
@@ -6245,7 +6245,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/error-chaining/</guid>
-  <pubDate>Fri, 08 Apr 2022 23:00:00 GMT</pubDate>
+  <pubDate>Sat, 09 Apr 2022 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Open Source Developer Apprenticeship - 9 months in</title>
@@ -6309,7 +6309,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>Arrow</category>
   <category>Career</category>
   <guid>https://niccrane.com/posts/open-source-apprenticeship/</guid>
-  <pubDate>Sun, 23 Jan 2022 00:00:00 GMT</pubDate>
+  <pubDate>Sun, 23 Jan 2022 05:00:00 GMT</pubDate>
 </item>
 <item>
   <title>R package documentation - what makes a good example?</title>
@@ -6399,7 +6399,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>R</category>
   <category>Python</category>
   <guid>https://niccrane.com/posts/r-examples/</guid>
-  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 <item>
@@ -6474,7 +6474,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/good-examples/</guid>
-  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>My First Month at Ursa Computing</title>
@@ -6504,7 +6504,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>Arrow</category>
   <category>Career</category>
   <guid>https://niccrane.com/posts/ursa-computing-first-month/</guid>
-  <pubDate>Wed, 12 May 2021 23:00:00 GMT</pubDate>
+  <pubDate>Thu, 13 May 2021 04:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Why is eval parse bad?</title>
@@ -6800,7 +6800,7 @@ font-style: inherit;">eval_array_expression</span>(not_na_agg))</span></code></p
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/eval-parse/</guid>
-  <pubDate>Mon, 19 Apr 2021 23:00:00 GMT</pubDate>
+  <pubDate>Tue, 20 Apr 2021 04:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

@@ -35,3 +35,7 @@ Things I've been working on lately:
 "I had the privilege of attending Nic Crane's 'Big Data in R with Arrow' workshop, and it fundamentally changed how I approach large-scale data processing. Despite having worked with Arrow and DuckDB for a couple of years prior, Nic's workshop gave me a much deeper understanding of the relationship between Parquet file management and optimizing data processing with Arrow. What stands out most about Nic as an instructor is their ability to take complex technical concepts and make them not just comprehensible, but genuinely exciting to learn."
 
 **— Javier Orraca-Deatcu, Lead Machine Learning Engineer at Centene**
+
+"This project was in great hands with Nic. Nic’s full ownership of the end-to-end process—the learning objectives, the workshop materials, the infrastructure for hands-on exercises, the Zoom logistics, and even the post-workshop surveys—was impressive. Nic was also clear and direct about what was needed to make the workshop a success, from the narrative we were looking to establish to the specific technical requirements, while ensuring that everything we said was technically sound and supported the objectives we were targeting."
+
+**— Ian Cook, CEO at Columnar**
