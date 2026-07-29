@@ -3,6 +3,7 @@ title: "Client Work"
 listing:
   type: grid
   contents: "*/index.qmd"
+  sort: "order"
 ---
 
 A selection of consulting projects I've worked on.

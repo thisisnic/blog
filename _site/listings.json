@@ -1,14 +1,5 @@
 [
   {
-    "listing": "/projects/index.html",
-    "items": [
-      "/projects/workshop/index.html",
-      "/projects/refactoring/index.html",
-      "/projects/migration/index.html",
-      "/projects/nhs/index.html"
-    ]
-  },
-  {
     "listing": "/talks.html",
     "items": [
       "/talks/shinyinprod2025/index.html",
@@ -19,6 +10,15 @@
       "/talks/rstudioconf2022/index.html",
       "/talks/rstudioconf2019/index.html",
       "/talks/londonr/index.html"
+    ]
+  },
+  {
+    "listing": "/projects/index.html",
+    "items": [
+      "/projects/workshop/index.html",
+      "/projects/migration/index.html",
+      "/projects/nhs/index.html",
+      "/projects/refactoring/index.html"
     ]
   },
   {
