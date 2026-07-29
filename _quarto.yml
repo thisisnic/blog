@@ -13,7 +13,7 @@ website:
       - text: Talks
         file: talks.qmd
       - text: Client Work
-        file: projects
+        file: projects/index.qmd
       - text: Blog
         file: blog.qmd
       - icon: rss
