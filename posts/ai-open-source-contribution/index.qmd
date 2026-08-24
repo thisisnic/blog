@@ -37,7 +37,7 @@ I'm not always in the maintainer role though, and when dealing with author peopl
 
 Code contributions can feel satisfying but aren't always the most helpful, and there are so many other ways to contribute to a codebase. I don't always make PRs. I know they're a time commitment - after generating the code, I also need to stick around for the iteration of review and updates and I don't always have time for this. If I find a bug, I'll often just report it, with a simple reproducible example. I might also take the time to work out with AI the source of the bug, and if I'm confident about the explanation, include that in the issue too. If the fix is simple, I'll submit a PR, but if there are complex design decisions to be made, I'll often get package author input.
 
-Of course, not all contributions have to be code, and a great non-code contribution is triaging other people's bugs, by adding simple reproducible examples if they're missing.Or explanations of the cause if I know it, to make it easier for maintainers to get it fixed faster.
+Of course, not all contributions have to be code, and a great non-code contribution is triaging other people's bugs, by adding simple reproducible examples if they're missing. Or explanations of the cause if I know it, to make it easier for maintainers to get it fixed faster.
 
 I also try to stick to the principle of starting small and building up trust. I'll submit a PR for a documentation fix if I spot a typo, or fix an existing bug. I rarely submit PRs for feature implementations, unless I've been contributing for a while or have buy-in from the package maintainers by opening an issue and asking if they'd be happy for me to make a PR.
 
