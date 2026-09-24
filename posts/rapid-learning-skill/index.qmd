@@ -2,7 +2,7 @@
 title: "Rapid Learning Skill for Code"
 author: "Nic Crane"
 date: "2026-09-24"
-categories: [AI]
+categories: [AI, R]
 image: "featured.jpg"
 toc: true
 toc-depth: 2
@@ -27,9 +27,13 @@ The original framework by Lin (2003) described various steps relating to self-di
 
 ## A concrete example
 
+### The problem
+
 Here's a concrete example of where I've used this. I was working on [ellmer](https://github.com/tidyverse/ellmer), an R package for working with LLMs directly from R. The particular [problem I was trying to solve](https://github.com/tidyverse/ellmer/issues/858) required me to understand some internals of ellmer I'd not worked with before - how tool calls work.
 
 To really understand this properly, I needed to trace the code from input to output via complex internals, so I could see where tool calls happened in the flow. There's a lot of code here, some packages I've never worked with before, and concepts I was unfamiliar with, but the nice thing about using the skill was that it reduced the amount of cognitive load by just pointing me to the relevant information.
+
+### What it did
 
 You can see the full output file saved from the session in the collapsible block below, but essential the key things it did were:
 
@@ -267,7 +271,11 @@ Line 298 in chat.R
 
 ## Working with the skill
 
+### Getting the skill
+
 You can get the raw markdown for the skill at <https://github.com/thisisnic/rapid-learning/blob/main/SKILL.md> or check out the [full repo](https://github.com/thisisnic/rapid-learning)
+
+### Installing via Claude CLI
 
 Alternatively, if you're using the Claude CLI, you can install it by running:
 
@@ -276,14 +284,22 @@ Alternatively, if you're using the Claude CLI, you can install it by running:
 /plugin install rapid-learning@rapid-learning
 ```
 
+### Customizing for your needs
+
 It is pretty tailored to me, and what I'd actually recommend is using the overall framework as a starting point and writing your own.
 
 ## Caveats and Recommendations
+
+### Model performance varies
 
 I've had different degrees of success using the skill based on the model I've been using. I've been working mostly with more capable Claude models like more recent versions of Sonnet, Opus, and Fable, and got pretty good results.
 
 Before I released the skill, I did experiment with DeepSeek V4.1 Flash and Claude Haiku 4.5 to see if it was compatible with cheaper models, but unfortunately I got much worse results. Failure modes varied, but included things like incorrect assumptions made about the coding concepts I was trying to learn, overly complex or verbose explanations, and poor teaching practices like single letter variable names.
 
+### Best practices
+
 Regardless of model, I recommend trying this out with a concrete problem to solve or concept to learn about an existing codebase, as that's where it's really helped me the most.
+
+### Try speech-to-text
 
 Another thing that I found particularly helpful is using some sort of speech-to-text input so I can ask my questions naturally without having to type them. I've installed an app on my phone that allows it to function as a Bluetooth keyboard and talk directly to my laptop.

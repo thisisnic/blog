@@ -1,5 +1,6 @@
 project:
   type: website
+  post-render: filter-rss.py
 
 website:
   title: "Nic Crane"

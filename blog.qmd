@@ -11,3 +11,5 @@ listing:
 page-layout: full
 title-block-banner: true
 ---
+
+Also available on [R-bloggers](https://www.r-bloggers.com).
