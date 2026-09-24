@@ -14,4 +14,4 @@ Whether you're curious about integrating LLMs into your own projects or just wan
 
 Presented at useR! 2025.
 
-{{< video https://www.youtube.com/watch?v=RQ_8tToedMk >}}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/RQ_8tToedMk" frameborder="0" allowfullscreen></iframe>

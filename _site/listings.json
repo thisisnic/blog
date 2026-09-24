@@ -24,6 +24,8 @@
   {
     "listing": "/blog.html",
     "items": [
+      "/posts/index.html",
+      "/posts/rapid-learning-skill/index.html",
       "/posts/ai-open-source-contribution/index.html",
       "/posts/intro-to-parquet/index.html",
       "/posts/claude-code-dplyr-arrow/index.html",

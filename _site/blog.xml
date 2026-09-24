@@ -10,7 +10,315 @@
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.9.35</generator>
-<lastBuildDate>Sat, 20 Jun 2026 04:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 23 Sep 2026 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>Rapid Learning Skill for Code</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/rapid-learning-skill/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>I posted last year about <a href="https://niccrane.com/posts/llms_for_learning/">using AI to help me learn</a>. I had read a <a href="https://doi.org/10.1177/10451595231184928">paper</a> that suggested how ChatGPT could help with learning, based on a framework of self-directed learning, and tried it out by pasting a whole chunk of the paper into Claude. It worked really well, and since then I’ve been using the same framework to level up my skills and learn about new codebases.</p>
+<p>Today I published it as a skill to share it with others and make it easier to work with from a CLI.</p>
+<p>In this blog post I’ll explain more about it, and show you how to use it yourself.</p>
+<section id="the-framework-and-my-additions" class="level2">
+<h2 class="anchored" data-anchor-id="the-framework-and-my-additions">The framework and my additions</h2>
+<p>The original framework by Lin (2003) described various steps relating to self-direccted learning, from setting goals, to selecting activities, and assessing strategies - see my previous post for more details on this. I extended it specifically for practices I find useful when learning a new codebase, via trial and error:</p>
+<ul>
+<li>timeboxing the activities to a particular length to make them predictable and avoid falling into a rabbit hole</li>
+<li>saving notes to refer back to later, with specific sections for human-generated content vs.&nbsp;AI-generated content</li>
+<li>using checkpoint questions where the agent asks me questions before we move on, to make sure I have good understanding</li>
+<li>having the agent create visual diagrams via ASCII drawings of code flow to use as a reference when learning the structure of the code</li>
+<li>using the Socratic method - the agent asks questions, I answer, and the agent patiently guides through any mistakes</li>
+<li>the agents asks me to guess what a particular piece of code doe, and then we verify what was correct/incorrect</li>
+</ul>
+</section>
+<section id="a-concrete-example" class="level2">
+<h2 class="anchored" data-anchor-id="a-concrete-example">A concrete example</h2>
+<p>Here’s a concrete example of where I’ve used this. I was working on <a href="https://github.com/tidyverse/ellmer">ellmer</a>, an R package for working with LLMs directly from R. The particular <a href="https://github.com/tidyverse/ellmer/issues/858">problem I was trying to solve</a> required me to understand some internals of ellmer I’d not worked with before - how tool calls work.</p>
+<p>To really understand this properly, I needed to trace the code from input to output via complex internals, so I could see where tool calls happened in the flow. There’s a lot of code here, some packages I’ve never worked with before, and concepts I was unfamiliar with, but the nice thing about using the skill was that it reduced the amount of cognitive load by just pointing me to the relevant information.</p>
+<p>You can see the full output file saved from the session in the collapsible block below, but essential the key things it did were:</p>
+<ul>
+<li>create an ASCII diagram of code flow to refer to</li>
+<li>get me to read the relevant bits of code by asking me small scoped questions</li>
+<li>correcting any mistakes I make in my response</li>
+<li>summarising my responses and the connection between what I’d learned and the original goal</li>
+</ul>
+<p>I found it really useful - I’m not sure how long it would have taken to understand this bit of the codebase without the extra help, but I suspect it would have been a long week of intense frustration!</p>
+<p><em>The ASCII diagram created by the agent</em></p>
+<pre><code>chat$chat("hello")
+  |
+  +-- complete_dangling_tool_requests()  [no-op on happy path]
+  +-- user_turn("hello")                [wraps input into Turn with ContentText]
+  |
+  +-- chat_impl(turn)                   [THE LOOP]
+       |
+       +-- submit_turns(user_turn)
+       |    +-- chat_perform(provider, ...)
+       |    |    +-- chat_request()      [GENERIC: provider builds HTTP request]
+       |    |    |    +-- chat_body()    [GENERIC: provider builds JSON body]
+       |    |    |         +-- as_json() [GENERIC: per provider + content type]
+       |    |    +-- req_perform()       [httr2 sends HTTP request]
+       |    |
+       |    +-- accumulator$add_turn()   [parses response]
+       |         +-- value_turn()        [GENERIC: provider parses JSON -&gt; Turn/Content]
+       |
+       +-- set user_turn = NULL
+       +-- assistant has tool requests?
+       |    +-- NO  -&gt; loop exits (user_turn is already NULL)
+       |    +-- YES -&gt; invoke_tools() -&gt; tool_results_as_turn() -&gt; reassign user_turn, loop back
+       |
+       +-- return assistant turn</code></pre>
+<p>The full conversation - including the dodgy speech-to-text transcription I used to chat with the model! - can be seen below.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Full output
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<section id="understanding-the-ellmer-chat-path" class="level1 conversation-content">
+<h1>Understanding the ellmer chat path</h1>
+<section id="the-chat-path-at-a-glance" class="level2">
+<h2 class="anchored" data-anchor-id="the-chat-path-at-a-glance">The chat path at a glance</h2>
+<pre><code>chat$chat("hello")
+  |
+  +-- complete_dangling_tool_requests()  [no-op on happy path]
+  +-- user_turn("hello")                [wraps input into Turn with ContentText]
+  |
+  +-- chat_impl(turn)                   [THE LOOP]
+       |
+       +-- submit_turns(user_turn)
+       |    +-- chat_perform(provider, ...)
+       |    |    +-- chat_request()      [GENERIC: provider builds HTTP request]
+       |    |    |    +-- chat_body()    [GENERIC: provider builds JSON body]
+       |    |    |         +-- as_json() [GENERIC: per provider + content type]
+       |    |    +-- req_perform()       [httr2 sends HTTP request]
+       |    |
+       |    +-- accumulator$add_turn()   [parses response]
+       |         +-- value_turn()        [GENERIC: provider parses JSON -&gt; Turn/Content]
+       |
+       +-- set user_turn = NULL
+       +-- assistant has tool requests?
+       |    +-- NO  -&gt; loop exits (user_turn is already NULL)
+       |    +-- YES -&gt; invoke_tools() -&gt; tool_results_as_turn() -&gt; reassign user_turn, loop back
+       |
+       +-- return assistant turn</code></pre>
+</section>
+<section id="key-concepts" class="level2">
+<h2 class="anchored" data-anchor-id="key-concepts">Key concepts</h2>
+<ul>
+<li><strong>Turns</strong> contain a list of <strong>Content</strong> objects. A Turn is either a user turn or an assistant turn.</li>
+<li><strong>“User turn”</strong> in LLM API terms means “anything that isn’t the assistant” – this includes tool results, not just human input.</li>
+<li><strong>The tool loop</strong> is the core engine: submit a turn, check if the assistant wants tools called, if yes invoke them and loop, if no we’re done. On the happy path (no tools) it runs exactly once.</li>
+<li><strong>Provider-specific behavior</strong> lives in only a few generics. On the outbound side: <code>chat_request()</code>, <code>chat_body()</code>, and <code>as_json()</code>. On the inbound side: <code>value_turn()</code>. Everything else is shared machinery.</li>
+<li><strong><code>as_json()</code> uses double dispatch</strong> on both provider and content type, so there’s a method per combination (e.g.&nbsp;<code>ProviderAnthropic</code> + <code>ContentText</code>).</li>
+<li><strong><code>chat_perform()</code> is deliberately not generic</strong> – it takes the provider as an argument but doesn’t dispatch on it. The streaming vs non-streaming modes are httr2 delivery mechanisms, not provider differences.</li>
+</ul>
+</section>
+<section id="content-lifecycle" class="level2">
+<h2 class="anchored" data-anchor-id="content-lifecycle">Content lifecycle</h2>
+<ol type="1">
+<li><strong>Created from user input</strong>: raw strings/images -&gt; <code>as_content()</code> -&gt; Content objects in a Turn</li>
+<li><strong>Serialized outbound</strong>: Content objects -&gt; <code>as_json()</code> (per provider + content type) -&gt; JSON in HTTP request body</li>
+<li><strong>Parsed inbound</strong>: JSON response -&gt; <code>value_turn()</code> (per provider) -&gt; Content objects in an assistant Turn</li>
+<li><strong>Read by user</strong>: Turn -&gt; <code>turn@text</code> -&gt; returned string</li>
+</ol>
+</section>
+<section id="connection-to-858" class="level2">
+<h2 class="anchored" data-anchor-id="connection-to-858">Connection to #858</h2>
+<p>Issue #858 is about the tool result path: when a tool’s R function returns a value, that value needs to become JSON to send back to the LLM. Currently the coercion from R object to JSON is deferred to <code>tool_string()</code>. The issue proposes doing it earlier, at invoke time in <code>invoke_tools()</code>, so the value is validated up front. This lives in the “YES” branch of the tool loop in <code>chat_impl</code>.</p>
+</section>
+<section id="files-touched" class="level2">
+<h2 class="anchored" data-anchor-id="files-touched">Files touched</h2>
+<ul>
+<li><code>R/chat.R</code> – <code>Chat</code> class, <code>chat()</code> method, <code>chat_impl</code>, <code>submit_turns</code></li>
+<li><code>R/httr2.R</code> – <code>chat_perform()</code> (not generic, shared across providers)</li>
+<li><code>R/provider.R</code> – <code>chat_request()</code> generic and default method</li>
+<li><code>R/provider-anthropic.R</code> (and other provider files) – <code>chat_body()</code>, <code>value_turn()</code> methods</li>
+<li><code>R/as-json.R</code> – <code>as_json()</code> generic (double dispatch on provider + content/turn/type)</li>
+<li><code>R/chat-tools.R</code> – <code>invoke_tools()</code>, <code>tool_results_as_turn()</code></li>
+</ul>
+</section>
+<section id="extra-notes" class="level2">
+<h2 class="anchored" data-anchor-id="extra-notes">Extra notes</h2>
+<ul>
+<li>What is stream_controller?</li>
+</ul>
+<blockquote class="blockquote">
+<p>🤖: “A mechanism for the caller to pause/resume/cancel streaming – like a remote control for the stream. shinychat uses it so the UI can stop generation if the user navigates away. Not relevant to the data flow itself.”</p>
+</blockquote>
+<ul>
+<li>What is a generator / what does yield do?</li>
+</ul>
+<blockquote class="blockquote">
+<p>🤖: “A generator (from the <code>coro</code> package) is a function that can return values one at a time and <em>pause</em> in between. <code>yield(x)</code> sends <code>x</code> back to the caller and suspends the function right there. When the caller asks for the next value, execution resumes from where it paused. This is how streaming works – each chunk gets yielded as it arrives. <code>coro::collect()</code> in the <code>chat()</code> method just drains all the yielded values at once.”</p>
+</blockquote>
+<ul>
+<li>How do generators work with self/private in R6?</li>
+</ul>
+<blockquote class="blockquote">
+<p>🤖: “The generators in ellmer aren’t R6 methods – they’re standalone functions that receive <code>self</code> and <code>private</code> as regular arguments. <code>coro::generator()</code> can’t create R6 methods directly, so the workaround is to pass the R6 object’s <code>self</code> and <code>private</code> into the generator as parameters. Inside the generator they work the same as they would in an R6 method.”</p>
+</blockquote>
+<ul>
+<li>Design decision: why pass provider into chat_perform rather than making it generic?</li>
+</ul>
+<blockquote class="blockquote">
+<p>🤖: “Because it does the same thing for every provider – build the request (delegating to generics for the provider-specific parts), then call httr2 to send it. Making it generic would let providers override the entire HTTP call pattern, which would be a footgun. By keeping it non-generic, the design forces provider differences into the narrower, well-defined generics (<code>chat_request</code>, <code>chat_body</code>, <code>value_turn</code>).”</p>
+</blockquote>
+<hr>
+</section>
+<section id="session-detail-questions-and-answers" class="level2">
+<h2 class="anchored" data-anchor-id="session-detail-questions-and-answers">Session detail: questions and answers</h2>
+<section id="can-you-find-where-the-chat-method-is-defined-what-file-is-it-in-and-roughly-what-line-whats-the-first-thing-it-does" class="level3">
+<h3 class="anchored" data-anchor-id="can-you-find-where-the-chat-method-is-defined-what-file-is-it-in-and-roughly-what-line-whats-the-first-thing-it-does">1. Can you find where the <code>chat()</code> method is defined? What file is it in, and roughly what line? What’s the first thing it does?</h3>
+<p>Hash 2370f315 Line 298 in chat.R the first thing that it does is that it completes any dangling tool requests which is some defensive code that was added in case this is an assistant turn, I think, and so it wouldn’t actually do much on a normal happy path and it would do something in a more complex flow.</p>
+<blockquote class="blockquote">
+<p>🤖: “The dangling tool request completion is defensive code. On the happy path with <code>chat$chat("hello")</code> it’s a no-op. It matters when there are unfinished tool calls from a previous turn.”</p>
+</blockquote>
+</section>
+<section id="after-the-dangling-tool-request-code-the-next-line-is-turn---user_turnfinish_tools-....-what-does-user_turn-do-what-goes-in-and-what-comes-out" class="level3">
+<h3 class="anchored" data-anchor-id="after-the-dangling-tool-request-code-the-next-line-is-turn---user_turnfinish_tools-....-what-does-user_turn-do-what-goes-in-and-what-comes-out">2. After the dangling tool request code, the next line is <code>turn &lt;- user_turn(!!!finish_tools, ...)</code>. What does <code>user_turn()</code> do? What goes in and what comes out?</h3>
+<p>I don’t know what comes out of complete dangling tool request but effectively it’s the output of that which I think would be the outputs from those dangling tool requests like ok yeah so actually it takes the output of those dangling tool requests so those could be you know things like calling in our function and it creates a user turn and we have to be careful about language here because it doesn’t mean the user it could mean it’s like the result of the tool call effectively but because LLM APIs only have assistant in user it’s called a user turn I think. I’m looking at what goes into it it effectively takes those dangling tool calls and anything that has been passed in the ellipses which could be the actual users message which is later passed into the chat implementation</p>
+<blockquote class="blockquote">
+<p>🤖: “You’re right that ‘user turn’ in LLM API terms means ‘anything that isn’t the assistant,’ which includes tool results. On the happy path, <code>finish_tools</code> is empty so it’s really just wrapping <code>\"hello\"</code> into a Turn object.”</p>
+</blockquote>
+</section>
+<section id="what-structure-does-user_turn-wrap-the-input-into-look-at-the-function." class="level3">
+<h3 class="anchored" data-anchor-id="what-structure-does-user_turn-wrap-the-input-into-look-at-the-function.">3. What structure does <code>user_turn()</code> wrap the input into? (Look at the function.)</h3>
+<p>ok so it takes the results of those dangling tool calls and the user input and it calls as user turn on them which itself either so if there’s inputs or some sort of content object like contacts text or sorry content image or content PDF or whatever it just wraps them in a list the user turn is those content objects and then and I presume that only triggers if like it’s a single content object cuz you might have individual things so if it’s not a single content subject then it calls as content on all of those which I guess itself then would take those and convert them into content objects so like if someone’s just passing a string then it just turns into content text and then you’ve basically got a list of content objects that comes out of that</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>user_turn()</code> takes raw inputs (strings, images, etc.) and produces a <code>Turn</code> object whose contents are a list of <code>Content</code> objects (like <code>ContentText</code>). On the happy path with <code>chat$chat("hello")</code>, you get a <code>Turn</code> with a single <code>ContentText("hello")</code>.”</p>
+</blockquote>
+</section>
+<section id="before-you-look-at-chat_impl-just-from-the-context-of-the-chat-method-what-do-you-think-chat_impl-is-responsible-for-what-goes-in-and-what-comes-out-predict-first-dont-read-it-yet." class="level3">
+<h3 class="anchored" data-anchor-id="before-you-look-at-chat_impl-just-from-the-context-of-the-chat-method-what-do-you-think-chat_impl-is-responsible-for-what-goes-in-and-what-comes-out-predict-first-dont-read-it-yet.">4. Before you look at <code>chat_impl</code>, just from the context of the <code>chat()</code> method: what do you think <code>chat_impl</code> is responsible for? What goes in and what comes out? (Predict first, don’t read it yet.)</h3>
+<p>a turn goes in which is that user turn that we just created and we set a few things about like whether we want streaming or echo and I don’t know what the stream controller is but I think we get back and assistant turn and I think that it probably adds it to the list of turns in the chat object somewhere</p>
+<blockquote class="blockquote">
+<p>🤖: “Good prediction. A Turn goes in, and it does add turns to the chat’s history. The stream controller is about controlling streaming flow – not core to the path. Park it as a dangling question.”</p>
+</blockquote>
+</section>
+<section id="now-go-read-chat_impl-its-a-private-method-in-the-same-file.-what-are-the-major-steps-it-takes-remember-what-it-does-not-how.-dont-get-lost-in-the-details." class="level3">
+<h3 class="anchored" data-anchor-id="now-go-read-chat_impl-its-a-private-method-in-the-same-file.-what-are-the-major-steps-it-takes-remember-what-it-does-not-how.-dont-get-lost-in-the-details.">5. Now go read <code>chat_impl</code> (it’s a private method in the same file). What are the major steps it takes? Remember: what it does, not how. Don’t get lost in the details.</h3>
+<p>ok so it’s a generator method which I don’t know what that is yet so that is something to come back to later and it operates on the chat object itself it takes the user turn and the configuration of streaming and things and a few other things. first it handles any tool errors then it does some hotel stuff which is tracking which we can leave alone and then we start a while loop so basically while user turn isn’t null so I guess something later will set it to null but basically it creates a subject assistant chunks which means it submits the user turn and it receives some sort of chunk thing which it gets something back and I don’t know what yield does either so we could come back to that but effectively it submits the turn it yields the chunk it sets the some variable assistant turn to the last turn which I think probably submit turns probably creates itself and then it sets the user turn to null it’ll stop things if things get cancelled and so once it’s set the user turn to null so I guess once maybe there’s no tool calls I’m guessing maybe I don’t know oh but then oh the assistant team might have a tool request okay so basically maybe the user turn is any tool request we’re making now and then the assistant might have asked to call a tool so if the assistant has to call it till then it calls invoke tools to do that I won’t get into what that function does now it then pulls out the results of the tool call and then it converts them into turns or Aton sorry and that’s it</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>chat_impl</code> is a loop. (1) Submit user turn, get assistant turn. (2) Did the assistant request tools? If no, done. If yes, invoke the tools, package results as a new user turn, loop back to step 1. On the happy path (no tools), the loop runs exactly once. The generator/yield stuff is about <em>how</em> results are delivered (lazily), not <em>what</em> happens.”</p>
+</blockquote>
+</section>
+<section id="you-mentioned-submit_turns-inside-chat_impl.-this-is-the-next-layer-down-its-where-the-turn-gets-sent-to-the-actual-llm.-find-it-and-describe-what-it-does-at-a-high-level.-whats-its-job" class="level3">
+<h3 class="anchored" data-anchor-id="you-mentioned-submit_turns-inside-chat_impl.-this-is-the-next-layer-down-its-where-the-turn-gets-sent-to-the-actual-llm.-find-it-and-describe-what-it-does-at-a-high-level.-whats-its-job">6. You mentioned <code>submit_turns</code> inside <code>chat_impl</code>. This is the next layer down – it’s where the Turn gets sent to the actual LLM. Find it and describe what it does at a high level. What’s its job?</h3>
+<p>ok so the user turn is whatever is going to be passed to the LLM and now and again I don’t understand how these generator methods work with S7 classes because it’s interesting passing self the object itself and then private which I wonder if it’s the private methods but I know we can park that and come back to it but it passes in the user term and then the config stuff and then it does some hotel stuff which we don’t need to think about now either and then it calls chat perform which I think literally is another sort of layer of implementation it does the chat it gets response back and it calls the intern accumulator which literally accumulates these terms together and without jumping too far into that it basically populates this turn object and then depending on various bits of config and what’s returned it returns something so basically to zoom out a second and try to answer the original question it submits the turn to the provider and it gets whatever the provider has returned in the form of accumulated turns</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>submit_turns</code> orchestrates the call: it sends the turn to the provider via <code>chat_perform</code>, and accumulates what comes back into Turn objects. It’s the bridge between the chat loop and the actual HTTP call.”</p>
+</blockquote>
+</section>
+<section id="you-found-chat_perform-inside-submit_turns.-this-is-where-we-cross-from-the-chat-object-into-the-provider.-find-chat_perform-and-tell-me-what-does-it-do-and-where-does-provider-specific-behavior-start" class="level3">
+<h3 class="anchored" data-anchor-id="you-found-chat_perform-inside-submit_turns.-this-is-where-we-cross-from-the-chat-object-into-the-provider.-find-chat_perform-and-tell-me-what-does-it-do-and-where-does-provider-specific-behavior-start">7. You found <code>chat_perform</code> inside <code>submit_turns</code>. This is where we cross from the Chat object into the Provider. Find <code>chat_perform</code> and tell me: what does it do, and where does provider-specific behavior start?</h3>
+<p>ok so this function is interesting it’s in a file called HTTR2 and there’s a comment saying that it’s not generic because I guess it doesn’t vary between providers and they actually pass in the provider which is an interesting design decision that I’d like to revisit but park it so it takes the provider and some config and the turns and tools and telemetry stuff and there’s a function chat request which the provider is all of this stuff is passed into so get this request and then depending on the mode we call different functions to literally perform the chat thing so the provider specific behaviour happens inside those that the request construction in chat request and also the chat performing in the chat perform functions for stream or async stream or just wreck request perform which I don’t really know what wreck perform is like what are those modes</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>chat_perform</code> is deliberately not generic – it’s the same for every provider. The three modes (<code>req_perform_stream</code>, <code>req_perform_async_stream</code>, <code>req_perform</code>) are httr2 functions for streaming vs non-streaming delivery – a ‘how’ detail, not a ‘what’ detail. The provider-specific behavior lives in <code>chat_request()</code>, which builds the HTTP request differently for each provider.”</p>
+</blockquote>
+</section>
+<section id="find-chat_request.-its-an-s7-generic.-what-does-it-take-in-and-what-does-it-produce-you-dont-need-to-read-any-specific-provider-method-just-the-generic-and-maybe-one-example-to-get-the-idea." class="level3">
+<h3 class="anchored" data-anchor-id="find-chat_request.-its-an-s7-generic.-what-does-it-take-in-and-what-does-it-produce-you-dont-need-to-read-any-specific-provider-method-just-the-generic-and-maybe-one-example-to-get-the-idea.">8. Find <code>chat_request</code>. It’s an S7 generic. What does it take in, and what does it produce? You don’t need to read any specific provider method – just the generic and maybe one example to get the idea.</h3>
+<p>ok so chat request is in provider that are and it’s a generic that dispatches on the provider and it literally just takes the provider and the config and then it calls face request which is probably the base URL it does some path construction stuff it calls a function chat body which I think probably creates the chat body in Jason or whatever it does anything around adding an extra arguement oh and interestingly actually there’s a function later that’s got Jason in it so maybe it hasn’t done the Jason bit yet it adds any headers and it basically it gives back the request that’s been constructed from all the things that have been put into it so I guess it probably takes our objects and makes the overall Jason thing at the very end of it</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>chat_request</code> dispatches on the provider to build the HTTP request. It delegates to sub-generics like <code>chat_body()</code> for the request body. The body is built as R objects, then serialized to JSON at the end. This is the deepest provider-specific layer on the outbound path.”</p>
+</blockquote>
+</section>
+<section id="weve-traced-the-outbound-path.-now-trace-the-return-back-in-submit_turns-after-chat_perform-returns-what-happens-to-the-response-look-at-what-the-accumulator-does-how-does-raw-http-response-data-become-an-assistantturn" class="level3">
+<h3 class="anchored" data-anchor-id="weve-traced-the-outbound-path.-now-trace-the-return-back-in-submit_turns-after-chat_perform-returns-what-happens-to-the-response-look-at-what-the-accumulator-does-how-does-raw-http-response-data-become-an-assistantturn">9. We’ve traced the outbound path. Now trace the return: back in <code>submit_turns</code>, after <code>chat_perform</code> returns, what happens to the response? Look at what the “accumulator” does – how does raw HTTP response data become an <code>AssistantTurn</code>?</h3>
+<p>ok so I guess chat perform returns a response and from your question I’m going to presume that that response is in like Jason response data stuff so we start this turn accumulator we call this function begin turn don’t know what that does but if I was to guess the response is in this is the streaming one maybe I’ll skip to the non-streaming one cuz it’s probably simpler and it’s probably the same thing with less steps so it gets the Jason buddy from that response it pulls out things like the duration it does some telemetry stuff it then creates this variable turn which is made from getting the accumulator to add the turn the user turn cuz now it’s extracted like the relevant fields from it and then it creates this variable text which is like the text from the turn it’s been created when we did the accumulator add turn thing and then it called yield to give it back like I guess yield is probably a little bit like return as a function but it’s different</p>
+<blockquote class="blockquote">
+<p>🤖: “The non-streaming path is simpler and the result is the same. The response comes back as JSON, and the accumulator’s job is to parse it into a Turn object. Your yield intuition is correct – it’s like return but the generator can keep going afterwards.”</p>
+</blockquote>
+</section>
+<section id="inside-the-accumulator-or-the-functions-it-calls-theres-a-provider-specific-generic-that-parses-the-json-response-into-turncontent-objects-the-mirror-of-chat_body-on-the-outbound-side.-can-you-find-it" class="level3">
+<h3 class="anchored" data-anchor-id="inside-the-accumulator-or-the-functions-it-calls-theres-a-provider-specific-generic-that-parses-the-json-response-into-turncontent-objects-the-mirror-of-chat_body-on-the-outbound-side.-can-you-find-it">10. Inside the accumulator or the functions it calls, there’s a provider-specific generic that parses the JSON response into Turn/Content objects (the mirror of <code>chat_body</code> on the outbound side). Can you find it?</h3>
+<p>ok so I’m just going to walk through this step by step and the turn accumulator then it takes in ok no it’s a class and it’s got like these methods chat chat private provider controller or other stuff like that and it’s got all these methods so what method do we call just before? so we called and turn so that’s the method that I need to read so basically that then calls the value turn method which is handling just underneath so value turn it first calls value finish reason which is a function I actually added which is to extract the reason the turn finished and then it calls check finish reason which is a function that I added that issues any warnings if the term was finished for reasons that are not necessarily just that it was done then it calls another function value turn which is kind of confusing to me because it’s got the same name but you said there’s a provider specific generic and I think this is it because that takes the provider and the results and it constructs a turn from it and just I’m going to have a look at the value turn function which I think is a generic. ok so I looked at the provider anthropic example just give me something concrete and I was right it’s a generic that dispatches on provider and effectively what it does is I’m going to assume that this is the provider specific response Jason pausing so it creates this object contents which basically it takes the content field I don’t know field is the right word out of the results and it looks at the type of each item and depending on the type it constructs a new content object relevant to that item</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>value_turn()</code> is the mirror of <code>chat_body()</code>. Each provider implements both: <code>chat_body()</code> converts Turn/Content objects into provider-specific JSON for the request, and <code>value_turn()</code> converts provider-specific JSON from the response back into Turn/Content objects. The accumulator’s <code>add_turn</code> method calls <code>value_turn()</code> to do this parsing, and you also spotted that <code>value_finish_reason()</code> (which you added!) runs first to check how the turn ended.”</p>
+</blockquote>
+</section>
+<section id="in-chat_body-how-do-content-objects-get-converted-into-the-providers-json-format" class="level3">
+<h3 class="anchored" data-anchor-id="in-chat_body-how-do-content-objects-get-converted-into-the-providers-json-format">11. In <code>chat_body()</code>, how do Content objects get converted into the provider’s JSON format?</h3>
+<p>so chat request is the generic and interestingly it’s not defined for every single provider because there is a default one that works for a lot of providers and what that does is it oh wait a minute but it uses the chat body function so maybe for some providers we need to do extra work before or after we create we call the chat body function but for most it’s the same. and if I look at the specific chat body function for provider on topic you can see actually where it calls as Jason to construct messages but I won’t go too deeply into this quite yet I’m going to wait for the next question</p>
+<blockquote class="blockquote">
+<p>🤖: “Good spot – <code>chat_request</code> has a default that works for most providers, and some providers override it to add extra work before/after <code>chat_body()</code>. Inside <code>chat_body</code>, you found <code>as_json</code> – that’s the bridge from Content objects to provider-specific JSON.”</p>
+</blockquote>
+</section>
+<section id="as_json-is-a-generic-too.-what-does-it-dispatch-on" class="level3">
+<h3 class="anchored" data-anchor-id="as_json-is-a-generic-too.-what-does-it-dispatch-on">12. <code>as_json</code> is a generic too. What does it dispatch on?</h3>
+<p>so the as Jason function if I look in the file as dash Jason dot r it dispatch on both the provider and the type that’s the type of the thing that’s passed in and it depends on whether the thing being passed in I don’t know cuz I thought types are in part about structured output but they’re also important in terms of parameters for tool use and there’s also this type Jason schema that I don’t really know what that does which is something I’d also like to add to my answer questions to come back to if it doesn’t come up in conversation but I think rather than yeah I don’t know I guess I’m a little bit confused here now because I forgot I’m not working very into Jason like I guess it’s it’s a content object but then yeah no I’m a bit lost. I think to one stick myself I’m gonna look at a provider specific implementation. ok so I might have not been looking at the best place for this because now I have a look at the Claude one I can see that it doesn’t just dispatch on provider and type I didn’t know that’s a very specific thing and those were probably in that file because then it doesn’t ok those were just the ones for types but we’re not looking at that we’re looking at ccontent types so it dispatches on basically any kind of thing that we want to pass to a provider that needs to get converted to Jason because all of these different methods return lists so whether it’s a content object or a turn object which I guess probably contains content objects as Jason dispatches on the provider and the individual thing like that</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>as_json</code> dispatches on <strong>both the provider and the content type</strong>. So there’s a method for every combination: <code>(ProviderAnthropic, ContentText)</code>, <code>(ProviderOpenAI, ContentImageRemote)</code>, etc. This matters for #858: if you add a new Content type or change what one carries, you need <code>as_json</code> methods per provider (outbound) and <code>value_turn</code> handling per provider (inbound). The <code>type_*</code> stuff you saw is the structured output / tool parameter schema system – separate from Content, park it.”</p>
+</blockquote>
+</section>
+<section id="what-content-types-does-value_turn-produce-from-json" class="level3">
+<h3 class="anchored" data-anchor-id="what-content-types-does-value_turn-produce-from-json">13. What Content types does <code>value_turn()</code> produce from JSON?</h3>
+<p>ok so I’m looking at the value turn method for provider anthropic and yeah the mapping seems straightforward like it takes whatever contents have been returned and uses the type item and it checks okay it’s like this has type arguement is a little bit complex term in terms of terminology but this is just to do with whether we’re dealing with I guess structured output is my guess here so what that means is that it extracts the relevant fields and wraps it in a content object like of the right class</p>
+<blockquote class="blockquote">
+<p>🤖: “Correct. <code>value_turn()</code> checks the <code>type</code> field in each JSON content item and constructs the matching Content class (<code>\"text\"</code> -&gt; <code>ContentText</code>, <code>\"tool_use\"</code> -&gt; <code>ContentToolRequest</code>, etc.). Each provider has its own type names but the pattern is the same.”</p>
+</blockquote>
+</section>
+<section id="where-does-858-live-in-the-flow-trace-from-invoke_tools-to-the-turn-that-goes-back-to-the-llm." class="level3">
+<h3 class="anchored" data-anchor-id="where-does-858-live-in-the-flow-trace-from-invoke_tools-to-the-turn-that-goes-back-to-the-llm.">14. Where does #858 live in the flow? Trace from <code>invoke_tools()</code> to the Turn that goes back to the LLM.</h3>
+<p>I don’t really get it because invoke tool is called from unload well it’s called from inside invoke tools the function which is another generator which I don’t get still ok so maybe I need the version with the s on the end of it so it’s inside chatimple and it’s in the loop that does the assistant turns and so we call the invoke tools function and get this variable tool calls that’s where we’ve set the value of it and then later on we cycle through that to populate this tool results variable which then get turned into a turn so if I was to guess I would say that the tool calls but sorry so the invoke tools bit is literally where we run the ass stuff and get some results of it and then we do a little bit of messing around to get this tool results variable which I won’t jump into either but effectively there’s a function tool results as turn that does that and that one takes a parameter results and it checks that all of those things are tool results and if any or not when it returns null but I guess sorry if none of them are it returns null but then otherwise it uses the user turn class creatory thing it creates a user turn containing the tool results effectively</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>invoke_tools()</code> runs the R functions, produces tool results, then <code>tool_results_as_turn()</code> wraps them into a user Turn that goes back into the loop. #858 is about <em>when</em> the raw R return value gets converted to JSON – currently it’s deferred to <code>tool_string()</code>, but the issue says do it at invoke time so it’s validated up front. You’ve now connected your map to where #858 lives in the flow.”</p>
+</blockquote>
+</section>
+<section id="quiz" class="level3">
+<h3 class="anchored" data-anchor-id="quiz">Quiz</h3>
+<p><strong>Q1.</strong> Name the major functions in order from <code>chat$chat("hello")</code> to HTTP request sent.</p>
+<p><strong><code>complete_dangling_tool_requests()</code> -&gt; <code>user_turn()</code> -&gt; <code>chat_impl</code> -&gt; <code>submit_turns</code> -&gt; <code>chat_perform</code> -&gt; <code>chat_request</code> -&gt; <code>req_perform()</code>.</strong></p>
+<p><strong>Q2.</strong> Two provider-specific generics on the critical path?</p>
+<p><strong><code>chat_body()</code> outbound, <code>value_turn()</code> inbound.</strong> (Initially said <code>chat_perform</code> but corrected – it takes provider as argument but doesn’t dispatch on it.)</p>
+<p><strong>Q3.</strong> What goes back as user turn after a tool call?</p>
+<p><strong>A Turn containing ContentToolResult objects, created via <code>tool_results_as_turn()</code>.</strong></p>
+<p><strong>Q4.</strong> What’s special about <code>as_json</code> dispatch?</p>
+<p><strong>Double dispatch on provider AND content type.</strong></p>
+<p><strong>Q5.</strong> Explain <code>chat_impl</code>’s while loop in two sentences.</p>
+<p><strong>It submits the user turn to the LLM and gets an assistant turn back. If the assistant requested tool calls, it invokes them, packages the results as a new user turn, and loops back until the assistant gives a final response with no tool requests.</strong></p>
+</section>
+</section>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="working-with-the-skill" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-the-skill">Working with the skill</h2>
+<p>You can get the raw markdown for the skill at <a href="https://github.com/thisisnic/rapid-learning/blob/main/SKILL.md" class="uri">https://github.com/thisisnic/rapid-learning/blob/main/SKILL.md</a> or check out the <a href="https://github.com/thisisnic/rapid-learning">full repo</a></p>
+<p>Alternatively, if you’re using the Claude CLI, you can install it by running:</p>
+<pre><code>/plugin marketplace add thisisnic/rapid-learning
+/plugin install rapid-learning@rapid-learning</code></pre>
+<p>It is pretty tailored to me, and what I’d actually recommend is using the overall framework as a starting point and writing your own.</p>
+</section>
+<section id="caveats-and-recommendations" class="level2">
+<h2 class="anchored" data-anchor-id="caveats-and-recommendations">Caveats and Recommendations</h2>
+<p>I’ve had different degrees of success using the skill based on the model I’ve been using. I’ve been working mostly with more capable Claude models like more recent versions of Sonnet, Opus, and Fable, and got pretty good results.</p>
+<p>Before I released the skill, I did experiment with DeepSeek V4.1 Flash and Claude Haiku 4.5 to see if it was compatible with cheaper models, but unfortunately I got much worse results. Failure modes varied, but included things like incorrect assumptions made about the coding concepts I was trying to learn, overly complex or verbose explanations, and poor teaching practices like single letter variable names.</p>
+<p>Regardless of model, I recommend trying this out with a concrete problem to solve or concept to learn about an existing codebase, as that’s where it’s really helped me the most.</p>
+<p>Another thing that I found particularly helpful is using some sort of speech-to-text input so I can ask my questions naturally without having to type them. I’ve installed an app on my phone that allows it to function as a Bluetooth keyboard and talk directly to my laptop.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>AI</category>
+  <guid>https://niccrane.com/posts/rapid-learning-skill/</guid>
+  <pubDate>Wed, 23 Sep 2026 23:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/rapid-learning-skill/featured.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>My Strategies for Using AI to Contribute to Open Source</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -94,7 +402,7 @@
   <category>AI</category>
   <category>Open Source</category>
   <guid>https://niccrane.com/posts/ai-open-source-contribution/</guid>
-  <pubDate>Sat, 20 Jun 2026 04:00:00 GMT</pubDate>
+  <pubDate>Fri, 19 Jun 2026 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/ai-open-source-contribution/manchesterroof.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -1208,7 +1516,7 @@ font-style: inherit;">collect</span>()</span></code></pre></div></div>
   <category>Arrow</category>
   <category>Data Engineering</category>
   <guid>https://niccrane.com/posts/intro-to-parquet/</guid>
-  <pubDate>Tue, 02 Jun 2026 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 01 Jun 2026 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/intro-to-parquet/Apache_Parquet_logo.svg.png" medium="image" type="image/png" height="29" width="144"/>
 </item>
 <item>
@@ -1376,7 +1684,7 @@ font-style: inherit;">"Strongly agree"</span></span>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/claude-code-dplyr-arrow/</guid>
-  <pubDate>Fri, 10 Apr 2026 04:00:00 GMT</pubDate>
+  <pubDate>Thu, 09 Apr 2026 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/claude-code-dplyr-arrow/dplyr_arrow.png" medium="image" type="image/png" height="45" width="144"/>
 </item>
 <item>
@@ -2205,7 +2513,7 @@ C++</code></pre>
   <category>R</category>
   <category>LLMs</category>
   <guid>https://niccrane.com/posts/llm-issue-triage/</guid>
-  <pubDate>Fri, 06 Mar 2026 05:00:00 GMT</pubDate>
+  <pubDate>Fri, 06 Mar 2026 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>AI Tooling and Open Source</title>
@@ -2283,7 +2591,7 @@ C++</code></pre>
  ]]></description>
   <category>AI</category>
   <guid>https://niccrane.com/posts/ai-tooling-open-source/</guid>
-  <pubDate>Tue, 27 Jan 2026 05:00:00 GMT</pubDate>
+  <pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/ai-tooling-open-source/ai_code_future.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -3093,7 +3401,7 @@ font-style: inherit;">datatable</span>(packages)</span></code></pre></div></div>
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/llms_for_learning/</guid>
-  <pubDate>Sun, 03 Aug 2025 04:00:00 GMT</pubDate>
+  <pubDate>Sat, 02 Aug 2025 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/llms_for_learning/tutor_img.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -3421,7 +3729,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socalmediagen2/</guid>
-  <pubDate>Mon, 17 Feb 2025 05:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 Feb 2025 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socalmediagen2/ellmershiny.png" medium="image" type="image/png" height="172" width="144"/>
 </item>
 <item>
@@ -3495,7 +3803,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socialmediagen/</guid>
-  <pubDate>Fri, 14 Feb 2025 05:00:00 GMT</pubDate>
+  <pubDate>Fri, 14 Feb 2025 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socialmediagen/preview.png" medium="image" type="image/png" height="98" width="144"/>
 </item>
 <item>
@@ -3648,7 +3956,7 @@ on:
   <category>R</category>
   <category>GitHub Actions</category>
   <guid>https://niccrane.com/posts/rwatcher/</guid>
-  <pubDate>Thu, 28 Dec 2023 05:00:00 GMT</pubDate>
+  <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rwatcher/job.png" medium="image" type="image/png" height="117" width="144"/>
 </item>
 <item>
@@ -3676,7 +3984,7 @@ on:
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/debugging/</guid>
-  <pubDate>Wed, 04 Oct 2023 04:00:00 GMT</pubDate>
+  <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -3730,7 +4038,7 @@ on:
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/goats/</guid>
-  <pubDate>Tue, 03 Oct 2023 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -4573,7 +4881,7 @@ font-style: inherit;">FALSE</span>)</span></code></pre></div></div>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/type-inference/</guid>
-  <pubDate>Mon, 21 Nov 2022 05:00:00 GMT</pubDate>
+  <pubDate>Mon, 21 Nov 2022 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Arrow New Feature Showcase: show_exec_plan()</title>
@@ -4663,7 +4971,7 @@ font-style: inherit;">show_exec_plan</span>()</span></code></pre></div></div>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/show-exec-plan/</guid>
-  <pubDate>Fri, 26 Aug 2022 04:00:00 GMT</pubDate>
+  <pubDate>Thu, 25 Aug 2022 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Customising pkgdown with a version selector</title>
@@ -5588,7 +5896,7 @@ font-style: inherit;">;</span></span>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/pkgdown-version-selector/</guid>
-  <pubDate>Fri, 15 Apr 2022 04:00:00 GMT</pubDate>
+  <pubDate>Thu, 14 Apr 2022 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Error chaining</title>
@@ -6245,7 +6553,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/error-chaining/</guid>
-  <pubDate>Sat, 09 Apr 2022 04:00:00 GMT</pubDate>
+  <pubDate>Fri, 08 Apr 2022 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Open Source Developer Apprenticeship - 9 months in</title>
@@ -6309,7 +6617,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>Arrow</category>
   <category>Career</category>
   <guid>https://niccrane.com/posts/open-source-apprenticeship/</guid>
-  <pubDate>Sun, 23 Jan 2022 05:00:00 GMT</pubDate>
+  <pubDate>Sun, 23 Jan 2022 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>R package documentation - what makes a good example?</title>
@@ -6399,7 +6707,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>R</category>
   <category>Python</category>
   <guid>https://niccrane.com/posts/r-examples/</guid>
-  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 <item>
@@ -6474,7 +6782,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/good-examples/</guid>
-  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>My First Month at Ursa Computing</title>
@@ -6504,303 +6812,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>Arrow</category>
   <category>Career</category>
   <guid>https://niccrane.com/posts/ursa-computing-first-month/</guid>
-  <pubDate>Thu, 13 May 2021 04:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Why is eval parse bad?</title>
-  <dc:creator>Nic Crane</dc:creator>
-  <link>https://niccrane.com/posts/eval-parse/</link>
-  <description><![CDATA[ 
-
-
-
-
-
-<p>I was writing Arrow bindings for <code>na.omit</code> and needed a way of applying <code>is.na</code> to every column of a table at once. I’d originally implemented using <code>dplyr::filter</code>, but had failed to realise that Arrow only suggests <code>dplyr</code> but doesn’t import it, and so needed to refactor it.</p>
-<p>Table objects in <code>Arrow</code> have a <code>Filter</code> method, and I knew that a naive implementation would be a for loop which iteratively called <code>Table$Filter(!is.na(column_name))</code> for each column in my table. However, this would be ugly at best and inefficient at worst, and so what I really wanted was to be able to call <code>Table$Filter(!is.na(col1) &amp; !is.na(col2) &amp; ... !is.na(colN))</code> where <code>1</code>…<code>N</code> are my column names.</p>
-<p>An early implementation without <code>dplyr::filter</code> looked like this:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">filter_text <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste0</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"!is.na(tbl$"</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">names</span>(tbl), <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">")"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">" &amp; "</span>)</span>
-<span id="cb1-2">filter <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> rlang<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">parse_expr</span>(filter_text)</span>
-<span id="cb1-3">tbl<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">Filter</span>(rlang<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">eval_bare</span>(filter))</span></code></pre></div></div>
-<p>To break this down a bit, I’ll demonstrate a line by line run, using <code>airquality</code> as my input data. Below you can see that we start off with 153 rows.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">tbl <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> arrow<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span>Table<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">create</span>(airquality)</span>
-<span id="cb2-2">tbl</span></code></pre></div></div>
-<pre><code>## Table
-## 153 rows x 6 columns
-## $Ozone &lt;int32&gt;
-## $Solar.R &lt;int32&gt;
-## $Wind &lt;double&gt;
-## $Temp &lt;int32&gt;
-## $Month &lt;int32&gt;
-## $Day &lt;int32&gt;
-##
-## See $metadata for additional Schema metadata</code></pre>
-<p>If I call <code>na.omit</code> on the <code>airquality</code> data.frame, I’m left with 111 rows.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">nrow</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">na.omit</span>(airquality))</span></code></pre></div></div>
-<pre><code>## [1] 111</code></pre>
-<p>So now for the Arrow implementation. I first construct my filter:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">filter_text <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste0</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"!is.na(tbl$"</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">names</span>(tbl), <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">")"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">" &amp; "</span>)</span>
-<span id="cb6-2">filter_text</span></code></pre></div></div>
-<pre><code>## [1] "!is.na(tbl$Ozone) &amp; !is.na(tbl$Solar.R) &amp; !is.na(tbl$Wind) &amp; !is.na(tbl$Temp) &amp; !is.na(tbl$Month) &amp; !is.na(tbl$Day)"</code></pre>
-<p>I then convert the string to an expression.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1">filter <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> rlang<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">parse_expr</span>(filter_text)</span>
-<span id="cb8-2">filter</span></code></pre></div></div>
-<pre><code>## !is.na(tbl$Ozone) &amp; !is.na(tbl$Solar.R) &amp; !is.na(tbl$Wind) &amp;
-##     !is.na(tbl$Temp) &amp; !is.na(tbl$Month) &amp; !is.na(tbl$Day)</code></pre>
-<p>Finally, I evaluate the expression:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">tbl<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">Filter</span>(rlang<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">eval_bare</span>(filter))</span></code></pre></div></div>
-<pre><code>## Table
-## 111 rows x 6 columns
-## $Ozone &lt;int32&gt;
-## $Solar.R &lt;int32&gt;
-## $Wind &lt;double&gt;
-## $Temp &lt;int32&gt;
-## $Month &lt;int32&gt;
-## $Day &lt;int32&gt;
-##
-## See $metadata for additional Schema metadata</code></pre>
-<p>It looks like it’s worked - it has! - but something feels wrong. I’ve heard people in the past talk about <code>eval(parse(text = stuff))</code> being a bad way of doing things, and my solution felt a bit dirty in a similar way, though I wasn’t sure why.</p>
-<p>A bit of a search and I found <a href="https://stackoverflow.com/questions/13649979/what-specifically-are-the-dangers-of-evalparse">an answer on StackOverflow</a>. In short, the main reasons that eval/parse is warned against are:</p>
-<ul>
-<li>if you’re evaluating text passed in by a user there could be security concerns</li>
-<li>there are other more efficient and human-readable ways of accomplishing the same thing</li>
-<li>it may be unclear what’s being evaluated from what environment</li>
-</ul>
-<p>So, my code wasn’t as bad as I thought. However, in another bit of the Arrow codebase I’d seen some pretty nice code written using data masks and environment, and so refactored my code a little to mirror this style.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># paste together the filter function as a character vector</span></span>
-<span id="cb12-2">filter_text <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste0</span>(</span>
-<span id="cb12-3">  <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">".data$Filter("</span>,</span>
-<span id="cb12-4">  <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">paste0</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"!is.na(.data$"</span>, <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">names</span>(tbl), <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">")"</span>, <span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">" &amp; "</span>),</span>
-<span id="cb12-5">  <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">")"</span></span>
-<span id="cb12-6">)</span>
-<span id="cb12-7"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># parse expression; results in:</span></span>
-<span id="cb12-8"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># .data$Filter(!is.na(.data$Ozone) &amp; !is.na(.data$Solar.R) &amp; !is.na(.data$Wind) &amp;</span></span>
-<span id="cb12-9"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">#  !is.na(.data$Temp) &amp; !is.na(.data$Month) &amp; !is.na(.data$Day))</span></span>
-<span id="cb12-10">filter <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">=</span> rlang<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">parse_expr</span>(filter_text)</span>
-<span id="cb12-11"></span>
-<span id="cb12-12"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># tidily evaluate the results, within the data mask</span></span>
-<span id="cb12-13">rlang<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">eval_tidy</span>(filter,  rlang<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">new_data_mask</span>(rlang<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">env</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">.data =</span> tbl)))</span></code></pre></div></div>
-<p>The above solution is my latest one at time of writing but hasn’t been reviewed or merged yet, so may require further changes. Here, I move in the called to <code>Table$Filter</code> into the filter text, so the whole expression is captured. This now means that I can use the <code>.data</code> pronoun to refer to the dataset, and instead of depending on the fact that a variable called <code>tbl</code> has been passed into my function, can instead manually pass it in when I call <code>rlang::env</code>.</p>
-<p>I’m happier with this solution; whilst it still feels weird to construct calls using strings, at least this way, what is being called against what feels a little cleaner.</p>
-<p>One thing that really helped me work all this out was the <a href="https://raw.githubusercontent.com/rstudio/cheatsheets/master/tidyeval.pdf"><code>rlang</code> cheatsheet</a>, which is a resource I’d recommend to anyone wrestling with tidy eval.</p>
-<p>[Edited to add below]</p>
-<p>So in the end, after discussing with a colleague, we decided that parsing an expression was still potentially problematic. Although I’d dismissed the possible security concerns, they mentioned that it could be the case that someone has a dodgy column name, and it was unclear whether encapsulating things in their own environment would remove this risk or not. They suggested that I see if I could get <code>purrr</code> to do something useful, and after a little experimentation, here was my eventual solution.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Creates a list of ChunkedArrays containing true/false for each value depending</span></span>
-<span id="cb13-2"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># if it's an NA or not</span></span>
-<span id="cb13-3">not_na <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> purrr<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">map</span>(tbl<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>columns, <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~!</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">is.na</span>(.x))</span>
-<span id="cb13-4"></span>
-<span id="cb13-5"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># reduces across lists to a single ChunkedArray (i.e. only true if all rows contain true)</span></span>
-<span id="cb13-6">not_na_agg <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> purrr<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">reduce</span>(not_na, <span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">`</span><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">&amp;</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">`</span>)</span>
-<span id="cb13-7"></span>
-<span id="cb13-8"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># filter only to retrieve rows which match with true</span></span>
-<span id="cb13-9">tbl<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">Filter</span>(not_na_agg)</span></code></pre></div></div>
-<p>As is common in these circumstances, there was a simpler and more aesthetically pleasing solution available that didn’t require parsing of expressions. I’m much happier with the above code - it feels like a much better approach!</p>
-<p>[Edited again!]</p>
-<p>Ultimately we went with a different approach that implemented functionality that already exists in the Arrow package. This approach is even better as, instead of evaluating <code>!is.na</code> on each column of data and combining them, we instead build an expression that is evaluated against the dataset.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1">not_na <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> purrr<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">map</span>(tbl<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span>columns, <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span>arrow<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">build_array_expression</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"is_valid"</span>, .x))</span>
-<span id="cb14-2">not_na_agg <span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">Reduce</span>(<span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">"&amp;"</span>, not_na)</span>
-<span id="cb14-3">tbl<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">Filter</span>(arrow<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:::</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">eval_array_expression</span>(not_na_agg))</span></code></pre></div></div>
-<pre><code>## Table
-## 111 rows x 6 columns
-## $Ozone &lt;int32&gt;
-## $Solar.R &lt;int32&gt;
-## $Wind &lt;double&gt;
-## $Temp &lt;int32&gt;
-## $Month &lt;int32&gt;
-## $Day &lt;int32&gt;
-##
-## See $metadata for additional Schema metadata</code></pre>
-
-
-
- ]]></description>
-  <category>R</category>
-  <guid>https://niccrane.com/posts/eval-parse/</guid>
-  <pubDate>Tue, 20 Apr 2021 04:00:00 GMT</pubDate>
+  <pubDate>Wed, 12 May 2021 23:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

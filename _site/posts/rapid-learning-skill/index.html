@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.35">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nic Crane">
+<meta name="dcterms.date" content="2026-09-24">
+
+<title>Rapid Learning Skill for Code – Nic Crane</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-3497c1b0d03429dc8b8bfbaddbbef5f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SJ58WZL69W"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Nic Crane</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../courses.html"> 
+<span class="menu-text">Courses</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../talks.html"> 
+<span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Client Work</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../blog.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Rapid Learning Skill for Code</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">AI</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nic Crane </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 24, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-framework-and-my-additions" id="toc-the-framework-and-my-additions" class="nav-link active" data-scroll-target="#the-framework-and-my-additions">The framework and my additions</a></li>
+  <li><a href="#a-concrete-example" id="toc-a-concrete-example" class="nav-link" data-scroll-target="#a-concrete-example">A concrete example</a></li>
+  <li><a href="#working-with-the-skill" id="toc-working-with-the-skill" class="nav-link" data-scroll-target="#working-with-the-skill">Working with the skill</a></li>
+  <li><a href="#caveats-and-recommendations" id="toc-caveats-and-recommendations" class="nav-link" data-scroll-target="#caveats-and-recommendations">Caveats and Recommendations</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>I posted last year about <a href="https://niccrane.com/posts/llms_for_learning/">using AI to help me learn</a>. I had read a <a href="https://doi.org/10.1177/10451595231184928">paper</a> that suggested how ChatGPT could help with learning, based on a framework of self-directed learning, and tried it out by pasting a whole chunk of the paper into Claude. It worked really well, and since then I’ve been using the same framework to level up my skills and learn about new codebases.</p>
+<p>Today I published it as a skill to share it with others and make it easier to work with from a CLI.</p>
+<p>In this blog post I’ll explain more about it, and show you how to use it yourself.</p>
+<section id="the-framework-and-my-additions" class="level2">
+<h2 class="anchored" data-anchor-id="the-framework-and-my-additions">The framework and my additions</h2>
+<p>The original framework by Lin (2003) described various steps relating to self-direccted learning, from setting goals, to selecting activities, and assessing strategies - see my previous post for more details on this. I extended it specifically for practices I find useful when learning a new codebase, via trial and error:</p>
+<ul>
+<li>timeboxing the activities to a particular length to make them predictable and avoid falling into a rabbit hole</li>
+<li>saving notes to refer back to later, with specific sections for human-generated content vs.&nbsp;AI-generated content</li>
+<li>using checkpoint questions where the agent asks me questions before we move on, to make sure I have good understanding</li>
+<li>having the agent create visual diagrams via ASCII drawings of code flow to use as a reference when learning the structure of the code</li>
+<li>using the Socratic method - the agent asks questions, I answer, and the agent patiently guides through any mistakes</li>
+<li>the agents asks me to guess what a particular piece of code doe, and then we verify what was correct/incorrect</li>
+</ul>
+</section>
+<section id="a-concrete-example" class="level2">
+<h2 class="anchored" data-anchor-id="a-concrete-example">A concrete example</h2>
+<p>Here’s a concrete example of where I’ve used this. I was working on <a href="https://github.com/tidyverse/ellmer">ellmer</a>, an R package for working with LLMs directly from R. The particular <a href="https://github.com/tidyverse/ellmer/issues/858">problem I was trying to solve</a> required me to understand some internals of ellmer I’d not worked with before - how tool calls work.</p>
+<p>To really understand this properly, I needed to trace the code from input to output via complex internals, so I could see where tool calls happened in the flow. There’s a lot of code here, some packages I’ve never worked with before, and concepts I was unfamiliar with, but the nice thing about using the skill was that it reduced the amount of cognitive load by just pointing me to the relevant information.</p>
+<p>You can see the full output file saved from the session in the collapsible block below, but essential the key things it did were:</p>
+<ul>
+<li>create an ASCII diagram of code flow to refer to</li>
+<li>get me to read the relevant bits of code by asking me small scoped questions</li>
+<li>correcting any mistakes I make in my response</li>
+<li>summarising my responses and the connection between what I’d learned and the original goal</li>
+</ul>
+<p>I found it really useful - I’m not sure how long it would have taken to understand this bit of the codebase without the extra help, but I suspect it would have been a long week of intense frustration!</p>
+<p><em>The ASCII diagram created by the agent</em></p>
+<pre><code>chat$chat("hello")
+  |
+  +-- complete_dangling_tool_requests()  [no-op on happy path]
+  +-- user_turn("hello")                [wraps input into Turn with ContentText]
+  |
+  +-- chat_impl(turn)                   [THE LOOP]
+       |
+       +-- submit_turns(user_turn)
+       |    +-- chat_perform(provider, ...)
+       |    |    +-- chat_request()      [GENERIC: provider builds HTTP request]
+       |    |    |    +-- chat_body()    [GENERIC: provider builds JSON body]
+       |    |    |         +-- as_json() [GENERIC: per provider + content type]
+       |    |    +-- req_perform()       [httr2 sends HTTP request]
+       |    |
+       |    +-- accumulator$add_turn()   [parses response]
+       |         +-- value_turn()        [GENERIC: provider parses JSON -&gt; Turn/Content]
+       |
+       +-- set user_turn = NULL
+       +-- assistant has tool requests?
+       |    +-- NO  -&gt; loop exits (user_turn is already NULL)
+       |    +-- YES -&gt; invoke_tools() -&gt; tool_results_as_turn() -&gt; reassign user_turn, loop back
+       |
+       +-- return assistant turn</code></pre>
+<p>The full conversation - including the dodgy speech-to-text transcription I used to chat with the model! - can be seen below.</p>
+<div class="callout callout-style-default callout-note no-icon callout-titled">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Full output
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<section id="understanding-the-ellmer-chat-path" class="level1 conversation-content">
+<h1>Understanding the ellmer chat path</h1>
+<section id="the-chat-path-at-a-glance" class="level2">
+<h2 class="anchored" data-anchor-id="the-chat-path-at-a-glance">The chat path at a glance</h2>
+<pre><code>chat$chat("hello")
+  |
+  +-- complete_dangling_tool_requests()  [no-op on happy path]
+  +-- user_turn("hello")                [wraps input into Turn with ContentText]
+  |
+  +-- chat_impl(turn)                   [THE LOOP]
+       |
+       +-- submit_turns(user_turn)
+       |    +-- chat_perform(provider, ...)
+       |    |    +-- chat_request()      [GENERIC: provider builds HTTP request]
+       |    |    |    +-- chat_body()    [GENERIC: provider builds JSON body]
+       |    |    |         +-- as_json() [GENERIC: per provider + content type]
+       |    |    +-- req_perform()       [httr2 sends HTTP request]
+       |    |
+       |    +-- accumulator$add_turn()   [parses response]
+       |         +-- value_turn()        [GENERIC: provider parses JSON -&gt; Turn/Content]
+       |
+       +-- set user_turn = NULL
+       +-- assistant has tool requests?
+       |    +-- NO  -&gt; loop exits (user_turn is already NULL)
+       |    +-- YES -&gt; invoke_tools() -&gt; tool_results_as_turn() -&gt; reassign user_turn, loop back
+       |
+       +-- return assistant turn</code></pre>
+</section>
+<section id="key-concepts" class="level2">
+<h2 class="anchored" data-anchor-id="key-concepts">Key concepts</h2>
+<ul>
+<li><strong>Turns</strong> contain a list of <strong>Content</strong> objects. A Turn is either a user turn or an assistant turn.</li>
+<li><strong>“User turn”</strong> in LLM API terms means “anything that isn’t the assistant” – this includes tool results, not just human input.</li>
+<li><strong>The tool loop</strong> is the core engine: submit a turn, check if the assistant wants tools called, if yes invoke them and loop, if no we’re done. On the happy path (no tools) it runs exactly once.</li>
+<li><strong>Provider-specific behavior</strong> lives in only a few generics. On the outbound side: <code>chat_request()</code>, <code>chat_body()</code>, and <code>as_json()</code>. On the inbound side: <code>value_turn()</code>. Everything else is shared machinery.</li>
+<li><strong><code>as_json()</code> uses double dispatch</strong> on both provider and content type, so there’s a method per combination (e.g.&nbsp;<code>ProviderAnthropic</code> + <code>ContentText</code>).</li>
+<li><strong><code>chat_perform()</code> is deliberately not generic</strong> – it takes the provider as an argument but doesn’t dispatch on it. The streaming vs non-streaming modes are httr2 delivery mechanisms, not provider differences.</li>
+</ul>
+</section>
+<section id="content-lifecycle" class="level2">
+<h2 class="anchored" data-anchor-id="content-lifecycle">Content lifecycle</h2>
+<ol type="1">
+<li><strong>Created from user input</strong>: raw strings/images -&gt; <code>as_content()</code> -&gt; Content objects in a Turn</li>
+<li><strong>Serialized outbound</strong>: Content objects -&gt; <code>as_json()</code> (per provider + content type) -&gt; JSON in HTTP request body</li>
+<li><strong>Parsed inbound</strong>: JSON response -&gt; <code>value_turn()</code> (per provider) -&gt; Content objects in an assistant Turn</li>
+<li><strong>Read by user</strong>: Turn -&gt; <code>turn@text</code> -&gt; returned string</li>
+</ol>
+</section>
+<section id="connection-to-858" class="level2">
+<h2 class="anchored" data-anchor-id="connection-to-858">Connection to #858</h2>
+<p>Issue #858 is about the tool result path: when a tool’s R function returns a value, that value needs to become JSON to send back to the LLM. Currently the coercion from R object to JSON is deferred to <code>tool_string()</code>. The issue proposes doing it earlier, at invoke time in <code>invoke_tools()</code>, so the value is validated up front. This lives in the “YES” branch of the tool loop in <code>chat_impl</code>.</p>
+</section>
+<section id="files-touched" class="level2">
+<h2 class="anchored" data-anchor-id="files-touched">Files touched</h2>
+<ul>
+<li><code>R/chat.R</code> – <code>Chat</code> class, <code>chat()</code> method, <code>chat_impl</code>, <code>submit_turns</code></li>
+<li><code>R/httr2.R</code> – <code>chat_perform()</code> (not generic, shared across providers)</li>
+<li><code>R/provider.R</code> – <code>chat_request()</code> generic and default method</li>
+<li><code>R/provider-anthropic.R</code> (and other provider files) – <code>chat_body()</code>, <code>value_turn()</code> methods</li>
+<li><code>R/as-json.R</code> – <code>as_json()</code> generic (double dispatch on provider + content/turn/type)</li>
+<li><code>R/chat-tools.R</code> – <code>invoke_tools()</code>, <code>tool_results_as_turn()</code></li>
+</ul>
+</section>
+<section id="extra-notes" class="level2">
+<h2 class="anchored" data-anchor-id="extra-notes">Extra notes</h2>
+<ul>
+<li>What is stream_controller?</li>
+</ul>
+<blockquote class="blockquote">
+<p>🤖: “A mechanism for the caller to pause/resume/cancel streaming – like a remote control for the stream. shinychat uses it so the UI can stop generation if the user navigates away. Not relevant to the data flow itself.”</p>
+</blockquote>
+<ul>
+<li>What is a generator / what does yield do?</li>
+</ul>
+<blockquote class="blockquote">
+<p>🤖: “A generator (from the <code>coro</code> package) is a function that can return values one at a time and <em>pause</em> in between. <code>yield(x)</code> sends <code>x</code> back to the caller and suspends the function right there. When the caller asks for the next value, execution resumes from where it paused. This is how streaming works – each chunk gets yielded as it arrives. <code>coro::collect()</code> in the <code>chat()</code> method just drains all the yielded values at once.”</p>
+</blockquote>
+<ul>
+<li>How do generators work with self/private in R6?</li>
+</ul>
+<blockquote class="blockquote">
+<p>🤖: “The generators in ellmer aren’t R6 methods – they’re standalone functions that receive <code>self</code> and <code>private</code> as regular arguments. <code>coro::generator()</code> can’t create R6 methods directly, so the workaround is to pass the R6 object’s <code>self</code> and <code>private</code> into the generator as parameters. Inside the generator they work the same as they would in an R6 method.”</p>
+</blockquote>
+<ul>
+<li>Design decision: why pass provider into chat_perform rather than making it generic?</li>
+</ul>
+<blockquote class="blockquote">
+<p>🤖: “Because it does the same thing for every provider – build the request (delegating to generics for the provider-specific parts), then call httr2 to send it. Making it generic would let providers override the entire HTTP call pattern, which would be a footgun. By keeping it non-generic, the design forces provider differences into the narrower, well-defined generics (<code>chat_request</code>, <code>chat_body</code>, <code>value_turn</code>).”</p>
+</blockquote>
+<hr>
+</section>
+<section id="session-detail-questions-and-answers" class="level2">
+<h2 class="anchored" data-anchor-id="session-detail-questions-and-answers">Session detail: questions and answers</h2>
+<section id="can-you-find-where-the-chat-method-is-defined-what-file-is-it-in-and-roughly-what-line-whats-the-first-thing-it-does" class="level3">
+<h3 class="anchored" data-anchor-id="can-you-find-where-the-chat-method-is-defined-what-file-is-it-in-and-roughly-what-line-whats-the-first-thing-it-does">1. Can you find where the <code>chat()</code> method is defined? What file is it in, and roughly what line? What’s the first thing it does?</h3>
+<p>Hash 2370f315 Line 298 in chat.R the first thing that it does is that it completes any dangling tool requests which is some defensive code that was added in case this is an assistant turn, I think, and so it wouldn’t actually do much on a normal happy path and it would do something in a more complex flow.</p>
+<blockquote class="blockquote">
+<p>🤖: “The dangling tool request completion is defensive code. On the happy path with <code>chat$chat("hello")</code> it’s a no-op. It matters when there are unfinished tool calls from a previous turn.”</p>
+</blockquote>
+</section>
+<section id="after-the-dangling-tool-request-code-the-next-line-is-turn---user_turnfinish_tools-....-what-does-user_turn-do-what-goes-in-and-what-comes-out" class="level3">
+<h3 class="anchored" data-anchor-id="after-the-dangling-tool-request-code-the-next-line-is-turn---user_turnfinish_tools-....-what-does-user_turn-do-what-goes-in-and-what-comes-out">2. After the dangling tool request code, the next line is <code>turn &lt;- user_turn(!!!finish_tools, ...)</code>. What does <code>user_turn()</code> do? What goes in and what comes out?</h3>
+<p>I don’t know what comes out of complete dangling tool request but effectively it’s the output of that which I think would be the outputs from those dangling tool requests like ok yeah so actually it takes the output of those dangling tool requests so those could be you know things like calling in our function and it creates a user turn and we have to be careful about language here because it doesn’t mean the user it could mean it’s like the result of the tool call effectively but because LLM APIs only have assistant in user it’s called a user turn I think. I’m looking at what goes into it it effectively takes those dangling tool calls and anything that has been passed in the ellipses which could be the actual users message which is later passed into the chat implementation</p>
+<blockquote class="blockquote">
+<p>🤖: “You’re right that ‘user turn’ in LLM API terms means ‘anything that isn’t the assistant,’ which includes tool results. On the happy path, <code>finish_tools</code> is empty so it’s really just wrapping <code>\"hello\"</code> into a Turn object.”</p>
+</blockquote>
+</section>
+<section id="what-structure-does-user_turn-wrap-the-input-into-look-at-the-function." class="level3">
+<h3 class="anchored" data-anchor-id="what-structure-does-user_turn-wrap-the-input-into-look-at-the-function.">3. What structure does <code>user_turn()</code> wrap the input into? (Look at the function.)</h3>
+<p>ok so it takes the results of those dangling tool calls and the user input and it calls as user turn on them which itself either so if there’s inputs or some sort of content object like contacts text or sorry content image or content PDF or whatever it just wraps them in a list the user turn is those content objects and then and I presume that only triggers if like it’s a single content object cuz you might have individual things so if it’s not a single content subject then it calls as content on all of those which I guess itself then would take those and convert them into content objects so like if someone’s just passing a string then it just turns into content text and then you’ve basically got a list of content objects that comes out of that</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>user_turn()</code> takes raw inputs (strings, images, etc.) and produces a <code>Turn</code> object whose contents are a list of <code>Content</code> objects (like <code>ContentText</code>). On the happy path with <code>chat$chat("hello")</code>, you get a <code>Turn</code> with a single <code>ContentText("hello")</code>.”</p>
+</blockquote>
+</section>
+<section id="before-you-look-at-chat_impl-just-from-the-context-of-the-chat-method-what-do-you-think-chat_impl-is-responsible-for-what-goes-in-and-what-comes-out-predict-first-dont-read-it-yet." class="level3">
+<h3 class="anchored" data-anchor-id="before-you-look-at-chat_impl-just-from-the-context-of-the-chat-method-what-do-you-think-chat_impl-is-responsible-for-what-goes-in-and-what-comes-out-predict-first-dont-read-it-yet.">4. Before you look at <code>chat_impl</code>, just from the context of the <code>chat()</code> method: what do you think <code>chat_impl</code> is responsible for? What goes in and what comes out? (Predict first, don’t read it yet.)</h3>
+<p>a turn goes in which is that user turn that we just created and we set a few things about like whether we want streaming or echo and I don’t know what the stream controller is but I think we get back and assistant turn and I think that it probably adds it to the list of turns in the chat object somewhere</p>
+<blockquote class="blockquote">
+<p>🤖: “Good prediction. A Turn goes in, and it does add turns to the chat’s history. The stream controller is about controlling streaming flow – not core to the path. Park it as a dangling question.”</p>
+</blockquote>
+</section>
+<section id="now-go-read-chat_impl-its-a-private-method-in-the-same-file.-what-are-the-major-steps-it-takes-remember-what-it-does-not-how.-dont-get-lost-in-the-details." class="level3">
+<h3 class="anchored" data-anchor-id="now-go-read-chat_impl-its-a-private-method-in-the-same-file.-what-are-the-major-steps-it-takes-remember-what-it-does-not-how.-dont-get-lost-in-the-details.">5. Now go read <code>chat_impl</code> (it’s a private method in the same file). What are the major steps it takes? Remember: what it does, not how. Don’t get lost in the details.</h3>
+<p>ok so it’s a generator method which I don’t know what that is yet so that is something to come back to later and it operates on the chat object itself it takes the user turn and the configuration of streaming and things and a few other things. first it handles any tool errors then it does some hotel stuff which is tracking which we can leave alone and then we start a while loop so basically while user turn isn’t null so I guess something later will set it to null but basically it creates a subject assistant chunks which means it submits the user turn and it receives some sort of chunk thing which it gets something back and I don’t know what yield does either so we could come back to that but effectively it submits the turn it yields the chunk it sets the some variable assistant turn to the last turn which I think probably submit turns probably creates itself and then it sets the user turn to null it’ll stop things if things get cancelled and so once it’s set the user turn to null so I guess once maybe there’s no tool calls I’m guessing maybe I don’t know oh but then oh the assistant team might have a tool request okay so basically maybe the user turn is any tool request we’re making now and then the assistant might have asked to call a tool so if the assistant has to call it till then it calls invoke tools to do that I won’t get into what that function does now it then pulls out the results of the tool call and then it converts them into turns or Aton sorry and that’s it</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>chat_impl</code> is a loop. (1) Submit user turn, get assistant turn. (2) Did the assistant request tools? If no, done. If yes, invoke the tools, package results as a new user turn, loop back to step 1. On the happy path (no tools), the loop runs exactly once. The generator/yield stuff is about <em>how</em> results are delivered (lazily), not <em>what</em> happens.”</p>
+</blockquote>
+</section>
+<section id="you-mentioned-submit_turns-inside-chat_impl.-this-is-the-next-layer-down-its-where-the-turn-gets-sent-to-the-actual-llm.-find-it-and-describe-what-it-does-at-a-high-level.-whats-its-job" class="level3">
+<h3 class="anchored" data-anchor-id="you-mentioned-submit_turns-inside-chat_impl.-this-is-the-next-layer-down-its-where-the-turn-gets-sent-to-the-actual-llm.-find-it-and-describe-what-it-does-at-a-high-level.-whats-its-job">6. You mentioned <code>submit_turns</code> inside <code>chat_impl</code>. This is the next layer down – it’s where the Turn gets sent to the actual LLM. Find it and describe what it does at a high level. What’s its job?</h3>
+<p>ok so the user turn is whatever is going to be passed to the LLM and now and again I don’t understand how these generator methods work with S7 classes because it’s interesting passing self the object itself and then private which I wonder if it’s the private methods but I know we can park that and come back to it but it passes in the user term and then the config stuff and then it does some hotel stuff which we don’t need to think about now either and then it calls chat perform which I think literally is another sort of layer of implementation it does the chat it gets response back and it calls the intern accumulator which literally accumulates these terms together and without jumping too far into that it basically populates this turn object and then depending on various bits of config and what’s returned it returns something so basically to zoom out a second and try to answer the original question it submits the turn to the provider and it gets whatever the provider has returned in the form of accumulated turns</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>submit_turns</code> orchestrates the call: it sends the turn to the provider via <code>chat_perform</code>, and accumulates what comes back into Turn objects. It’s the bridge between the chat loop and the actual HTTP call.”</p>
+</blockquote>
+</section>
+<section id="you-found-chat_perform-inside-submit_turns.-this-is-where-we-cross-from-the-chat-object-into-the-provider.-find-chat_perform-and-tell-me-what-does-it-do-and-where-does-provider-specific-behavior-start" class="level3">
+<h3 class="anchored" data-anchor-id="you-found-chat_perform-inside-submit_turns.-this-is-where-we-cross-from-the-chat-object-into-the-provider.-find-chat_perform-and-tell-me-what-does-it-do-and-where-does-provider-specific-behavior-start">7. You found <code>chat_perform</code> inside <code>submit_turns</code>. This is where we cross from the Chat object into the Provider. Find <code>chat_perform</code> and tell me: what does it do, and where does provider-specific behavior start?</h3>
+<p>ok so this function is interesting it’s in a file called HTTR2 and there’s a comment saying that it’s not generic because I guess it doesn’t vary between providers and they actually pass in the provider which is an interesting design decision that I’d like to revisit but park it so it takes the provider and some config and the turns and tools and telemetry stuff and there’s a function chat request which the provider is all of this stuff is passed into so get this request and then depending on the mode we call different functions to literally perform the chat thing so the provider specific behaviour happens inside those that the request construction in chat request and also the chat performing in the chat perform functions for stream or async stream or just wreck request perform which I don’t really know what wreck perform is like what are those modes</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>chat_perform</code> is deliberately not generic – it’s the same for every provider. The three modes (<code>req_perform_stream</code>, <code>req_perform_async_stream</code>, <code>req_perform</code>) are httr2 functions for streaming vs non-streaming delivery – a ‘how’ detail, not a ‘what’ detail. The provider-specific behavior lives in <code>chat_request()</code>, which builds the HTTP request differently for each provider.”</p>
+</blockquote>
+</section>
+<section id="find-chat_request.-its-an-s7-generic.-what-does-it-take-in-and-what-does-it-produce-you-dont-need-to-read-any-specific-provider-method-just-the-generic-and-maybe-one-example-to-get-the-idea." class="level3">
+<h3 class="anchored" data-anchor-id="find-chat_request.-its-an-s7-generic.-what-does-it-take-in-and-what-does-it-produce-you-dont-need-to-read-any-specific-provider-method-just-the-generic-and-maybe-one-example-to-get-the-idea.">8. Find <code>chat_request</code>. It’s an S7 generic. What does it take in, and what does it produce? You don’t need to read any specific provider method – just the generic and maybe one example to get the idea.</h3>
+<p>ok so chat request is in provider that are and it’s a generic that dispatches on the provider and it literally just takes the provider and the config and then it calls face request which is probably the base URL it does some path construction stuff it calls a function chat body which I think probably creates the chat body in Jason or whatever it does anything around adding an extra arguement oh and interestingly actually there’s a function later that’s got Jason in it so maybe it hasn’t done the Jason bit yet it adds any headers and it basically it gives back the request that’s been constructed from all the things that have been put into it so I guess it probably takes our objects and makes the overall Jason thing at the very end of it</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>chat_request</code> dispatches on the provider to build the HTTP request. It delegates to sub-generics like <code>chat_body()</code> for the request body. The body is built as R objects, then serialized to JSON at the end. This is the deepest provider-specific layer on the outbound path.”</p>
+</blockquote>
+</section>
+<section id="weve-traced-the-outbound-path.-now-trace-the-return-back-in-submit_turns-after-chat_perform-returns-what-happens-to-the-response-look-at-what-the-accumulator-does-how-does-raw-http-response-data-become-an-assistantturn" class="level3">
+<h3 class="anchored" data-anchor-id="weve-traced-the-outbound-path.-now-trace-the-return-back-in-submit_turns-after-chat_perform-returns-what-happens-to-the-response-look-at-what-the-accumulator-does-how-does-raw-http-response-data-become-an-assistantturn">9. We’ve traced the outbound path. Now trace the return: back in <code>submit_turns</code>, after <code>chat_perform</code> returns, what happens to the response? Look at what the “accumulator” does – how does raw HTTP response data become an <code>AssistantTurn</code>?</h3>
+<p>ok so I guess chat perform returns a response and from your question I’m going to presume that that response is in like Jason response data stuff so we start this turn accumulator we call this function begin turn don’t know what that does but if I was to guess the response is in this is the streaming one maybe I’ll skip to the non-streaming one cuz it’s probably simpler and it’s probably the same thing with less steps so it gets the Jason buddy from that response it pulls out things like the duration it does some telemetry stuff it then creates this variable turn which is made from getting the accumulator to add the turn the user turn cuz now it’s extracted like the relevant fields from it and then it creates this variable text which is like the text from the turn it’s been created when we did the accumulator add turn thing and then it called yield to give it back like I guess yield is probably a little bit like return as a function but it’s different</p>
+<blockquote class="blockquote">
+<p>🤖: “The non-streaming path is simpler and the result is the same. The response comes back as JSON, and the accumulator’s job is to parse it into a Turn object. Your yield intuition is correct – it’s like return but the generator can keep going afterwards.”</p>
+</blockquote>
+</section>
+<section id="inside-the-accumulator-or-the-functions-it-calls-theres-a-provider-specific-generic-that-parses-the-json-response-into-turncontent-objects-the-mirror-of-chat_body-on-the-outbound-side.-can-you-find-it" class="level3">
+<h3 class="anchored" data-anchor-id="inside-the-accumulator-or-the-functions-it-calls-theres-a-provider-specific-generic-that-parses-the-json-response-into-turncontent-objects-the-mirror-of-chat_body-on-the-outbound-side.-can-you-find-it">10. Inside the accumulator or the functions it calls, there’s a provider-specific generic that parses the JSON response into Turn/Content objects (the mirror of <code>chat_body</code> on the outbound side). Can you find it?</h3>
+<p>ok so I’m just going to walk through this step by step and the turn accumulator then it takes in ok no it’s a class and it’s got like these methods chat chat private provider controller or other stuff like that and it’s got all these methods so what method do we call just before? so we called and turn so that’s the method that I need to read so basically that then calls the value turn method which is handling just underneath so value turn it first calls value finish reason which is a function I actually added which is to extract the reason the turn finished and then it calls check finish reason which is a function that I added that issues any warnings if the term was finished for reasons that are not necessarily just that it was done then it calls another function value turn which is kind of confusing to me because it’s got the same name but you said there’s a provider specific generic and I think this is it because that takes the provider and the results and it constructs a turn from it and just I’m going to have a look at the value turn function which I think is a generic. ok so I looked at the provider anthropic example just give me something concrete and I was right it’s a generic that dispatches on provider and effectively what it does is I’m going to assume that this is the provider specific response Jason pausing so it creates this object contents which basically it takes the content field I don’t know field is the right word out of the results and it looks at the type of each item and depending on the type it constructs a new content object relevant to that item</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>value_turn()</code> is the mirror of <code>chat_body()</code>. Each provider implements both: <code>chat_body()</code> converts Turn/Content objects into provider-specific JSON for the request, and <code>value_turn()</code> converts provider-specific JSON from the response back into Turn/Content objects. The accumulator’s <code>add_turn</code> method calls <code>value_turn()</code> to do this parsing, and you also spotted that <code>value_finish_reason()</code> (which you added!) runs first to check how the turn ended.”</p>
+</blockquote>
+</section>
+<section id="in-chat_body-how-do-content-objects-get-converted-into-the-providers-json-format" class="level3">
+<h3 class="anchored" data-anchor-id="in-chat_body-how-do-content-objects-get-converted-into-the-providers-json-format">11. In <code>chat_body()</code>, how do Content objects get converted into the provider’s JSON format?</h3>
+<p>so chat request is the generic and interestingly it’s not defined for every single provider because there is a default one that works for a lot of providers and what that does is it oh wait a minute but it uses the chat body function so maybe for some providers we need to do extra work before or after we create we call the chat body function but for most it’s the same. and if I look at the specific chat body function for provider on topic you can see actually where it calls as Jason to construct messages but I won’t go too deeply into this quite yet I’m going to wait for the next question</p>
+<blockquote class="blockquote">
+<p>🤖: “Good spot – <code>chat_request</code> has a default that works for most providers, and some providers override it to add extra work before/after <code>chat_body()</code>. Inside <code>chat_body</code>, you found <code>as_json</code> – that’s the bridge from Content objects to provider-specific JSON.”</p>
+</blockquote>
+</section>
+<section id="as_json-is-a-generic-too.-what-does-it-dispatch-on" class="level3">
+<h3 class="anchored" data-anchor-id="as_json-is-a-generic-too.-what-does-it-dispatch-on">12. <code>as_json</code> is a generic too. What does it dispatch on?</h3>
+<p>so the as Jason function if I look in the file as dash Jason dot r it dispatch on both the provider and the type that’s the type of the thing that’s passed in and it depends on whether the thing being passed in I don’t know cuz I thought types are in part about structured output but they’re also important in terms of parameters for tool use and there’s also this type Jason schema that I don’t really know what that does which is something I’d also like to add to my answer questions to come back to if it doesn’t come up in conversation but I think rather than yeah I don’t know I guess I’m a little bit confused here now because I forgot I’m not working very into Jason like I guess it’s it’s a content object but then yeah no I’m a bit lost. I think to one stick myself I’m gonna look at a provider specific implementation. ok so I might have not been looking at the best place for this because now I have a look at the Claude one I can see that it doesn’t just dispatch on provider and type I didn’t know that’s a very specific thing and those were probably in that file because then it doesn’t ok those were just the ones for types but we’re not looking at that we’re looking at ccontent types so it dispatches on basically any kind of thing that we want to pass to a provider that needs to get converted to Jason because all of these different methods return lists so whether it’s a content object or a turn object which I guess probably contains content objects as Jason dispatches on the provider and the individual thing like that</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>as_json</code> dispatches on <strong>both the provider and the content type</strong>. So there’s a method for every combination: <code>(ProviderAnthropic, ContentText)</code>, <code>(ProviderOpenAI, ContentImageRemote)</code>, etc. This matters for #858: if you add a new Content type or change what one carries, you need <code>as_json</code> methods per provider (outbound) and <code>value_turn</code> handling per provider (inbound). The <code>type_*</code> stuff you saw is the structured output / tool parameter schema system – separate from Content, park it.”</p>
+</blockquote>
+</section>
+<section id="what-content-types-does-value_turn-produce-from-json" class="level3">
+<h3 class="anchored" data-anchor-id="what-content-types-does-value_turn-produce-from-json">13. What Content types does <code>value_turn()</code> produce from JSON?</h3>
+<p>ok so I’m looking at the value turn method for provider anthropic and yeah the mapping seems straightforward like it takes whatever contents have been returned and uses the type item and it checks okay it’s like this has type arguement is a little bit complex term in terms of terminology but this is just to do with whether we’re dealing with I guess structured output is my guess here so what that means is that it extracts the relevant fields and wraps it in a content object like of the right class</p>
+<blockquote class="blockquote">
+<p>🤖: “Correct. <code>value_turn()</code> checks the <code>type</code> field in each JSON content item and constructs the matching Content class (<code>\"text\"</code> -&gt; <code>ContentText</code>, <code>\"tool_use\"</code> -&gt; <code>ContentToolRequest</code>, etc.). Each provider has its own type names but the pattern is the same.”</p>
+</blockquote>
+</section>
+<section id="where-does-858-live-in-the-flow-trace-from-invoke_tools-to-the-turn-that-goes-back-to-the-llm." class="level3">
+<h3 class="anchored" data-anchor-id="where-does-858-live-in-the-flow-trace-from-invoke_tools-to-the-turn-that-goes-back-to-the-llm.">14. Where does #858 live in the flow? Trace from <code>invoke_tools()</code> to the Turn that goes back to the LLM.</h3>
+<p>I don’t really get it because invoke tool is called from unload well it’s called from inside invoke tools the function which is another generator which I don’t get still ok so maybe I need the version with the s on the end of it so it’s inside chatimple and it’s in the loop that does the assistant turns and so we call the invoke tools function and get this variable tool calls that’s where we’ve set the value of it and then later on we cycle through that to populate this tool results variable which then get turned into a turn so if I was to guess I would say that the tool calls but sorry so the invoke tools bit is literally where we run the ass stuff and get some results of it and then we do a little bit of messing around to get this tool results variable which I won’t jump into either but effectively there’s a function tool results as turn that does that and that one takes a parameter results and it checks that all of those things are tool results and if any or not when it returns null but I guess sorry if none of them are it returns null but then otherwise it uses the user turn class creatory thing it creates a user turn containing the tool results effectively</p>
+<blockquote class="blockquote">
+<p>🤖: “<code>invoke_tools()</code> runs the R functions, produces tool results, then <code>tool_results_as_turn()</code> wraps them into a user Turn that goes back into the loop. #858 is about <em>when</em> the raw R return value gets converted to JSON – currently it’s deferred to <code>tool_string()</code>, but the issue says do it at invoke time so it’s validated up front. You’ve now connected your map to where #858 lives in the flow.”</p>
+</blockquote>
+</section>
+<section id="quiz" class="level3">
+<h3 class="anchored" data-anchor-id="quiz">Quiz</h3>
+<p><strong>Q1.</strong> Name the major functions in order from <code>chat$chat("hello")</code> to HTTP request sent.</p>
+<p><strong><code>complete_dangling_tool_requests()</code> -&gt; <code>user_turn()</code> -&gt; <code>chat_impl</code> -&gt; <code>submit_turns</code> -&gt; <code>chat_perform</code> -&gt; <code>chat_request</code> -&gt; <code>req_perform()</code>.</strong></p>
+<p><strong>Q2.</strong> Two provider-specific generics on the critical path?</p>
+<p><strong><code>chat_body()</code> outbound, <code>value_turn()</code> inbound.</strong> (Initially said <code>chat_perform</code> but corrected – it takes provider as argument but doesn’t dispatch on it.)</p>
+<p><strong>Q3.</strong> What goes back as user turn after a tool call?</p>
+<p><strong>A Turn containing ContentToolResult objects, created via <code>tool_results_as_turn()</code>.</strong></p>
+<p><strong>Q4.</strong> What’s special about <code>as_json</code> dispatch?</p>
+<p><strong>Double dispatch on provider AND content type.</strong></p>
+<p><strong>Q5.</strong> Explain <code>chat_impl</code>’s while loop in two sentences.</p>
+<p><strong>It submits the user turn to the LLM and gets an assistant turn back. If the assistant requested tool calls, it invokes them, packages the results as a new user turn, and loops back until the assistant gives a final response with no tool requests.</strong></p>
+</section>
+</section>
+</section>
+</div>
+</div>
+</div>
+</section>
+<section id="working-with-the-skill" class="level2">
+<h2 class="anchored" data-anchor-id="working-with-the-skill">Working with the skill</h2>
+<p>You can get the raw markdown for the skill at <a href="https://github.com/thisisnic/rapid-learning/blob/main/SKILL.md" class="uri">https://github.com/thisisnic/rapid-learning/blob/main/SKILL.md</a> or check out the <a href="https://github.com/thisisnic/rapid-learning">full repo</a></p>
+<p>Alternatively, if you’re using the Claude CLI, you can install it by running:</p>
+<pre><code>/plugin marketplace add thisisnic/rapid-learning
+/plugin install rapid-learning@rapid-learning</code></pre>
+<p>It is pretty tailored to me, and what I’d actually recommend is using the overall framework as a starting point and writing your own.</p>
+</section>
+<section id="caveats-and-recommendations" class="level2">
+<h2 class="anchored" data-anchor-id="caveats-and-recommendations">Caveats and Recommendations</h2>
+<p>I’ve had different degrees of success using the skill based on the model I’ve been using. I’ve been working mostly with more capable Claude models like more recent versions of Sonnet, Opus, and Fable, and got pretty good results.</p>
+<p>Before I released the skill, I did experiment with DeepSeek V4.1 Flash and Claude Haiku 4.5 to see if it was compatible with cheaper models, but unfortunately I got much worse results. Failure modes varied, but included things like incorrect assumptions made about the coding concepts I was trying to learn, overly complex or verbose explanations, and poor teaching practices like single letter variable names.</p>
+<p>Regardless of model, I recommend trying this out with a concrete problem to solve or concept to learn about an existing codebase, as that’s where it’s really helped me the most.</p>
+<p>Another thing that I found particularly helpful is using some sort of speech-to-text input so I can ask my questions naturally without having to type them. I’ve installed an app on my phone that allows it to function as a Bluetooth keyboard and talk directly to my laptop.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/niccrane\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
