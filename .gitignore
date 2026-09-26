@@ -5,3 +5,6 @@
 .RData
 
 **/*.quarto_ipynb
+posts/intro-to-parquet/*.parquet
+posts/intro-to-parquet/*.csv
+posts/intro-to-parquet/taxi-partitioned
