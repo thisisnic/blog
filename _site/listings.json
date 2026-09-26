@@ -1,30 +1,9 @@
 [
   {
-    "listing": "/talks.html",
-    "items": [
-      "/talks/shinyinprod2025/index.html",
-      "/talks/positconf2025/index.html",
-      "/talks/user2025/index.html",
-      "/talks/positconf2024_2/index.html",
-      "/talks/nyhackr/index.html",
-      "/talks/rstudioconf2022/index.html",
-      "/talks/rstudioconf2019/index.html",
-      "/talks/londonr/index.html"
-    ]
-  },
-  {
-    "listing": "/projects/index.html",
-    "items": [
-      "/projects/workshop/index.html",
-      "/projects/migration/index.html",
-      "/projects/nhs/index.html",
-      "/projects/refactoring/index.html"
-    ]
-  },
-  {
     "listing": "/blog.html",
     "items": [
       "/posts/index.html",
+      "/posts/go-utilities/index.html",
       "/posts/rapid-learning-skill/index.html",
       "/posts/ai-open-source-contribution/index.html",
       "/posts/intro-to-parquet/index.html",
@@ -52,6 +31,28 @@
       "/posts/packagemetrics/index.html",
       "/posts/shiny-confirm-popup/index.html",
       "/posts/leaflet-shiny/index.html"
+    ]
+  },
+  {
+    "listing": "/projects/index.html",
+    "items": [
+      "/projects/workshop/index.html",
+      "/projects/migration/index.html",
+      "/projects/nhs/index.html",
+      "/projects/refactoring/index.html"
+    ]
+  },
+  {
+    "listing": "/talks.html",
+    "items": [
+      "/talks/shinyinprod2025/index.html",
+      "/talks/positconf2025/index.html",
+      "/talks/user2025/index.html",
+      "/talks/positconf2024_2/index.html",
+      "/talks/nyhackr/index.html",
+      "/talks/rstudioconf2022/index.html",
+      "/talks/rstudioconf2019/index.html",
+      "/talks/londonr/index.html"
     ]
   }
 ]

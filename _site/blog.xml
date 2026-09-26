@@ -10,7 +10,147 @@
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.9.35</generator>
-<lastBuildDate>Wed, 23 Sep 2026 23:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 27 Sep 2026 23:00:00 GMT</lastBuildDate>
+<item>
+  <title>Building Go Tools Without Writing Any Go</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/go-utilities/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="the-motivation" class="level2">
+<h2 class="anchored" data-anchor-id="the-motivation">The motivation</h2>
+<p>I’m a pretty heavy user of AI in my day-to-day open source maintenance, but with a lot of care and caveats. Generating code is easy, but the challenge these days lies in having confidence in the results - not just that they’re correct, but that they fit in with existing design philosophy and won’t have unintended consequences. As a result of this, my work has shifted from solving problems with code to reviewing code, and my biggest challenges now lie in managing cognitive load and decision fatigue.</p>
+<p>I mostly work in R with some Python and C++, but one of my goals is to expand my skills into other languages.</p>
+<p>Recently I was at <a href="https://conf.posit.co/2026/">posit::conf</a> in Houston, watching Wes McKinney’s keynote <a href="https://posit.co/blog/posit-conf-2026-keynotes">“Navigating the Agentic Future”</a>, in which he says</p>
+<blockquote class="blockquote">
+<p>“Over the last year I’ve built tons of software but written no lines of code by hand”</p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/go-utilities/wes.png" class="img-fluid figure-img"></p>
+<figcaption>Slide from Wes McKinney’s keynote: “Lines of code I have written by hand in the past year. Effectively none.”</figcaption>
+</figure>
+</div>
+<p>Wes also mentions that he’s ended up shifting his focus to coding in languages which work well with agents, the most prevalent in his work is Go, describing himself as “an agentic Go programmer despite never having written a line of Go in [his] life”.</p>
+<p>At this point, I’m honestly feeling envy. My day-to-day open source maintenance works involves so much reading of mine and others’ AI generated code, and so the prospect of productivity where my engagement is with aspects of the project other than code sounds…well, bloody delightful!</p>
+</section>
+<section id="what-i-built" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-built">What I built</h2>
+<p>And so I decided to take this and see where I could get to over the course of the rest of the day, armed with a Claude 5x Max plan and an attention span which was going to be mostly focused on watching talks.</p>
+<p>I decided to build a simple <a href="https://github.com/thisisnic/goaltracker">goal tracker app</a> which runs on the command line. It needed to be something I’d genuinely use, and it seemed like a good alternative to the website I was using for this kind of thing at the moment.</p>
+</section>
+<section id="the-role-of-the-human" class="level2">
+<h2 class="anchored" data-anchor-id="the-role-of-the-human">The role of the human</h2>
+<p>So, if I’m not writing the code, what am I doing in this project?</p>
+<p>In Wes’ keynote, he mentions that there a 3 key remaining skills that programmers need to produce code which isn’t just slop: judgment, taste, and agency.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="https://niccrane.com/posts/go-utilities/wes2.png" class="img-fluid figure-img"></p>
+<figcaption>Slide from Wes McKinney’s keynote: “The work I still have to do: Judgment, Taste, Agency”</figcaption>
+</figure>
+</div>
+<p>In essence, judgment is deciding what is actually needed for the project without veering into unnecessary complexity and really understanding the constraints.<br>
+Taste is about knowing whether the output is good or bad, with the failure mode here being decision fatigue. Agency is about making it happen - the model can solve the problem, but the desire to solve it in the first place must come from a human.</p>
+<p>The point about decision fatigue really resonated with me; recently I’d found myself in conversation with Claude learning about how air traffic controllers manage lapses in concentration to see if there were any techniques I could use in my open source work - taking regular breaks was as much as I took from it though.</p>
+</section>
+<section id="how-i-did-it" class="level2">
+<h2 class="anchored" data-anchor-id="how-i-did-it">How I did it</h2>
+<p>I hadn’t built this kind of thing before, and so I was concerned that both my judgment and taste may be lacking, but fortunately, I could outsource this. Wes had been making a lot of useful Go utilities lately, all stored within the <a href="https://github.com/kenn-io">Kenn Software organisation on GitHub</a>. I’m actually a regular user of one of them - <a href="https://github.com/kenn-io/roborev">roborev</a> which provides “Continuous code review for AI coding agents”.</p>
+<p>I use roborev most days when coding; when initialised in a repo, when I make a commit, roborev automatically runs and has an agent perform a review of the code. I tend to use this manually for open source work, inspecting the roborev review before pushing the code to GitHub.</p>
+<p>Here’s an example roborev review from some work I did recently on <a href="https://ellmer.tidyverse.org">ellmer</a>.</p>
+<pre><code>Review #848 ellmer (claude-code: opus)
+/home/nic/ellmer dirty on 1155-interactions
+Verdict: Fail [33.5k ctx · 1.6k out · ~$0.22]
+
+## Review Findings
+
+• Severity: Low
+• Location: R/provider-google-interactions.R:351
+• Problem: The %||% list() fallback is added only at the value_turn() call site.
+gemini_step_contents() still returns NULL when steps is missing or empty, or when no step produces
+content, because list_c(list()) is c(), which is NULL. The other caller, stream_content() at line
+638, therefore still gets NULL, and any new caller would hit the same trap. Nothing breaks today
+because the stream path tolerates NULL, but the contract is inconsistent.
+• Fix: Put the fallback inside gemini_step_contents(), e.g. list_c(...) %||% list(), and drop it
+from value_turn(). That way every caller always gets a list.
+
+--------
+
+• Severity: Low
+• Location: Rplots.pdf
+• Problem: A stray graphics-device output file sits untracked in the package root. If it gets
+committed by accident, it will also be flagged by R CMD check as a non-standard top-level file.
+• Fix: Delete it, or add it to .gitignore and .Rbuildignore.
+
+## Summary
+
+value_turn() for ProviderGoogleGemini now returns an empty contents list instead of NULL when an
+Interactions response has no steps (e.g. an incomplete status), and a new unit test covers that
+case.</code></pre>
+<p>It’s really helpful and regularly picks up mistakes, errors, or edge cases that the agent writing the code has missed - even with the most advanced models.</p>
+<p>In this project roborev served as both a tool and a template.</p>
+<p>I don’t recall the exact prompt I used any more, but essentially, I set up a new directory, opened up a Claude session using Fable 5.1, and instructed it to ask me questions to figure out the minimal requirements needed to create an MVP goal tracker project. I also told it to go take a look at the various projects in the Kenn Software organisation to use as a template in terms of approach, structure, and design.<br>
+This way, although I’m not confident that I know what “good” looks like here, I can lean on the decisions that had been made in the design of roborev and other projects.</p>
+<p>I then left the session running, with auto-accept turned on. I told it to commit things incrementally, inspect the roborev reviews after every commit, and only pause when input was needed from me - this way the agent was being given continuous feedback on the code but my involvement was limited to design decisions.</p>
+<p>I also specified a couple of other pieces of functionality I wanted here, like for the utility to be updated by running by a command like <code>goaltracker update</code>. The idea here was to have something running smoothly before bolting on more features.</p>
+</section>
+<section id="what-it-was-like" class="level2">
+<h2 class="anchored" data-anchor-id="what-it-was-like">What it was like</h2>
+<p>I then ignored it and let the agent run. It took most of the day to build the project, though most of that was due to me being busy and unable to provide input. It did use up over half of my Fable usage tokens for the week, so it was a resource intensive project.</p>
+<p>I was curious about what I’d get - could I produce working software with this little input, or would it result in broken slop that would be more effort than it was worth to fix?</p>
+</section>
+<section id="the-result" class="level2">
+<h2 class="anchored" data-anchor-id="the-result">The result</h2>
+<p>It actually worked terrifying well. The <a href="https://github.com/thisisnic/goaltracker">goaltracker</a> is fantastic and I use it weekly. While at posit::conf I actually had it implement really customised features, like privacy mode - press the ‘x’ key while viewing the tracker and it would hide all certain fields - exactly something I needed while inputting my real data while at a conference.</p>
+<p>Here’s a preview of the interface.</p>
+<pre><code>goaltracker · goals
+╭──────────────────────────────────────────────────╮╭──────────────────────────────────────────╮
+│ 2026                                             ││ run 500 km                               │
+│   2026     run 500 km                        43% ││ period 2026 (year)   id #1               │
+│   ✓ 2026-Q2  run a half marathon                 ││                                          │
+│   2026     finish the garden                     ││ why                                      │
+│   ✓ 2026-04  plant the hedge                     ││ Be able to say yes to a long day out     │
+│ 2027                                             ││ without thinking about it.               │
+│   2027     swim 5 km in open water               ││                                          │
+│                                                  ││ progress 215 km / 500 km                 │
+│                                                  ││ █████████████████░░░░░░░░░░░░░░░░░░░░░░░ │
+│                                                  ││                                          │
+│                                                  ││ history                                  │
+│                                                  ││   2026-03-31  120 km  end of March       │
+│                                                  ││   2026-05-31  215 km  end of May         │
+│                                                  ││                                          │
+╰──────────────────────────────────────────────────╯╰──────────────────────────────────────────╯
+
+a add · e edit · n notes · p progress · h hit · m missed · c clear · d delete · x private · j/k move · q quit</code></pre>
+<p>One of the things that I love about the utility is that while the UI above is a TUI - a terminal user interface for the human to interact with - it also was build with a CLI. This means that if I’m working with an agent session where it becomes relevant to update the data here, I can have the agent directly update it for me via the CLI.</p>
+</section>
+<section id="how-does-this-compare-to-open-source-work" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-this-compare-to-open-source-work">How does this compare to open source work?</h2>
+<p>This is very different from typical open source maintenance - the outcome here was much more important to me than the code itself. Some of the lessons I learned here do transfer to my open source maintenance work though. When I was building more complex features on a project, I’d been reviewing the agent’s code output iteratively in chunks, but now I’m going to let it complete a full coding cycle with reviews and updates before engaging with the code.</p>
+<p>It was an interesting experiment from the perspective of my development as a programmer as well. Usually with this kind of project, my aim is to acquire some new knowledge, but here I didn’t learn anything much about Go at all. In this case, I learned how to approach agentic development and what was possible. I didn’t necessarily develop any additional taste or judgment either.</p>
+<p>This is radically different to the work I’m doing on Arrow, where I’ve been working on issue with how data is converted between Arrow types to R types via C++, and using this as an opportunity to learn about some of the <a href="https://arrow.apache.org/docs/r/">Arrow R package</a>’s inner mechanisms that I’d never felt like I could spare the time to deep dive into. The difference here though is that I <em>need</em> this knowledge so that next time I use AI to work on a type conversion problem, I know enough to be able to review the generated code myself.</p>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>I enjoyed my experiment - I since extended it to create a <a href="https://github.com/thisisnic/tasktracker">task tracker utility</a> which I use to plan my work - and while I still need to be a lot more involved in the code I work with in my day-to-day work, it’s great to know how easy it is to create utilities like this which can help me get things done.</p>
+<p>I’d recommend checking out Wes’ keynote when it’s out on the Posit Youtube channel - I really appreciated how he links agentic coding to decades old software engineering theory and shows how it’s still relevant today. There are a lot of examples of his experiences on real projects have influenced his thinking, and is a really balanced take on the wins and losses of this new approach to development, and how the challenges encountered when writing code have changed immensely.</p>
+<p>And in the meantime, check out this set of operating principles for coding agents which was referenced heavily in the talk: https://github.com/kenn-io/constitution/blob/main/CONSTITUTION.md</p>
+<hr>
+<p>Photo by <a href="https://unsplash.com/@egaomi">Khitomi Michiru</a> on <a href="https://unsplash.com/photos/nGP4knVCJTc">Unsplash</a></p>
+
+
+</section>
+
+ ]]></description>
+  <category>AI</category>
+  <guid>https://niccrane.com/posts/go-utilities/</guid>
+  <pubDate>Sun, 27 Sep 2026 23:00:00 GMT</pubDate>
+  <media:content url="https://niccrane.com/posts/go-utilities/gopher.jpg" medium="image" type="image/jpeg"/>
+</item>
 <item>
   <title>Rapid Learning Skill for Code</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -6839,6 +6979,1598 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>Career</category>
   <guid>https://niccrane.com/posts/ursa-computing-first-month/</guid>
   <pubDate>Wed, 12 May 2021 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Why is eval parse bad?</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/eval-parse/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>I was writing Arrow bindings for <code>na.omit</code> and needed a way of applying <code>is.na</code> to every column of a table at once. I’d originally implemented using <code>dplyr::filter</code>, but had failed to realise that Arrow only suggests <code>dplyr</code> but doesn’t import it, and so needed to refactor it.</p>
+<p>Table objects in <code>Arrow</code> have a <code>Filter</code> method, and I knew that a naive implementation would be a for loop which iteratively called <code>Table$Filter(!is.na(column_name))</code> for each column in my table. However, this would be ugly at best and inefficient at worst, and so what I really wanted was to be able to call <code>Table$Filter(!is.na(col1) &amp; !is.na(col2) &amp; ... !is.na(colN))</code> where <code>1</code>…<code>N</code> are my column names.</p>
+<p>An early implementation without <code>dplyr::filter</code> looked like this:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">filter_text <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste0</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"!is.na(tbl$"</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">names</span>(tbl), <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">")"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" &amp; "</span>)</span>
+<span id="cb1-2">filter <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> rlang<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parse_expr</span>(filter_text)</span>
+<span id="cb1-3">tbl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Filter</span>(rlang<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eval_bare</span>(filter))</span></code></pre></div></div>
+<p>To break this down a bit, I’ll demonstrate a line by line run, using <code>airquality</code> as my input data. Below you can see that we start off with 153 rows.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span>Table<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">create</span>(airquality)</span>
+<span id="cb2-2">tbl</span></code></pre></div></div>
+<pre><code>## Table
+## 153 rows x 6 columns
+## $Ozone &lt;int32&gt;
+## $Solar.R &lt;int32&gt;
+## $Wind &lt;double&gt;
+## $Temp &lt;int32&gt;
+## $Month &lt;int32&gt;
+## $Day &lt;int32&gt;
+##
+## See $metadata for additional Schema metadata</code></pre>
+<p>If I call <code>na.omit</code> on the <code>airquality</code> data.frame, I’m left with 111 rows.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">nrow</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">na.omit</span>(airquality))</span></code></pre></div></div>
+<pre><code>## [1] 111</code></pre>
+<p>So now for the Arrow implementation. I first construct my filter:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">filter_text <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste0</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"!is.na(tbl$"</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">names</span>(tbl), <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">")"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" &amp; "</span>)</span>
+<span id="cb6-2">filter_text</span></code></pre></div></div>
+<pre><code>## [1] "!is.na(tbl$Ozone) &amp; !is.na(tbl$Solar.R) &amp; !is.na(tbl$Wind) &amp; !is.na(tbl$Temp) &amp; !is.na(tbl$Month) &amp; !is.na(tbl$Day)"</code></pre>
+<p>I then convert the string to an expression.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1">filter <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> rlang<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parse_expr</span>(filter_text)</span>
+<span id="cb8-2">filter</span></code></pre></div></div>
+<pre><code>## !is.na(tbl$Ozone) &amp; !is.na(tbl$Solar.R) &amp; !is.na(tbl$Wind) &amp;
+##     !is.na(tbl$Temp) &amp; !is.na(tbl$Month) &amp; !is.na(tbl$Day)</code></pre>
+<p>Finally, I evaluate the expression:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">tbl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Filter</span>(rlang<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eval_bare</span>(filter))</span></code></pre></div></div>
+<pre><code>## Table
+## 111 rows x 6 columns
+## $Ozone &lt;int32&gt;
+## $Solar.R &lt;int32&gt;
+## $Wind &lt;double&gt;
+## $Temp &lt;int32&gt;
+## $Month &lt;int32&gt;
+## $Day &lt;int32&gt;
+##
+## See $metadata for additional Schema metadata</code></pre>
+<p>It looks like it’s worked - it has! - but something feels wrong. I’ve heard people in the past talk about <code>eval(parse(text = stuff))</code> being a bad way of doing things, and my solution felt a bit dirty in a similar way, though I wasn’t sure why.</p>
+<p>A bit of a search and I found <a href="https://stackoverflow.com/questions/13649979/what-specifically-are-the-dangers-of-evalparse">an answer on StackOverflow</a>. In short, the main reasons that eval/parse is warned against are:</p>
+<ul>
+<li>if you’re evaluating text passed in by a user there could be security concerns</li>
+<li>there are other more efficient and human-readable ways of accomplishing the same thing</li>
+<li>it may be unclear what’s being evaluated from what environment</li>
+</ul>
+<p>So, my code wasn’t as bad as I thought. However, in another bit of the Arrow codebase I’d seen some pretty nice code written using data masks and environment, and so refactored my code a little to mirror this style.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># paste together the filter function as a character vector</span></span>
+<span id="cb12-2">filter_text <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste0</span>(</span>
+<span id="cb12-3">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">".data$Filter("</span>,</span>
+<span id="cb12-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste0</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"!is.na(.data$"</span>, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">names</span>(tbl), <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">")"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" &amp; "</span>),</span>
+<span id="cb12-5">  <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">")"</span></span>
+<span id="cb12-6">)</span>
+<span id="cb12-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># parse expression; results in:</span></span>
+<span id="cb12-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># .data$Filter(!is.na(.data$Ozone) &amp; !is.na(.data$Solar.R) &amp; !is.na(.data$Wind) &amp;</span></span>
+<span id="cb12-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#  !is.na(.data$Temp) &amp; !is.na(.data$Month) &amp; !is.na(.data$Day))</span></span>
+<span id="cb12-10">filter <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> rlang<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">parse_expr</span>(filter_text)</span>
+<span id="cb12-11"></span>
+<span id="cb12-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># tidily evaluate the results, within the data mask</span></span>
+<span id="cb12-13">rlang<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eval_tidy</span>(filter,  rlang<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">new_data_mask</span>(rlang<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">env</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">.data =</span> tbl)))</span></code></pre></div></div>
+<p>The above solution is my latest one at time of writing but hasn’t been reviewed or merged yet, so may require further changes. Here, I move in the called to <code>Table$Filter</code> into the filter text, so the whole expression is captured. This now means that I can use the <code>.data</code> pronoun to refer to the dataset, and instead of depending on the fact that a variable called <code>tbl</code> has been passed into my function, can instead manually pass it in when I call <code>rlang::env</code>.</p>
+<p>I’m happier with this solution; whilst it still feels weird to construct calls using strings, at least this way, what is being called against what feels a little cleaner.</p>
+<p>One thing that really helped me work all this out was the <a href="https://raw.githubusercontent.com/rstudio/cheatsheets/master/tidyeval.pdf"><code>rlang</code> cheatsheet</a>, which is a resource I’d recommend to anyone wrestling with tidy eval.</p>
+<p>[Edited to add below]</p>
+<p>So in the end, after discussing with a colleague, we decided that parsing an expression was still potentially problematic. Although I’d dismissed the possible security concerns, they mentioned that it could be the case that someone has a dodgy column name, and it was unclear whether encapsulating things in their own environment would remove this risk or not. They suggested that I see if I could get <code>purrr</code> to do something useful, and after a little experimentation, here was my eventual solution.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Creates a list of ChunkedArrays containing true/false for each value depending</span></span>
+<span id="cb13-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># if it's an NA or not</span></span>
+<span id="cb13-3">not_na <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> purrr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">map</span>(tbl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>columns, <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(.x))</span>
+<span id="cb13-4"></span>
+<span id="cb13-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># reduces across lists to a single ChunkedArray (i.e. only true if all rows contain true)</span></span>
+<span id="cb13-6">not_na_agg <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> purrr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">reduce</span>(not_na, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">&amp;</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">`</span>)</span>
+<span id="cb13-7"></span>
+<span id="cb13-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># filter only to retrieve rows which match with true</span></span>
+<span id="cb13-9">tbl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Filter</span>(not_na_agg)</span></code></pre></div></div>
+<p>As is common in these circumstances, there was a simpler and more aesthetically pleasing solution available that didn’t require parsing of expressions. I’m much happier with the above code - it feels like a much better approach!</p>
+<p>[Edited again!]</p>
+<p>Ultimately we went with a different approach that implemented functionality that already exists in the Arrow package. This approach is even better as, instead of evaluating <code>!is.na</code> on each column of data and combining them, we instead build an expression that is evaluated against the dataset.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1">not_na <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> purrr<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">map</span>(tbl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>columns, <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">build_array_expression</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"is_valid"</span>, .x))</span>
+<span id="cb14-2">not_na_agg <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Reduce</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"&amp;"</span>, not_na)</span>
+<span id="cb14-3">tbl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Filter</span>(arrow<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:::</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eval_array_expression</span>(not_na_agg))</span></code></pre></div></div>
+<pre><code>## Table
+## 111 rows x 6 columns
+## $Ozone &lt;int32&gt;
+## $Solar.R &lt;int32&gt;
+## $Wind &lt;double&gt;
+## $Temp &lt;int32&gt;
+## $Month &lt;int32&gt;
+## $Day &lt;int32&gt;
+##
+## See $metadata for additional Schema metadata</code></pre>
+
+
+
+ ]]></description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/eval-parse/</guid>
+  <pubDate>Mon, 19 Apr 2021 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Three Valued Logic</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/three-valued-logic/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This week I was writing Arrow bindings for some R functions and came across a concept that was new to me: three-valued logic.</p>
+<p>I encountered this when working out the expected behaviour of the functions <code>any</code> and <code>all</code> which are used for aggregation of boolean/logical values.</p>
+<p>If I have a vector without any NA values, the behaviour of these functions is pretty straightforward. In the example below, <code>vec &gt; 3</code> evaluates to <code>FALSE FALSE FALSE  TRUE  TRUE</code> and so a call to <code>any()</code> results in <code>TRUE</code> and a call to <code>all()</code> results in <code>FALSE</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">vec <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span></span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">any</span>(vec <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># are any values greater than 5?</span></span></code></pre></div></div>
+<pre><code>## [1] TRUE</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">all</span>(vec <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># are all values greater than 5?</span></span></code></pre></div></div>
+<pre><code>## [1] FALSE</code></pre>
+<p>Things get a little more complicated when we have a vector containing <code>NA</code> values. My vector, <code>na_vec</code>, has had an <code>NA</code> appended to the end and I’ve changed the expression to <code>na_vec &gt; 5</code>. In this case of <code>all()</code>, as there are definitely some values which are less than 5, we can say definitively that the answer is <code>FALSE</code>. However, in the case of <code>any()</code>, things are less clear. As <code>NA</code> represents a missing value, it might be the case that this missing value is greater than 5, and so even though none of the known values are greater than 5, we cannot be sure that the missing one is not. Therefore, we get <code>NA</code> back.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">na_vec <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>, <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">NA</span>)</span>
+<span id="cb5-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">any</span>(na_vec <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># are any values greater than 5?</span></span></code></pre></div></div>
+<pre><code>## [1] NA</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">all</span>(na_vec <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&gt;</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># are all values greater than 5?</span></span></code></pre></div></div>
+<pre><code>## [1] FALSE</code></pre>
+<p>If needed in principle, we can set the argument <code>na.rm = TRUE</code> for both of these functions, stripping out the <code>NA</code> values and continuing with the evaluation as if they were not there.</p>
+<p>I don’t think this is overly complex when using these functions, though it makes things more interesting when trying to implement them. There a <a href="https://en.wikipedia.org/wiki/Three-valued_logic">Wikipedia article</a> on the topic, and it also has other names like “Kleene logic”.</p>
+<p>I drew this out as a simple flowchart to make sure I had it right, and this is the logic inside it:</p>
+<section id="in-the-case-of-any" class="level4">
+<h4 class="anchored" data-anchor-id="in-the-case-of-any">In the case of <code>any</code>:</h4>
+<ol type="1">
+<li>Can you say that the condition has been met? If yes, return TRUE. If no, go to next step.</li>
+<li>Are there are missing values? If no, return FALSE. If yes, return NA.</li>
+</ol>
+</section>
+<section id="and-in-the-case-of-all" class="level4">
+<h4 class="anchored" data-anchor-id="and-in-the-case-of-all">And in the case of <code>all</code>:</h4>
+<ol type="1">
+<li>Can you say that the condition has been met? If no, return FALSE. If yes from the non-missing values (so more like “maybe”!), go to next step.</li>
+<li>Are there are missing values? If no, return TRUE If yes, return NA.</li>
+</ol>
+<p><img src="https://niccrane.com/posts/three-valued-logic/three_valued_logic.jpeg" class="img-fluid" style="width:25.0%"></p>
+<p>Now I write it out, it doesn’t seem overly complex, but it was pretty interesting encountering it for the first time. This concept also exists in SQL and I’m surprised I’ve not come across it before.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/three-valued-logic/</guid>
+  <pubDate>Fri, 16 Apr 2021 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Ten Steps to Becoming a Tidyverse Contributor</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/tidyverse-contributor/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This year has been a crazy whirlwind for me – I moved job once, moved house 3 times, <a href="https://www.datacamp.com/courses/developing-r-packages">co-authored a course on Data Camp</a>, got invited by a former colleague to assist with a workshop at rstudio::conf 2019, was accepted to present at the very same conference, and became a <a href="https://github.com/tidymodels/broom/pull/486">minor contributor to the tidyverse</a>. In this blog post I’ll talk about reasons for contributing and then walk through the steps I took to help guide others.</p>
+<p>A disclaimer before I start: I am no expert here and am talking about something I have done once. My aim here is to clarify the process and hopefully make it clear to other members of the R community that this isn’t as hard or intimidating as it might sound.</p>
+<p>It all started with the <a href="https://www.rstudio.com/resources/videos/contributing-to-tidyverse-packages/">fantastic talk by Mara Averick at the 2018 RStudio Conference</a>. Mara talked about different ways of getting involved and made me realise that contributing, specifically code, was both something I wanted to do, and something that was within reach.</p>
+<p>A while later, I saw this tweet by <a href="http://www.alexpghayes.com/">Alex Hayes</a>, who was doing an <a href="https://blog.rstudio.com/2018/04/18/summer-interns/">internship</a> at RStudio, and couldn’t turn down the opportunity. Massive thanks once again to both Alex and Mara!</p>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/alex_hayes_tweet.png" class="img-fluid" style="width:30.0%"></p>
+<p>I’d never thought about getting involved in contributing code because of my perception of some of the toxic culture of open source, and <a href="https://opensourcesurvey.org/2017/#insights">this perception isn’t totally unwarranted</a>.</p>
+<p>This year, however, I’ve seen <a href="https://www.theregister.co.uk/2018/09/17/linus_torvalds_linux_apology_break/">a lot of</a> <a href="https://stackoverflow.blog/2018/04/26/stack-overflow-isnt-very-welcoming-its-time-for-that-to-change/">evidence to suggest that this is changing</a>, and, regardless, the R community, is <a href="https://forwards.github.io/">way</a> <a href="https://rladies.org/">ahead</a> <a href="https://community.rstudio.com/">of the curve</a> in terms of being <a href="https://www.r-bloggers.com/the-r-community-is-awesome-and-fast/">welcoming, friendly</a>, and <a href="https://blog.revolutionanalytics.com/2017/06/r-community.html">willing to help newbies of all varieties to get involved</a>. <strong>I do not believe for even a split second that my concerns apply to the R community in 2018.</strong></p>
+<p>There are a lot of good reasons to contribute to open-source; half of the respondents to the Open Source Survey in 2017 <a href="https://opensourcesurvey.org/2017/#data">said that their open source contributions helped them get their current job</a>. My personal reasons for getting involved, however, were more about a) getting acquainted with some top-notch R code and hopefully levelling up my skills as a result, b) interacting with more of the R community, and c) helping lessen my imposter syndrome. I think it’s time for an inspirational quote now:</p>
+<blockquote class="blockquote">
+<p>“When I started my transition into data science, I said yes to pretty much every opportunity that came my way, even if it felt slightly beyond my skill set or experience level…I said yes to many of these things when it felt like I wasn’t sure if I was ready.” - Julia Silge (Interview with And Comfort, October 2018)</p>
+</blockquote>
+<p>So, without further ado, let’s take a look at the ten steps to becoming a tidyverse contributor. Please note that there may be nuances and details that I have missed here, but this should provide a rough guide to anyone who’s thinking about getting involved and wants to know a bit more about exactly what that looks like.</p>
+<p>Just to be clear; these steps apply to contributing to R packages in general and not just the tidyverse. However, the tidyverse team have been especially good for <a href="https://www.tidyverse.org/articles/2017/08/contributing/">encouraging people to get involved</a>.</p>
+<section id="step-1---decide-how-to-contribute" class="level1">
+<h1>Step 1 - Decide How to Contribute</h1>
+<p>I want to emphasise at this point that contributing code is not the only way to get involved; the reason why I’m focussing on this in this blog post is because a) it’s what I did, and b) it’s the method of contribution I feel like people know the least about.</p>
+<p>However, as <a href="https://www.rstudio.com/resources/videos/contributing-to-tidyverse-packages/">Mara discusses in her talk</a> (no really, just go watch it now, seriously!), there are other equally valid and important ways of getting involved.</p>
+</section>
+<section id="step-2---learn" class="level1">
+<h1>Step 2 - Learn!</h1>
+<p>Whilst there is some pre-requisite knowledge required to contribute code to R packages, it’s not as much as I expected. You absolutely should be comfortable with working with and writing functions in R. Beyond that, some familiarity with git is needed – things like clone, commit, and push, though doing it all via RStudio is fine. You’ll need to know the basics of R package building – when I say basics, what I mean is that you’re not writing a package from scratch, so don’t need to know every little detail. However, you should have a good idea of the directory structure of an R package, how to write tests and documentation, and how to build the page. Finally, you’ll need to know how to create a pull request on GitHub, which, once you’ve conquered the other items on the list, fairly uncomplicated. I’ve linked to resources for all of these things at the end of this post.</p>
+</section>
+<section id="step-3---find-an-issue" class="level1">
+<h1>Step 3 - Find an Issue</h1>
+<p>The next step is finding an issue to work on. Luckily, many issues are tagged on GitHub with “beginner friendly”, “help wanted”, or “good first issue” to help point you in the right direction.</p>
+<p>In the GIF below, I show how to get from the CRAN page for a package – broom in this case – to a potential issue to work on. I first click on the URL next to “BugReports” to get taken to the GitHub issues page. Next I find a relevant tag – “beginner friendly” in this case. Once I click on the tag, I’m shown all issues with that tag. I then pick one, and read the description to see if it’s something I think would be good to look at getting involved with.</p>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/broom_find_issue.gif" class="img-fluid" style="width:75.0%"></p>
+</section>
+<section id="step-4---ask-if-you-can-help" class="level1">
+<h1>Step 4 - Ask if You Can Help</h1>
+<p>Don’t charge straight into trying to write code! You need to ask for help – it’s always good to check that someone else isn’t already working on this issue, and ask to get involved. You don’t want to spend ages working on something and then find out someone else has submitted a pull request first! Try to be as specific as possible – unlike my comment here, ellessenne says exactly what they’ll be looking at!</p>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/ask_to_help.png" class="img-fluid"></p>
+</section>
+<section id="step-5---fork-the-repo" class="level1">
+<h1>Step 5 - Fork the Repo</h1>
+<p>Forking the repo means making a copy of it which is saved to your GitHub account. Click on the button as shown below.</p>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/fork.png" class="img-fluid"></p>
+</section>
+<section id="step-6---open-as-new-project-in-rstudio-make-a-branch" class="level1">
+<h1>Step 6 - Open as New Project in RStudio &amp; Make a Branch</h1>
+<p>Create a new project (“from version control”) in RStudio using the URL for your copy of the repo - the location for the URL is shown below.</p>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/clone_url.png" class="img-fluid" style="width:50.0%"></p>
+<p>Once you’re in this project, make a new branch, making sure “sync with remote” is checked.</p>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/branch_in_rstudio.gif" class="img-fluid"></p>
+</section>
+<section id="step-7---familiarise-yourself-with-the-code" class="level1">
+<h1>Step 7 - Familiarise Yourself with the Code</h1>
+<p>Play with the code and see if you can reproduce the issue, and work out the cause. I tend to run through things one line at a time, not moving on til I have a pretty good idea what each line is meant to be doing.</p>
+</section>
+<section id="step-8---write-code" class="level1">
+<h1>Step 8 - Write Code</h1>
+<p>Once you’ve worked out how to fix the issue, it’s time to write your code! Conform to the coding style used in the rest of the code, be concise but clear, and don’t introduce any new dependencies (if this is needed, it should be discussed first). Don’t forget to update any function parameter documentation.</p>
+<p>The image below shows a diff of the file I edited before and after the changes I made. There is very little changed – it’s best to work on small issues to build trust with the package maintainer over time.</p>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/write_code.png" class="img-fluid"></p>
+</section>
+<section id="step-9---submit-pr-and-wait" class="level1">
+<h1>Step 9 - Submit PR and Wait</h1>
+<p>Once I’d submitted my pull request, I waited with the patience of your average toddler that’s been sat down in front of a plate of marshmallows and told not to eat any. Look, I was excited – I was making my first tidyverse pull request! I nearly lost sight of the fact that people have lives, jobs, and frankly, other things to be doing with their time. Ultimately, I’m glad I didn’t nudge as I feel like it would have felt rude. There were a few changes and additions needed, but eventually my changes got merged into the master branch.</p>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/pr_and_wait.png" class="img-fluid" style="width:50.0%"></p>
+</section>
+<section id="step-10---celebrate-then-encourage-others-to-get-involved-and-share-your-experience" class="level1">
+<h1>Step 10 - Celebrate! Then Encourage Others to Get Involved and Share Your Experience</h1>
+<p><img src="https://niccrane.com/posts/tidyverse-contributor/ermagerd.png" class="img-fluid" style="width:50.0%"></p>
+<p>I was pleasantly surprised by the fact that I already had most of the background knowledge required, and all I really needed was some inspiration to get involved and the patient Alex Hayes being awesome at guiding me through the process.</p>
+<p>I’d like to end by emphasising that, although I’ve been using R on and off for 8 years, and as part of my job for 3, I believe I could have contributed sooner if I’d known more about the process. A lot is still unclear to me but I’m learning more by talking to people. If you’re unsure, watch the repos and see the conversations and how people go about different things. Look at the individual commits people make. Get a feel for what’s going on.</p>
+<p>I’m still so new to this, and still agonise on phrasing every time I open an issue or pull request, but I think that as long as you’re polite, accept feedback well, and don’t try to get too far ahead of yourself, it’s probably going to be a really positive experience for you. The R community is made up of a lot of really awesome people.</p>
+</section>
+<section id="resources" class="level1">
+<h1>Resources</h1>
+<p>Talk by Mara Averick on contributing: https://www.rstudio.com/resources/videos/contributing-to-tidyverse-packages/</p>
+<p>Guide to contributing code to the tidyverse: https://www.tidyverse.org/articles/2017/08/contributing/</p>
+<p>rOpenSci contributing guide: https://ropensci.github.io/dev_guide/contributingguide.html</p>
+<p>Repo walking through making a pull request: https://github.com/firstcontributions/first-contributions</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/tidyverse-contributor/</guid>
+  <pubDate>Wed, 28 Nov 2018 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Scraping rstudio::conf 2018 Abstracts</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/scraping-rstudioconf-2018-abstracts/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>RStudio Conference 2019 takes place in January 2019, and this week RStudio put out a <a href="https://blog.rstudio.com/2018/08/20/rstudio-conf-2019-contributed-talks-eposters/">call for contributed talks and e-posters</a>. Though I was eager to browse previous years’ abstracts for inspiration, I couldn’t find them all in one place, and so I decided to use one of my favourite R packages, <code>rvest</code>, to do some web scraping to grab the content.</p>
+<p>My main aim was to find all of the abstracts for the contributed talks only from 2018.</p>
+<p>As this ended up being an unusually long blog post, here’s a table containing links to the videos and abstract for contributed talks. A detailed walk through of the code used to create it can be found below.</p>
+<p>As ever, give me a shout <a href="https://twitter.com/nic_crane">on Twitter</a> if you have any comments or questions!</p>
+<p>Here’s a walkthrough of the code, and the full list of abstracts.</p>
+<section id="getting-started" class="level1">
+<h1>Getting Started</h1>
+<p>I found last year’s conference schedule <a href="https://beta.rstudioconnect.com/content/3105/">here</a>, which seemed as good a place as any to start. First, I loaded the <code>rvest</code> package and used <code>read_html()</code> (from <code>xml2</code> which is automatically loaded when you load <code>rvest</code>) to pull the html from the page.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(rvest)</span>
+<span id="cb1-2">my_html <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_html</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"https://beta.rstudioconnect.com/content/3105/"</span>)</span>
+<span id="cb1-3">my_html</span></code></pre></div></div>
+<pre><code>## {xml_document}
+## &lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+## [1] &lt;head&gt;\n&lt;meta charset="utf-8"&gt;\n&lt;meta http-equiv="Content-Type" cont ...
+## [2] &lt;body&gt;\n\n&lt;style type="text/css"&gt;\n.main-container {\n  max-width: 9 ...</code></pre>
+<p>The <code>my_html</code> object is an xml document, and to do anything useful with it, I need to work out which components I need. I could do this manually, but it’s much simpler to use <a href="https://selectorgadget.com/">Selector Gadget</a> to help me.</p>
+<section id="selector-gadget" class="level2">
+<h2 class="anchored" data-anchor-id="selector-gadget">Selector Gadget</h2>
+<p>Selector Gadget is a tool which takes a lot of effort out of webscraping. For an in-depth description, check out <a href="https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html">this rvest vignette</a>. In short, once Selector Gadget is loaded, I click on any unselected components to pick which ones I need (in green), look at what else is highlighted (in yellow) and then click on these to deselect them (now in red) and carry on selecting and/or deselecting components until only the ones I want are in green or yellow.</p>
+<p><img src="https://niccrane.com/posts/scraping-rstudioconf-2018-abstracts/selector_gadget.png" class="img-fluid" style="width:50.0%"></p>
+<p>Then, I copy the text out of the box, in the case, “.talk-title”. This is the CSS selector needed to grab those components, and I supply this as the <code>css</code> argument to <code>html_nodes()</code>. As I just want the inner text, I pipe the result of this into <code>html_text()</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">talks <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> my_html <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_nodes</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">".talk-title"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb3-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_text</span>()</span>
+<span id="cb3-4"></span>
+<span id="cb3-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(talks)</span></code></pre></div></div>
+<pre><code>## [1] "\nTo the Tidyverse and Beyond: Challenges for the Future in Data Science\n\n"
+## [2] "\nTo the Tidyverse and Beyond: Challenges for the Future in Data Science\n\n"
+## [3] "\nTidy spatial data analysis\n\n"
+## [4] "Scaling Shiny apps with async programming"
+## [5] "\nRStudio 1.1 new features\n\n"
+## [6] "\nThe future of time series and financial analysis in the tidyverse\n\n"</code></pre>
+<p>I now repeat this process to get the presenter names. Handily, the CSS selector for these is “.presenter”!</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">authors <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> my_html <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb5-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_nodes</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">".presenter"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb5-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_text</span>()</span>
+<span id="cb5-4"></span>
+<span id="cb5-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(authors)</span></code></pre></div></div>
+<pre><code>## [1] "Dianne Cook"   "Dianne Cook"   "Edzer Pebesma" "Joe Cheng"
+## [5] "Kevin Ushey"   "Davis Vaughan"</code></pre>
+<p>Now I’ve got my talks and authors, I’m next going to combine them in a <code>data_frame</code>. Once this is done, I’m also going to tidy them up by removing all the newline characters (“”) from the titles.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(dplyr)</span>
+<span id="cb7-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(stringr)</span>
+<span id="cb7-3">schedule <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data_frame</span>(talks, authors) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb7-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">talks =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">str_remove_all</span>(talks, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">\n</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb7-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">distinct</span>()</span>
+<span id="cb7-6"></span>
+<span id="cb7-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(schedule)</span></code></pre></div></div>
+<pre><code>## # A tibble: 6 x 2
+##   talks                                                        authors
+##   &lt;chr&gt;                                                        &lt;chr&gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Future in D~ Dianne Cook
+## 2 Tidy spatial data analysis                                   Edzer Pebe~
+## 3 Scaling Shiny apps with async programming                    Joe Cheng
+## 4 RStudio 1.1 new features                                     Kevin Ushey
+## 5 The future of time series and financial analysis in the tid~ Davis Vaug~
+## 6 Developing robust shiny apps with regression testing         Winston Ch~</code></pre>
+<p>Great! So now what? Well, the point of this analysis is to look at the contributed talks, rather than those from invited speakers or RStudio staff, so in the next part of this post, I’m going to be using lots of <code>dplyr</code> joins to remove these!</p>
+</section>
+</section>
+<section id="finding-only-contributed-talks" class="level1">
+<h1>Finding Only Contributed Talks</h1>
+<p>Let’s start of with identifying talks from invited speakers and RStudio staff.</p>
+<p>I found <a href="https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/">this post on the RStudio blog</a> which lists the invited speakers. I repeat the process from earlier using <code>rvest</code> and <code>xml2</code> functions to scrape the list of invited speakers.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">invited_speakers <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_html</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb9-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_nodes</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"table:nth-child(6) td:nth-child(1)"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb9-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_text</span>()</span>
+<span id="cb9-4"></span>
+<span id="cb9-5">invited <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data_frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">authors =</span> invited_speakers, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Status =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Invited"</span>)</span>
+<span id="cb9-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(invited)</span></code></pre></div></div>
+<pre><code>## # A tibble: 6 x 2
+##   authors         Status
+##   &lt;chr&gt;           &lt;chr&gt;
+## 1 Mara Averick    Invited
+## 2 Nick Carchedi   Invited
+## 3 Tanya Cashorali Invited
+## 4 Eric Colson     Invited
+## 5 Sandra Griffith Invited
+## 6 Aaron Horowitz  Invited</code></pre>
+<p>Now I need to combine this back with my original table, <code>schedule</code>, so I use <code>left_join()</code> from <code>dplyr</code> to help me.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">author_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(schedule, invited, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"authors"</span>)</span>
+<span id="cb11-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(author_tbl)</span></code></pre></div></div>
+<pre><code>## # A tibble: 6 x 3
+##   talks                                                authors      Status
+##   &lt;chr&gt;                                                &lt;chr&gt;        &lt;chr&gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Fut~ Dianne Cook  &lt;NA&gt;
+## 2 Tidy spatial data analysis                           Edzer Peb~ Invit~
+## 3 Scaling Shiny apps with async programming            Joe Cheng    &lt;NA&gt;
+## 4 RStudio 1.1 new features                             Kevin Ush~ &lt;NA&gt;
+## 5 The future of time series and financial analysis in~ Davis Vaugh~ &lt;NA&gt;
+## 6 Developing robust shiny apps with regression testing Winston Ch~ &lt;NA&gt;</code></pre>
+<p>Something you may have noticed is that we have some duplicated rows in the table, and so I use <code>distinct()</code> to remove these.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1">author_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">distinct</span>(author_tbl)</span>
+<span id="cb13-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(author_tbl)</span></code></pre></div></div>
+<pre><code>## # A tibble: 6 x 3
+##   talks                                                authors      Status
+##   &lt;chr&gt;                                                &lt;chr&gt;        &lt;chr&gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Fut~ Dianne Cook  &lt;NA&gt;
+## 2 Tidy spatial data analysis                           Edzer Peb~ Invit~
+## 3 Scaling Shiny apps with async programming            Joe Cheng    &lt;NA&gt;
+## 4 RStudio 1.1 new features                             Kevin Ush~ &lt;NA&gt;
+## 5 The future of time series and financial analysis in~ Davis Vaugh~ &lt;NA&gt;
+## 6 Developing robust shiny apps with regression testing Winston Ch~ &lt;NA&gt;</code></pre>
+<p>Great! Now I’ve remove the duplications, let’s take a look at how many rows have no value in the <code>Status</code> column. I can use <code>sum()</code> and <code>is.na()</code> to do this</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(author_tbl<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>Status))</span></code></pre></div></div>
+<pre><code>## [1] 51</code></pre>
+<p>I still have 51 rows with no value in the <code>Status</code> column, but I’m only expecting around 20. I need to remove talks from RStudio staff to get to my contributed talks.</p>
+<p>I did the next bit manually, by searching for any of the individuals I hadn’t already heard of. It’s likely that there’s a quicker way to do this, using the web scraping techniques we’ve already looked at.</p>
+<p>In no particular order…</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1">rstudio_staff <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Joe Cheng"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Winston Chang"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Alan Dipert"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Sean Lopp"</span>,</span>
+<span id="cb17-2">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Kevin Ushey"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Jonathan McPherson"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Mel Gregory"</span>,</span>
+<span id="cb17-3">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Yihui Xie"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Max Kuhn"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Jenny Bryan"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Jim Hester"</span>,</span>
+<span id="cb17-4">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Joseph Rickert"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Jeff Allen"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Aron Atkins"</span>,</span>
+<span id="cb17-5">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Barbara Borges Ribeiro"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Nathan Stephens"</span>,</span>
+<span id="cb17-6">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Mine Cetinkaya-Rundel"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Aaron Berg"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hadley Wickham"</span>,</span>
+<span id="cb17-7">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Edgar Ruiz"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Amanda Gadrow"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"JJ Allaire"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Kevin Kuo"</span>,</span>
+<span id="cb17-8">                   <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Javier Luraschi"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Michael Quinn"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Tareef Kawaf"</span>)</span>
+<span id="cb17-9"></span>
+<span id="cb17-10">rstudio <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data_frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">authors =</span> rstudio_staff, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Status =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"RStudio"</span>)</span>
+<span id="cb17-11"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(rstudio)</span></code></pre></div></div>
+<pre><code>## # A tibble: 6 x 2
+##   authors            Status
+##   &lt;chr&gt;              &lt;chr&gt;
+## 1 Joe Cheng          RStudio
+## 2 Winston Chang      RStudio
+## 3 Alan Dipert        RStudio
+## 4 Sean Lopp          RStudio
+## 5 Kevin Ushey        RStudio
+## 6 Jonathan McPherson RStudio</code></pre>
+<p>OK, so this is where it gets a little complicated, so please bear with me.</p>
+<p>What I need to do next is combine my list of RStudio people with the <code>schedule</code> data_frame. However, I can’t just do a <code>left_join</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(author_tbl, rstudio, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"authors"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb19-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>()</span></code></pre></div></div>
+<pre><code>## # A tibble: 6 x 4
+##   talks                                       authors    Status.x Status.y
+##   &lt;chr&gt;                                       &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;
+## 1 To the Tidyverse and Beyond: Challenges fo~ Dianne Co~ &lt;NA&gt;     &lt;NA&gt;
+## 2 Tidy spatial data analysis                  Edzer Peb~ Invited  &lt;NA&gt;
+## 3 Scaling Shiny apps with async programming   Joe Cheng  &lt;NA&gt;     RStudio
+## 4 RStudio 1.1 new features                    Kevin Ush~ &lt;NA&gt;     RStudio
+## 5 The future of time series and financial an~ Davis Vau~ &lt;NA&gt;     &lt;NA&gt;
+## 6 Developing robust shiny apps with regressi~ Winston C~ &lt;NA&gt;     RStudio</code></pre>
+<p>Oh no! The left join has created 2 new columns, <code>Status.x</code> and <code>Status.y</code>, representing the value of <code>Status</code> in the <code>x</code> and <code>y</code>.</p>
+<p>This is because all of the RStudio staff already exist in <code>author_tbl</code>, with a <code>Status</code> value of <code>NA</code>.</p>
+<p>Sad times! However, a quick trip to Stack Overflow tells me what I need to do: <em>Note that more efficient solutions may exist!</em></p>
+<ol type="1">
+<li><p>Extract all of the speakers who are not RStudio staff from <code>author_tbl</code> using <code>anti_join()</code>.</p></li>
+<li><p>Join my <code>rstudio</code> table with my original <code>schedule</code> table which does not have a <code>Status</code> column, using <code>left_join()</code>. As I removed duplicates after this, I’ll have to do it again, using <code>distinct()</code>.</p></li>
+<li><p>Combine the outputs from 1 and 2, using <code>bind_rows()</code>. It looks kinda ugly below as I wanted to do it all in a single pipe.</p></li>
+</ol>
+<p>I’ve used <code>tail()</code> to have a peek at the last 6 rows of the data_frame as I expect the rows for all the RStudio staff to be at the bottom of the table.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1">author_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">anti_join</span>(author_tbl, rstudio, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"authors"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb21-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bind_rows</span>(</span>
+<span id="cb21-3">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(rstudio, schedule, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"authors"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb21-4">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">distinct</span>()</span>
+<span id="cb21-5">  )</span>
+<span id="cb21-6"></span>
+<span id="cb21-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">tail</span>(author_tbl)</span></code></pre></div></div>
+<pre><code>## # A tibble: 6 x 3
+##   talks                                               authors       Status
+##   &lt;chr&gt;                                               &lt;chr&gt;         &lt;chr&gt;
+## 1 Debugging techniques in RStudio                     Amanda Gadrow RStud~
+## 2 Machine Learning with R and TensorFlow              JJ Allaire    RStud~
+## 3 Building Spark ML pipelines with sparklyr           Kevin Kuo     RStud~
+## 4 Deploying TensorFlow models with tfdeploy           Javier Luras~ RStud~
+## 5 Large scale machine learning using TensorFlow, Big~ Michael Quinn RStud~
+## 6 R for Presidents                                    Tareef Kawaf  RStud~</code></pre>
+<p>Hooray!</p>
+<p>I skim through the data and realise I probably need to add a <code>Status</code> value for the keynote speakers. JJ Allaire has already been included in <code>RStudio</code>, so it’s just Dianne Cook that I need to add. I use the same technique as before:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1">keynotes <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data_frame</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">authors =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Dianne Cook"</span>,</span>
+<span id="cb23-2">                       <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">Status =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"keynote"</span>)</span>
+<span id="cb23-3"></span>
+<span id="cb23-4">author_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">anti_join</span>(author_tbl, keynotes, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"authors"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb23-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">bind_rows</span>(</span>
+<span id="cb23-6">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">inner_join</span>(keynotes, schedule, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"authors"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb23-7">      <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">distinct</span>()</span>
+<span id="cb23-8">  )</span></code></pre></div></div>
+<p>I have a quick look over the data, and remove the discussions and closing remarks from the data using <code>filter()</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1">author_tbl <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> author_tbl <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb24-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span>talks <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%in%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"R in industry discussion"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Tidyverse discussion"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Closing remarks"</span>) )</span></code></pre></div></div>
+<p>Finally, I <code>filter()</code> again to only show the rows for which the <code>Status</code> column contains an <code>NA</code>, and drop the now-redundant <code>Status</code> column.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1">contributed_talks <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(author_tbl, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(Status)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb25-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>Status)</span>
+<span id="cb25-3"></span>
+<span id="cb25-4">contributed_talks</span></code></pre></div></div>
+<pre><code>## # A tibble: 20 x 2
+##    talks                                                 authors
+##    &lt;chr&gt;                                                 &lt;chr&gt;
+##  1 The future of time series and financial analysis in ~ Davis Vaughan
+##  2 infer: a package for tidy statistical inference       Andrew Bray
+##  3 Tidying up your network analysis with tidygraph and ~ Thomas Lin Peder~
+##  4 The lesser known stars of the tidyverse               Emily Robinson
+##  5 Creating interactive web graphics suitable for explo~ Carson Sievert
+##  6 Open-source solutions for medical marijuana           Carl Ganz
+##  7 Adaptive feedback for learnr tutorials                Daniel Kaplan
+##  8 tidycf: Turning analysis on its head by turning cash~ Emily Riederer
+##  9 Branding and automating your work with R Markdown     Daniel Hadley
+## 10 Understanding PCA using Shiny and Stack Overflow data Julia Silge
+## 11 Connecting to open source databases                   Kirill Müller
+## 12 An assignment operator to unpack vectors and lists    Nathan Teetor
+## 13 Developing and deploying large scale shiny applicati~ Herman Sontrop
+## 14 Five packages in five weeks - from boredom to contri~ Giora Simchoni
+## 15 A SAS-to-R success story                              Elizabeth J. Atk~
+## 16 Reinforcement learning in Minecraft with CNTK-R       Ali Zaidi
+## 17 Kaggle in the classroom: using R and GitHub to run p~ Colin Rundel
+## 18 Imagine Boston 2030: Using R-Shiny to keep ourselves~ Kayla Patel
+## 19 Something old, something new, something borrowed, so~ Chester Ismay
+## 20 Training an army of new data scientists               Marco Blume</code></pre>
+<p>I’m now left with around 20 talks, which is the number I expected. Hooray!</p>
+<p>The final step is to get hold of the abstracts.</p>
+</section>
+<section id="getting-the-urls-of-the-abstracts" class="level1">
+<h1>Getting the URLs of the Abstracts</h1>
+<p>The only place I could find the abstracts for the talks was on the individual videos, so there’s a final bit of webscraping to do.</p>
+<p>Like before, I used <code>read_html()</code> to pull the entire page, and then <code>html_nodes()</code> and <code>html_text()</code> to pull out the text.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1">video_links <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_html</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"https://www.rstudio.com/resources/videos/rstudioconf-2018-talks/"</span>)</span>
+<span id="cb27-2"></span>
+<span id="cb27-3">titles <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> video_links <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb27-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_nodes</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#post-15671 a"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb27-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_text</span>()</span>
+<span id="cb27-6"></span>
+<span id="cb27-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Get rid of any blank values</span></span>
+<span id="cb27-8">titles <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> titles[titles<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">""</span>]</span>
+<span id="cb27-9"></span>
+<span id="cb27-10"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(titles)</span></code></pre></div></div>
+<pre><code>## [1] "Greg Swinehart"
+## [2] "The unreasonable effectiveness of empathy"
+## [3] "Teach the Tidyverse to beginners"
+## [4] "How I Learned to Stop Worrying and Love the Firewall"
+## [5] "Imagine Boston 2030: Using R-Shiny to keep ourselves accountable and empower the public"
+## [6] "Phrasing: communicating data science through tweets, gifs, and classic misdirection"</code></pre>
+<p>I also need the links to the pages where the talks are. To pull these out, instead of <code>html_text()</code>, I used <code>html_attr()</code> which extracts everything with a specified attribute, in this case, “href” for the link locations.</p>
+<p>As there is duplication I only keep every alternating value.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1">links <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> video_links <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb29-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_nodes</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"#post-15671 a"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb29-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_attr</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"href"</span>)</span>
+<span id="cb29-4"></span>
+<span id="cb29-5">links <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> links[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">from =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">to =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">length</span>(links), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)]</span>
+<span id="cb29-6"></span>
+<span id="cb29-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(links)</span></code></pre></div></div>
+<pre><code>## [1] "https://www.rstudio.com/rviews/author/greg/"
+## [2] "https://www.rstudio.com/resources/videos/the-unreasonable-effectiveness-of-empathy/"
+## [3] "https://www.rstudio.com/resources/videos/teach-the-tidyverse-to-beginners/"
+## [4] "https://www.rstudio.com/resources/videos/how-i-learned-to-stop-worrying-and-love-the-firewall/"
+## [5] "https://www.rstudio.com/resources/videos/imagine-boston-2030-using-r-shiny-to-keep-ourselves-accountable-and-empower-the-public/"
+## [6] "https://www.rstudio.com/resources/videos/phrasing-communicating-data-science-through-tweets-gifs-and-classic-misdirection/"</code></pre>
+<p>I then grab the presenter names…</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1">names <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> video_links <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb31-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_nodes</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"em"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb31-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_text</span>()</span>
+<span id="cb31-4"></span>
+<span id="cb31-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(names)</span></code></pre></div></div>
+<pre><code>## [1] "JD Long"         "David Robinson"  "Ian Lyttle"      "Kayla Patel"
+## [5] "Mara Averick"    "Tanya Cashorali"</code></pre>
+<p>Great! Now I’m ready to combine my titles, links, and names. If we look at the first few elements of <code>names</code>, <code>titles</code> and <code>links</code>, we can see that there is an erroneous extra value in <code>titles</code> and <code>links</code> but not <code>names</code> - I must have accidentally picked this up with my selectors from earlier.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(names, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div></div>
+<pre><code>## [1] "JD Long"        "David Robinson" "Ian Lyttle"</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(titles, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div></div>
+<pre><code>## [1] "Greg Swinehart"
+## [2] "The unreasonable effectiveness of empathy"
+## [3] "Teach the Tidyverse to beginners"</code></pre>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb37" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(links, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>)</span></code></pre></div></div>
+<pre><code>## [1] "https://www.rstudio.com/rviews/author/greg/"
+## [2] "https://www.rstudio.com/resources/videos/the-unreasonable-effectiveness-of-empathy/"
+## [3] "https://www.rstudio.com/resources/videos/teach-the-tidyverse-to-beginners/"</code></pre>
+<p>To get rid of this, I combine <code>names</code> and <code>titles</code> in a data_frame and then <code>slice()</code> this extra row off before adding the <code>name</code> column.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb39" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1">abstract_links <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">data_frame</span>(titles, links) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb39-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">slice</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb39-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">name =</span> names)</span>
+<span id="cb39-4"></span>
+<span id="cb39-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(abstract_links)</span></code></pre></div></div>
+<pre><code>## # A tibble: 6 x 3
+##   titles                          links                           name
+##   &lt;chr&gt;                           &lt;chr&gt;                           &lt;chr&gt;
+## 1 The unreasonable effectiveness~ https://www.rstudio.com/resour~ JD Long
+## 2 Teach the Tidyverse to beginne~ https://www.rstudio.com/resour~ David R~
+## 3 How I Learned to Stop Worrying~ https://www.rstudio.com/resour~ Ian Lyt~
+## 4 Imagine Boston 2030: Using R-S~ https://www.rstudio.com/resour~ Kayla P~
+## 5 Phrasing: communicating data s~ https://www.rstudio.com/resour~ Mara Av~
+## 6 Rapid prototyping data product~ https://www.rstudio.com/resour~ Tanya C~</code></pre>
+<p>Awesome, I have my table of URLs, talks, and authors. Let’s join that with my table of contributed talks.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb41" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(contributed_talks, abstract_links, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"authors"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"name"</span>))</span></code></pre></div></div>
+<p>There are a couple of talks missing URLS and further inspection reveals that this is due to a missing middle name and a missing umlaut, so I make a couple of manual adjustments using <code>case_when()</code> and redo my join.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb42" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1">talks_and_urls <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> contributed_talks <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb42-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb42-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">authors =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">case_when</span>(</span>
+<span id="cb42-4">    authors <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Ali Zaidi"</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Ali-Kazim Zaidi"</span>,</span>
+<span id="cb42-5">    authors <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Kirill Müller"</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Kirill Muller"</span>,</span>
+<span id="cb42-6">    <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> authors</span>
+<span id="cb42-7">  )</span>
+<span id="cb42-8">) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb42-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(abstract_links, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"authors"</span> <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"name"</span>))</span>
+<span id="cb42-10"></span>
+<span id="cb42-11">talks_and_urls</span></code></pre></div></div>
+<p>And it’s worked! But what I want is the actual abstract text, which is what I’ll be doing in the next section.</p>
+</section>
+<section id="scraping-the-abstracts" class="level1">
+<h1>Scraping the Abstracts</h1>
+<p>In order to scrape the abstracts from the table of talks and URLs, I need to:</p>
+<ol type="1">
+<li>Read each URL</li>
+<li>Use the relevant selector to pull out just the abstract text nodes</li>
+<li>Use <code>html_text()</code> to pull just the text out of each node.</li>
+</ol>
+<p>I’ve done this a few times already, so it should be simple case of chucking this all into an <code>lapply()</code>, right? Well, not quite…</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb43" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1">abstracts <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(talks_and_urls<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>links, <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(i){</span>
+<span id="cb43-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_html</span>(i) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb43-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_nodes</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">".2_3 p"</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb43-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_text</span>()</span>
+<span id="cb43-5">})</span></code></pre></div></div>
+<pre><code>## Error in parse_simple_selector(stream): Expected selector, got &lt;NUMBER '.2' at 1&gt;</code></pre>
+<p>I quickly get an error. I’m not sure of the source of this, but a remedy here is to use XPath instead of CSS (easily acquired from Selector Gadget) to specify the components I want:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb45" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1">abstracts <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">lapply</span>(talks_and_urls<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>links, <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(i){</span>
+<span id="cb45-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">read_html</span>(i) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb45-3">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_nodes</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xpath=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'//*[contains(concat( " ", @class, " " ), concat( " ", "2_3", " " ))]//p'</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span></span>
+<span id="cb45-4">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">html_text</span>()</span>
+<span id="cb45-5">})</span></code></pre></div></div>
+<p>This takes a while as there are a lof of asbtracts to pull, but once it’s done, it’s looking good. This object is a list, each element containing a character vector of length 1 or more for each abstract. I want to make sure they’re all only 1 item long, so use <code>vapply()</code> to <code>paste()</code> the contents of each abstract into a single character object.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb46" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1">abstracts <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">vapply</span>(abstracts, <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(abstract){</span>
+<span id="cb46-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">paste</span>(abstract, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">collapse =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"  "</span>)</span>
+<span id="cb46-3">}, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">character</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span></code></pre></div></div>
+<p>Finally, I append the abstracts column onto my <code>talks_and_urls</code> table.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb47" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1">talks_and_urls<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>abstracts <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> abstracts</span></code></pre></div></div>
+<p>So here we have it, the full list of abstracts. I’m not 100% sure it’s accurate, as <a href="https://blog.rstudio.com/2017/11/06/rstudio-conf-2018-program/">this post</a> on the RStudio blog suggests different numbers of people for each status. My best guess is that couple of people I have down as delivering “contributed” talks were actually invited speakers who were invited after the publication of this blog post.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/scraping-rstudioconf-2018-abstracts/</guid>
+  <pubDate>Tue, 21 Aug 2018 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Comparing R packages using packagemetrics</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/packagemetrics/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>A colleague asked for my opinion on 2 packages; <code>loggit</code> and <code>futile.logger</code>. Whilst I have used <code>futile.logger</code> before, I hadn’t used <code>loggit</code> and so used the metrics of the package to evaluate the package itself.</p>
+<p>The <code>packagemetrics</code> package allows us to generate a number of metrics about a package, so we can compare them. The first thing I do is call <code>package_list_metrics()</code> to get metrics about these two packages. I’ve changed the shape of the table, just so it’s easier to read in this blog post.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(packagemetrics)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(dplyr)</span></code></pre></div></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">pkg_df <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">package_list_metrics</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"loggit"</span>, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"futile.logger"</span>))</span>
+<span id="cb2-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">as_data_frame</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(pkg_df), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">rownames =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"stat"</span>)</span></code></pre></div></div>
+<pre><code>## # A tibble: 18 x 3
+##    stat               V1                           V2
+##    &lt;chr&gt;              &lt;chr&gt;                        &lt;chr&gt;
+##  1 package            loggit                       futile.logger
+##  2 published          2018-04-09                   2016-07-10
+##  3 title              Effortless Exception Logging A Logging Utility for R
+##  4 depends_count      1                            1
+##  5 suggests_count     3                            2
+##  6 tidyverse_happy    " TRUE"                      FALSE
+##  7 has_vignette_build FALSE                        FALSE
+##  8 has_tests          TRUE                         TRUE
+##  9 reverse_count      " 0"                         27
+## 10 dl_last_month      "  250"                      37313
+## 11 ci                 Travis                       &lt;NA&gt;
+## 12 test_coverage      NONE                         &lt;NA&gt;
+## 13 forks              " 0"                         &lt;NA&gt;
+## 14 stars              15                           &lt;NA&gt;
+## 15 watchers           " 5"                         &lt;NA&gt;
+## 16 last_commit        &lt;NA&gt;                         &lt;NA&gt;
+## 17 last_issue_closed  8.4                          &lt;NA&gt;
+## 18 contributors       " 3"                         &lt;NA&gt;</code></pre>
+<p>You can see from the table that the last publication date for <code>loggit</code> is April 2018 whereas for <code>futile.logger</code> it is July 2016. It can be quite hard to gain much from this metric; whereas more recent updates can suggest active development and ongoing improvements to functionality, a lack of update may indicate that a package has reached a stable state.</p>
+<p>Reverse dependencies, however, tells us a lot more; if a package has a high number of reverse dependencies, one might conclude that there is a higher degree of trust in it in the community, but also more importantly, that it has been exposed to a higher number of users and therefore be less likely to have undiscovered bug. This is also true for the number of downloads.</p>
+<p>The second half of the values in the table are blank, implying that futile.logger isn’t on GitHub. For me, if this were true, it’d be a cause for concern as I’d like to be able to see the number of open issues and how recent updates were. However, a quick Google search tells me that futile.logger is in fact on GitHub, but just not linked to in its CRAN page.</p>
+<p>Reading GitHub issues pages is fairly simple. Rather than read every issue in detail, I try to get a rough idea of what’s going on, by skimming through. Typically a large number of issues tend to stem from user questions and enhancement requests, so just looking at the raw numbers isn’t enough.</p>
+<p><img src="https://niccrane.com/posts/packagemetrics/futile.logger-issues.png" class="img-fluid" style="width:50.0%"></p>
+<p>Looking through the open issues for <code>futile.logger</code>, the package authors has already flagged a couple of items as bugs, reducing my work. They appear to be do with namespacing issues, so certainly something to be aware of although not necessarily important.</p>
+<p>Going to the equivalent page for <code>loggit</code>, I see that there is only one ticket open, but has been flagged as an enhancement. However, fewer issues is not necessarily a sign of package quality, as it cannot be decoupled from package popularity.</p>
+<p><img src="https://niccrane.com/posts/packagemetrics/loggit-issues.png" class="img-fluid" style="width:50.0%"></p>
+<p>At this point, I could go on, and explore the source code for each package, but at this point I feel it’d lead to diminishing returns. The conclusion I draw and pass on to my colleague is that both packages seem to be functional with no glaring issues. As I’ve used <code>futile.logger</code> before, and it seems to be more widely used, I’d lean towards that one. My colleague thanks me for my advice and goes with <code>loggit</code> anyway because he’s used it before on a project and it worked pretty well there, which is fair enough.</p>
+<p>Package metrics can be a useful source of information about a package, but ultimately, there’s no substitute for experience. Other logging packages are available; these were merely the ones I’d heard of.</p>
+
+
+
+ ]]></description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/packagemetrics/</guid>
+  <pubDate>Mon, 30 Jul 2018 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Pop-up to confirm action in Shiny</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/shiny-confirm-popup/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>It’s a gorgeous evening in Bath tonight, and my evening has been improved by finding a free table outside at the pub, a large glass of Sauvignon Blanc, and working out how to include a JavaScript confirmation box in Shiny. Here, I’m using Shiny dashboard, although this methodology will work fine with other UI layouts.</p>
+<p>In the UI file, near the top of the dashboardBody, call <code>tags$head</code> and <code>tags$script</code> to give the source of the JavaScript file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">tags<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(</span>
+<span id="cb1-2">  tags<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">script</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">src =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'custom.js'</span>)</span>
+<span id="cb1-3">),</span></code></pre></div></div>
+<p>Then, in a file named <code>custom.js</code> as above, within the <code>www</code> folder, include the following code. Here, the button which the user clicks on has the inputId set to “submit”.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode js code-with-copy"><code class="sourceCode javascript"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">$</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">document</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">on</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'shiny:inputchanged'</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">,</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">function</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">event</span>) {</span>
+<span id="cb2-2"></span>
+<span id="cb2-3">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">event</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">name</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">===</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'submit'</span>) {</span>
+<span id="cb2-4"></span>
+<span id="cb2-5">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">var</span> r <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">confirm</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Are you sure you want to continue?"</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb2-6"></span>
+<span id="cb2-7">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (r <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">===</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">false</span>) {</span>
+<span id="cb2-8">      <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">event</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">.</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">preventDefault</span>()<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span>
+<span id="cb2-9">    }</span>
+<span id="cb2-10"></span>
+<span id="cb2-11">  }</span>
+<span id="cb2-12"></span>
+<span id="cb2-13">})<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">;</span></span></code></pre></div></div>
+<p>Want to know more about JavaScript events in Shiny? Visit this article on the RStudio website for a comprehensive guide: <a href="http://shiny.rstudio.com/articles/js-events.html" class="uri">http://shiny.rstudio.com/articles/js-events.html</a></p>
+
+
+
+ ]]></description>
+  <category>R</category>
+  <category>Shiny</category>
+  <guid>https://niccrane.com/posts/shiny-confirm-popup/</guid>
+  <pubDate>Mon, 15 Aug 2016 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Getting started with Leaflet in Shiny - interactive map apps</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/leaflet-shiny/</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>Lately I’ve been enjoying learning how to use <a href="http://www.shinyapps.io/">Shiny</a>, and experimenting with making a <a href="https://thisisnic.shinyapps.io/anscombe/">fairly basic app</a>, and wanted to develop my skills further. I’d been looking at an example app from the Shiny website which shows <a href="http://shiny.rstudio.com/gallery/bus-dashboard.html">live bus locations</a> in the US, refreshing at short intervals. It looked fairly complex at first, so I was pretty happy when, within 48 hours I’d managed to recreate <a href="https://thisisnic.shinyapps.io/London-Income-Map/">something of similar complexity</a>, so here’s your guide on how you can quickly get up to speed using interactive reactive maps in Shiny.</p>
+<p><img src="https://niccrane.com/posts/leaflet-shiny/london_income_map.png" class="img-fluid" style="width:50.0%"></p>
+<p>If you follow all of my steps, you will learn:</p>
+<ul>
+<li>The basics of geographic information systems (GIS)</li>
+<li>Spatial mapping in R</li>
+<li>How to use the R pipe (%&gt;%) operator</li>
+<li>How to use some features of the dplyr package</li>
+<li>How to make <a href="https://thisisnic.shinyapps.io/London-Income-Map/">choropleth maps</a></li>
+<li>How to use the <a href="https://rstudio.github.io/leaflet/">Leaflet</a> JavaScript library in R</li>
+</ul>
+<p>Here I’m presuming you already have a reasonable working knowledge of Shiny, and are at least at the point of having created your own app and run some of the examples. I’m also presuming that, like me, you have no prior knowledge of GISs, visualising spatial data, or Leaflet.</p>
+<section id="step-1-really-get-to-know-the-bus-dashboard-example" class="level2">
+<h2 class="anchored" data-anchor-id="step-1-really-get-to-know-the-bus-dashboard-example">Step 1: really get to know the bus dashboard example</h2>
+<p><img src="https://niccrane.com/posts/leaflet-shiny/bus_dashboard.png" class="img-fluid" style="width:50.0%"></p>
+<p>The bus dashboard example can be downloaded here. After playing around with the app in a browser, I printed out all of the code and annotated it with a few different colour pens. I went back and forth, writing notes and drawing diagrams until I understood what all the different components did and how they interacted with each other. This took a few hours, but the time invested was well worth it, as the design of the components of my app later felt pretty easy despite my lack of experience in making complex apps.</p>
+</section>
+<section id="step-2-read-up-on-visualising-spatial-data-in-r" class="level2">
+<h2 class="anchored" data-anchor-id="step-2-read-up-on-visualising-spatial-data-in-r">Step 2: read up on visualising spatial data in R</h2>
+<p>Next, go through the <a href="https://cran.r-project.org/doc/contrib/intro-spatial-rl.pdf">Introduction to visualising spatial data in R</a> by Robin Lovelace and James Cheshire, and be sure to run all the code examples. It’s a great introduction to the topic and covers all the relevant background you need, without being verbose. You might want to have a quick read up about geographical mapping systems, but don’t worry too much about in-depth understanding; a basic knowledge of the fact that <a href="https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system">different</a> <a href="https://en.wikipedia.org/wiki/World_Geodetic_System">systems</a> exist will do.</p>
+</section>
+<section id="step-3-read-up-on-leaflet-for-r" class="level2">
+<h2 class="anchored" data-anchor-id="step-3-read-up-on-leaflet-for-r">Step 3: read up on Leaflet for R</h2>
+<p>The official site of <a href="https://rstudio.github.io/leaflet/">Leaflet for R</a> tells you everything you need to know to get started. You don’t need to read everything here, but as a bare minimum make sure you check out the sections labelled “Introduction”, “The Map Widget”, and “Shiny Integration”.</p>
+</section>
+<section id="step-4-get-some-gis-boundary-files" class="level2">
+<h2 class="anchored" data-anchor-id="step-4-get-some-gis-boundary-files">Step 4: get some GIS boundary files</h2>
+<p>So now you know that the basics, you need some data to work with. We’ll start off with the boundaries for our maps. I had a few false starts and red herrings, but eventually found the boundary file I was after at the <a href="http://data.london.gov.uk/dataset/statistical-gis-boundary-files-london">London Datastore</a>. Once I’d downloaded the data and selected the relevant files, I did a quick plot to check it was what I was after.</p>
+</section>
+<section id="step-5-get-some-data" class="level2">
+<h2 class="anchored" data-anchor-id="step-5-get-some-data">Step 5: get some data</h2>
+<p>Again, I went to the London Datastore, but this time I downloaded data on the average income of tax payers by London borough. This was really easy to merge with my GIS boundary files, using the dplyr package to do SQL-style joins.</p>
+</section>
+<section id="step-6-code" class="level2">
+<h2 class="anchored" data-anchor-id="step-6-code">Step 6: code!</h2>
+<p><img src="https://niccrane.com/posts/leaflet-shiny/code.png" class="img-fluid" style="width:50.0%"></p>
+<p>Finally, it was time to pull it all together. I started off by writing a basic Shiny UI file, with placeholders for content, and then started filling in the different sections. First I added a static map, and then proceeded to adapt my code so that the map would change based on the user’s selections.</p>
+</section>
+<section id="step-7-refine" class="level2">
+<h2 class="anchored" data-anchor-id="step-7-refine">Step 7: refine</h2>
+<p>This is the step that I’m still at now. Whilst coding the map, my design changed to take into account the capabilities of Shiny and Leaflet. Originally I’d planned to use Shiny’s animated slider to scroll through the different years, but it became quickly apparent that this would render too slowly to be visually appealing. Although I offset some of this slowness by using the leafletProxy function to only redraw the coloured tiles but keep the underlying map, there was still some delay.</p>
+<p>With the resources I’ve linked to above and the occasional bit of Googling when things don’t quite work as expected, it’s fairly easy to get up and running making interactive maps with Shiny and Leaflet, so give it a go!</p>
+<p><a href="https://github.com/thisisnic/Shiny-London-Income-Map">Click here to view source code on GitHub.</a></p>
+<p><em>[Edited to add: I’ve been thinking about how I’d improve my code, and came to the conclusion that whilst this functions as a good introduction to a number of topics, if my goal was solely to create a choropleth of an area, I’d use something more lightweight than Leaflet to accomplish this.]</em></p>
+
+
+</section>
+
+ ]]></description>
+  <category>R</category>
+  <category>Shiny</category>
+  <guid>https://niccrane.com/posts/leaflet-shiny/</guid>
+  <pubDate>Wed, 27 Apr 2016 23:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

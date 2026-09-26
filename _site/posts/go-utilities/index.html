@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.35">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Nic Crane">
+<meta name="dcterms.date" content="2026-09-28">
+
+<title>Building Go Tools Without Writing Any Go – Nic Crane</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-46f66b053e56abd73bb6e954d61a315b.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-3497c1b0d03429dc8b8bfbaddbbef5f0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SJ58WZL69W"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-SJ58WZL69W', { 'anonymize_ip': true});
+</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Nic Crane</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../courses.html"> 
+<span class="menu-text">Courses</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../talks.html"> 
+<span class="menu-text">Talks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../projects/index.html"> 
+<span class="menu-text">Client Work</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../blog.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../blog.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Building Go Tools Without Writing Any Go</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">AI</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Nic Crane </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 28, 2026</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#the-motivation" id="toc-the-motivation" class="nav-link active" data-scroll-target="#the-motivation">The motivation</a></li>
+  <li><a href="#what-i-built" id="toc-what-i-built" class="nav-link" data-scroll-target="#what-i-built">What I built</a></li>
+  <li><a href="#the-role-of-the-human" id="toc-the-role-of-the-human" class="nav-link" data-scroll-target="#the-role-of-the-human">The role of the human</a></li>
+  <li><a href="#how-i-did-it" id="toc-how-i-did-it" class="nav-link" data-scroll-target="#how-i-did-it">How I did it</a></li>
+  <li><a href="#what-it-was-like" id="toc-what-it-was-like" class="nav-link" data-scroll-target="#what-it-was-like">What it was like</a></li>
+  <li><a href="#the-result" id="toc-the-result" class="nav-link" data-scroll-target="#the-result">The result</a></li>
+  <li><a href="#how-does-this-compare-to-open-source-work" id="toc-how-does-this-compare-to-open-source-work" class="nav-link" data-scroll-target="#how-does-this-compare-to-open-source-work">How does this compare to open source work?</a></li>
+  <li><a href="#conclusions" id="toc-conclusions" class="nav-link" data-scroll-target="#conclusions">Conclusions</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="the-motivation" class="level2">
+<h2 class="anchored" data-anchor-id="the-motivation">The motivation</h2>
+<p>I’m a pretty heavy user of AI in my day-to-day open source maintenance, but with a lot of care and caveats. Generating code is easy, but the challenge these days lies in having confidence in the results - not just that they’re correct, but that they fit in with existing design philosophy and won’t have unintended consequences. As a result of this, my work has shifted from solving problems with code to reviewing code, and my biggest challenges now lie in managing cognitive load and decision fatigue.</p>
+<p>I mostly work in R with some Python and C++, but one of my goals is to expand my skills into other languages.</p>
+<p>Recently I was at <a href="https://conf.posit.co/2026/">posit::conf</a> in Houston, watching Wes McKinney’s keynote <a href="https://posit.co/blog/posit-conf-2026-keynotes">“Navigating the Agentic Future”</a>, in which he says</p>
+<blockquote class="blockquote">
+<p>“Over the last year I’ve built tons of software but written no lines of code by hand”</p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="wes.png" class="img-fluid figure-img"></p>
+<figcaption>Slide from Wes McKinney’s keynote: “Lines of code I have written by hand in the past year. Effectively none.”</figcaption>
+</figure>
+</div>
+<p>Wes also mentions that he’s ended up shifting his focus to coding in languages which work well with agents, the most prevalent in his work is Go, describing himself as “an agentic Go programmer despite never having written a line of Go in [his] life”.</p>
+<p>At this point, I’m honestly feeling envy. My day-to-day open source maintenance works involves so much reading of mine and others’ AI generated code, and so the prospect of productivity where my engagement is with aspects of the project other than code sounds…well, bloody delightful!</p>
+</section>
+<section id="what-i-built" class="level2">
+<h2 class="anchored" data-anchor-id="what-i-built">What I built</h2>
+<p>And so I decided to take this and see where I could get to over the course of the rest of the day, armed with a Claude 5x Max plan and an attention span which was going to be mostly focused on watching talks.</p>
+<p>I decided to build a simple <a href="https://github.com/thisisnic/goaltracker">goal tracker app</a> which runs on the command line. It needed to be something I’d genuinely use, and it seemed like a good alternative to the website I was using for this kind of thing at the moment.</p>
+</section>
+<section id="the-role-of-the-human" class="level2">
+<h2 class="anchored" data-anchor-id="the-role-of-the-human">The role of the human</h2>
+<p>So, if I’m not writing the code, what am I doing in this project?</p>
+<p>In Wes’ keynote, he mentions that there a 3 key remaining skills that programmers need to produce code which isn’t just slop: judgment, taste, and agency.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="wes2.png" class="img-fluid figure-img"></p>
+<figcaption>Slide from Wes McKinney’s keynote: “The work I still have to do: Judgment, Taste, Agency”</figcaption>
+</figure>
+</div>
+<p>In essence, judgment is deciding what is actually needed for the project without veering into unnecessary complexity and really understanding the constraints.<br>
+Taste is about knowing whether the output is good or bad, with the failure mode here being decision fatigue. Agency is about making it happen - the model can solve the problem, but the desire to solve it in the first place must come from a human.</p>
+<p>The point about decision fatigue really resonated with me; recently I’d found myself in conversation with Claude learning about how air traffic controllers manage lapses in concentration to see if there were any techniques I could use in my open source work - taking regular breaks was as much as I took from it though.</p>
+</section>
+<section id="how-i-did-it" class="level2">
+<h2 class="anchored" data-anchor-id="how-i-did-it">How I did it</h2>
+<p>I hadn’t built this kind of thing before, and so I was concerned that both my judgment and taste may be lacking, but fortunately, I could outsource this. Wes had been making a lot of useful Go utilities lately, all stored within the <a href="https://github.com/kenn-io">Kenn Software organisation on GitHub</a>. I’m actually a regular user of one of them - <a href="https://github.com/kenn-io/roborev">roborev</a> which provides “Continuous code review for AI coding agents”.</p>
+<p>I use roborev most days when coding; when initialised in a repo, when I make a commit, roborev automatically runs and has an agent perform a review of the code. I tend to use this manually for open source work, inspecting the roborev review before pushing the code to GitHub.</p>
+<p>Here’s an example roborev review from some work I did recently on <a href="https://ellmer.tidyverse.org">ellmer</a>.</p>
+<pre><code>Review #848 ellmer (claude-code: opus)
+/home/nic/ellmer dirty on 1155-interactions
+Verdict: Fail [33.5k ctx · 1.6k out · ~$0.22]
+
+## Review Findings
+
+• Severity: Low
+• Location: R/provider-google-interactions.R:351
+• Problem: The %||% list() fallback is added only at the value_turn() call site.
+gemini_step_contents() still returns NULL when steps is missing or empty, or when no step produces
+content, because list_c(list()) is c(), which is NULL. The other caller, stream_content() at line
+638, therefore still gets NULL, and any new caller would hit the same trap. Nothing breaks today
+because the stream path tolerates NULL, but the contract is inconsistent.
+• Fix: Put the fallback inside gemini_step_contents(), e.g. list_c(...) %||% list(), and drop it
+from value_turn(). That way every caller always gets a list.
+
+--------
+
+• Severity: Low
+• Location: Rplots.pdf
+• Problem: A stray graphics-device output file sits untracked in the package root. If it gets
+committed by accident, it will also be flagged by R CMD check as a non-standard top-level file.
+• Fix: Delete it, or add it to .gitignore and .Rbuildignore.
+
+## Summary
+
+value_turn() for ProviderGoogleGemini now returns an empty contents list instead of NULL when an
+Interactions response has no steps (e.g. an incomplete status), and a new unit test covers that
+case.</code></pre>
+<p>It’s really helpful and regularly picks up mistakes, errors, or edge cases that the agent writing the code has missed - even with the most advanced models.</p>
+<p>In this project roborev served as both a tool and a template.</p>
+<p>I don’t recall the exact prompt I used any more, but essentially, I set up a new directory, opened up a Claude session using Fable 5.1, and instructed it to ask me questions to figure out the minimal requirements needed to create an MVP goal tracker project. I also told it to go take a look at the various projects in the Kenn Software organisation to use as a template in terms of approach, structure, and design.<br>
+This way, although I’m not confident that I know what “good” looks like here, I can lean on the decisions that had been made in the design of roborev and other projects.</p>
+<p>I then left the session running, with auto-accept turned on. I told it to commit things incrementally, inspect the roborev reviews after every commit, and only pause when input was needed from me - this way the agent was being given continuous feedback on the code but my involvement was limited to design decisions.</p>
+<p>I also specified a couple of other pieces of functionality I wanted here, like for the utility to be updated by running by a command like <code>goaltracker update</code>. The idea here was to have something running smoothly before bolting on more features.</p>
+</section>
+<section id="what-it-was-like" class="level2">
+<h2 class="anchored" data-anchor-id="what-it-was-like">What it was like</h2>
+<p>I then ignored it and let the agent run. It took most of the day to build the project, though most of that was due to me being busy and unable to provide input. It did use up over half of my Fable usage tokens for the week, so it was a resource intensive project.</p>
+<p>I was curious about what I’d get - could I produce working software with this little input, or would it result in broken slop that would be more effort than it was worth to fix?</p>
+</section>
+<section id="the-result" class="level2">
+<h2 class="anchored" data-anchor-id="the-result">The result</h2>
+<p>It actually worked terrifying well. The <a href="https://github.com/thisisnic/goaltracker">goaltracker</a> is fantastic and I use it weekly. While at posit::conf I actually had it implement really customised features, like privacy mode - press the ‘x’ key while viewing the tracker and it would hide all certain fields - exactly something I needed while inputting my real data while at a conference.</p>
+<p>Here’s a preview of the interface.</p>
+<pre><code>goaltracker · goals
+╭──────────────────────────────────────────────────╮╭──────────────────────────────────────────╮
+│ 2026                                             ││ run 500 km                               │
+│   2026     run 500 km                        43% ││ period 2026 (year)   id #1               │
+│   ✓ 2026-Q2  run a half marathon                 ││                                          │
+│   2026     finish the garden                     ││ why                                      │
+│   ✓ 2026-04  plant the hedge                     ││ Be able to say yes to a long day out     │
+│ 2027                                             ││ without thinking about it.               │
+│   2027     swim 5 km in open water               ││                                          │
+│                                                  ││ progress 215 km / 500 km                 │
+│                                                  ││ █████████████████░░░░░░░░░░░░░░░░░░░░░░░ │
+│                                                  ││                                          │
+│                                                  ││ history                                  │
+│                                                  ││   2026-03-31  120 km  end of March       │
+│                                                  ││   2026-05-31  215 km  end of May         │
+│                                                  ││                                          │
+╰──────────────────────────────────────────────────╯╰──────────────────────────────────────────╯
+
+a add · e edit · n notes · p progress · h hit · m missed · c clear · d delete · x private · j/k move · q quit</code></pre>
+<p>One of the things that I love about the utility is that while the UI above is a TUI - a terminal user interface for the human to interact with - it also was build with a CLI. This means that if I’m working with an agent session where it becomes relevant to update the data here, I can have the agent directly update it for me via the CLI.</p>
+</section>
+<section id="how-does-this-compare-to-open-source-work" class="level2">
+<h2 class="anchored" data-anchor-id="how-does-this-compare-to-open-source-work">How does this compare to open source work?</h2>
+<p>This is very different from typical open source maintenance - the outcome here was much more important to me than the code itself. Some of the lessons I learned here do transfer to my open source maintenance work though. When I was building more complex features on a project, I’d been reviewing the agent’s code output iteratively in chunks, but now I’m going to let it complete a full coding cycle with reviews and updates before engaging with the code.</p>
+<p>It was an interesting experiment from the perspective of my development as a programmer as well. Usually with this kind of project, my aim is to acquire some new knowledge, but here I didn’t learn anything much about Go at all. In this case, I learned how to approach agentic development and what was possible. I didn’t necessarily develop any additional taste or judgment either.</p>
+<p>This is radically different to the work I’m doing on Arrow, where I’ve been working on issue with how data is converted between Arrow types to R types via C++, and using this as an opportunity to learn about some of the <a href="https://arrow.apache.org/docs/r/">Arrow R package</a>’s inner mechanisms that I’d never felt like I could spare the time to deep dive into. The difference here though is that I <em>need</em> this knowledge so that next time I use AI to work on a type conversion problem, I know enough to be able to review the generated code myself.</p>
+</section>
+<section id="conclusions" class="level2">
+<h2 class="anchored" data-anchor-id="conclusions">Conclusions</h2>
+<p>I enjoyed my experiment - I since extended it to create a <a href="https://github.com/thisisnic/tasktracker">task tracker utility</a> which I use to plan my work - and while I still need to be a lot more involved in the code I work with in my day-to-day work, it’s great to know how easy it is to create utilities like this which can help me get things done.</p>
+<p>I’d recommend checking out Wes’ keynote when it’s out on the Posit Youtube channel - I really appreciated how he links agentic coding to decades old software engineering theory and shows how it’s still relevant today. There are a lot of examples of his experiences on real projects have influenced his thinking, and is a really balanced take on the wins and losses of this new approach to development, and how the challenges encountered when writing code have changed immensely.</p>
+<p>And in the meantime, check out this set of operating principles for coding agents which was referenced heavily in the talk: https://github.com/kenn-io/constitution/blob/main/CONSTITUTION.md</p>
+<hr>
+<p>Photo by <a href="https://unsplash.com/@egaomi">Khitomi Michiru</a> on <a href="https://unsplash.com/photos/nGP4knVCJTc">Unsplash</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/niccrane\.com");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

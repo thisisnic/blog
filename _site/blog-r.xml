@@ -3,7 +3,7 @@
 <channel>
 <title>Nic Crane</title>
 <link>https://niccrane.com/blog.html</link>
-<atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml" />
+<atom:link href="https://niccrane.com/blog-r.xml" rel="self" type="application/rss+xml" />
 <description />
 <generator>quarto-1.9.35</generator>
 <lastBuildDate>Wed, 23 Sep 2026 23:00:00 GMT</lastBuildDate>
@@ -6670,6 +6670,1598 @@ font-style: inherit;"&gt;"even_more_cats.csv"&lt;/span&gt;)&lt;/span&gt;&lt;/cod
   <category>Career</category>
   <guid>https://niccrane.com/posts/ursa-computing-first-month/</guid>
   <pubDate>Wed, 12 May 2021 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Why is eval parse bad?</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/eval-parse/</link>
+  <description> 
+
+
+
+
+
+&lt;p&gt;I was writing Arrow bindings for &lt;code&gt;na.omit&lt;/code&gt; and needed a way of applying &lt;code&gt;is.na&lt;/code&gt; to every column of a table at once. I’d originally implemented using &lt;code&gt;dplyr::filter&lt;/code&gt;, but had failed to realise that Arrow only suggests &lt;code&gt;dplyr&lt;/code&gt; but doesn’t import it, and so needed to refactor it.&lt;/p&gt;
+&lt;p&gt;Table objects in &lt;code&gt;Arrow&lt;/code&gt; have a &lt;code&gt;Filter&lt;/code&gt; method, and I knew that a naive implementation would be a for loop which iteratively called &lt;code&gt;Table$Filter(!is.na(column_name))&lt;/code&gt; for each column in my table. However, this would be ugly at best and inefficient at worst, and so what I really wanted was to be able to call &lt;code&gt;Table$Filter(!is.na(col1) &amp;amp; !is.na(col2) &amp;amp; ... !is.na(colN))&lt;/code&gt; where &lt;code&gt;1&lt;/code&gt;…&lt;code&gt;N&lt;/code&gt; are my column names.&lt;/p&gt;
+&lt;p&gt;An early implementation without &lt;code&gt;dplyr::filter&lt;/code&gt; looked like this:&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb1" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb1-1"&gt;filter_text &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;paste0&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"!is.na(tbl$"&lt;/span&gt;, &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;names&lt;/span&gt;(tbl), &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;")"&lt;/span&gt;, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;collapse =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;" &amp;amp; "&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb1-2"&gt;filter &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; rlang&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;parse_expr&lt;/span&gt;(filter_text)&lt;/span&gt;
+&lt;span id="cb1-3"&gt;tbl&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;Filter&lt;/span&gt;(rlang&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;eval_bare&lt;/span&gt;(filter))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;To break this down a bit, I’ll demonstrate a line by line run, using &lt;code&gt;airquality&lt;/code&gt; as my input data. Below you can see that we start off with 153 rows.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb2" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb2-1"&gt;tbl &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; arrow&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;Table&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;create&lt;/span&gt;(airquality)&lt;/span&gt;
+&lt;span id="cb2-2"&gt;tbl&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## Table
+## 153 rows x 6 columns
+## $Ozone &amp;lt;int32&amp;gt;
+## $Solar.R &amp;lt;int32&amp;gt;
+## $Wind &amp;lt;double&amp;gt;
+## $Temp &amp;lt;int32&amp;gt;
+## $Month &amp;lt;int32&amp;gt;
+## $Day &amp;lt;int32&amp;gt;
+##
+## See $metadata for additional Schema metadata&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If I call &lt;code&gt;na.omit&lt;/code&gt; on the &lt;code&gt;airquality&lt;/code&gt; data.frame, I’m left with 111 rows.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb4" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb4-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;nrow&lt;/span&gt;(&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;na.omit&lt;/span&gt;(airquality))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 111&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;So now for the Arrow implementation. I first construct my filter:&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb6" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb6-1"&gt;filter_text &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;paste0&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"!is.na(tbl$"&lt;/span&gt;, &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;names&lt;/span&gt;(tbl), &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;")"&lt;/span&gt;, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;collapse =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;" &amp;amp; "&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb6-2"&gt;filter_text&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "!is.na(tbl$Ozone) &amp;amp; !is.na(tbl$Solar.R) &amp;amp; !is.na(tbl$Wind) &amp;amp; !is.na(tbl$Temp) &amp;amp; !is.na(tbl$Month) &amp;amp; !is.na(tbl$Day)"&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I then convert the string to an expression.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb8" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb8-1"&gt;filter &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; rlang&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;parse_expr&lt;/span&gt;(filter_text)&lt;/span&gt;
+&lt;span id="cb8-2"&gt;filter&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## !is.na(tbl$Ozone) &amp;amp; !is.na(tbl$Solar.R) &amp;amp; !is.na(tbl$Wind) &amp;amp;
+##     !is.na(tbl$Temp) &amp;amp; !is.na(tbl$Month) &amp;amp; !is.na(tbl$Day)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, I evaluate the expression:&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb10" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb10-1"&gt;tbl&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;Filter&lt;/span&gt;(rlang&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;eval_bare&lt;/span&gt;(filter))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## Table
+## 111 rows x 6 columns
+## $Ozone &amp;lt;int32&amp;gt;
+## $Solar.R &amp;lt;int32&amp;gt;
+## $Wind &amp;lt;double&amp;gt;
+## $Temp &amp;lt;int32&amp;gt;
+## $Month &amp;lt;int32&amp;gt;
+## $Day &amp;lt;int32&amp;gt;
+##
+## See $metadata for additional Schema metadata&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It looks like it’s worked - it has! - but something feels wrong. I’ve heard people in the past talk about &lt;code&gt;eval(parse(text = stuff))&lt;/code&gt; being a bad way of doing things, and my solution felt a bit dirty in a similar way, though I wasn’t sure why.&lt;/p&gt;
+&lt;p&gt;A bit of a search and I found &lt;a href="https://stackoverflow.com/questions/13649979/what-specifically-are-the-dangers-of-evalparse"&gt;an answer on StackOverflow&lt;/a&gt;. In short, the main reasons that eval/parse is warned against are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;if you’re evaluating text passed in by a user there could be security concerns&lt;/li&gt;
+&lt;li&gt;there are other more efficient and human-readable ways of accomplishing the same thing&lt;/li&gt;
+&lt;li&gt;it may be unclear what’s being evaluated from what environment&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So, my code wasn’t as bad as I thought. However, in another bit of the Arrow codebase I’d seen some pretty nice code written using data masks and environment, and so refactored my code a little to mirror this style.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb12" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb12-1"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# paste together the filter function as a character vector&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb12-2"&gt;filter_text &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;paste0&lt;/span&gt;(&lt;/span&gt;
+&lt;span id="cb12-3"&gt;  &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;".data$Filter("&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb12-4"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;paste0&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"!is.na(.data$"&lt;/span&gt;, &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;names&lt;/span&gt;(tbl), &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;")"&lt;/span&gt;, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;collapse =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;" &amp;amp; "&lt;/span&gt;),&lt;/span&gt;
+&lt;span id="cb12-5"&gt;  &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;")"&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb12-6"&gt;)&lt;/span&gt;
+&lt;span id="cb12-7"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# parse expression; results in:&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb12-8"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# .data$Filter(!is.na(.data$Ozone) &amp;amp; !is.na(.data$Solar.R) &amp;amp; !is.na(.data$Wind) &amp;amp;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb12-9"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;#  !is.na(.data$Temp) &amp;amp; !is.na(.data$Month) &amp;amp; !is.na(.data$Day))&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb12-10"&gt;filter &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; rlang&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;parse_expr&lt;/span&gt;(filter_text)&lt;/span&gt;
+&lt;span id="cb12-11"&gt;&lt;/span&gt;
+&lt;span id="cb12-12"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# tidily evaluate the results, within the data mask&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb12-13"&gt;rlang&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;eval_tidy&lt;/span&gt;(filter,  rlang&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;new_data_mask&lt;/span&gt;(rlang&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;env&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;.data =&lt;/span&gt; tbl)))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;The above solution is my latest one at time of writing but hasn’t been reviewed or merged yet, so may require further changes. Here, I move in the called to &lt;code&gt;Table$Filter&lt;/code&gt; into the filter text, so the whole expression is captured. This now means that I can use the &lt;code&gt;.data&lt;/code&gt; pronoun to refer to the dataset, and instead of depending on the fact that a variable called &lt;code&gt;tbl&lt;/code&gt; has been passed into my function, can instead manually pass it in when I call &lt;code&gt;rlang::env&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;I’m happier with this solution; whilst it still feels weird to construct calls using strings, at least this way, what is being called against what feels a little cleaner.&lt;/p&gt;
+&lt;p&gt;One thing that really helped me work all this out was the &lt;a href="https://raw.githubusercontent.com/rstudio/cheatsheets/master/tidyeval.pdf"&gt;&lt;code&gt;rlang&lt;/code&gt; cheatsheet&lt;/a&gt;, which is a resource I’d recommend to anyone wrestling with tidy eval.&lt;/p&gt;
+&lt;p&gt;[Edited to add below]&lt;/p&gt;
+&lt;p&gt;So in the end, after discussing with a colleague, we decided that parsing an expression was still potentially problematic. Although I’d dismissed the possible security concerns, they mentioned that it could be the case that someone has a dodgy column name, and it was unclear whether encapsulating things in their own environment would remove this risk or not. They suggested that I see if I could get &lt;code&gt;purrr&lt;/code&gt; to do something useful, and after a little experimentation, here was my eventual solution.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb13" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb13-1"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# Creates a list of ChunkedArrays containing true/false for each value depending&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb13-2"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# if it's an NA or not&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb13-3"&gt;not_na &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; purrr&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;map&lt;/span&gt;(tbl&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;columns, &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;~!&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;is.na&lt;/span&gt;(.x))&lt;/span&gt;
+&lt;span id="cb13-4"&gt;&lt;/span&gt;
+&lt;span id="cb13-5"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# reduces across lists to a single ChunkedArray (i.e. only true if all rows contain true)&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb13-6"&gt;not_na_agg &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; purrr&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;reduce&lt;/span&gt;(not_na, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;`&lt;/span&gt;&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;&amp;amp;&lt;/span&gt;&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;`&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb13-7"&gt;&lt;/span&gt;
+&lt;span id="cb13-8"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# filter only to retrieve rows which match with true&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb13-9"&gt;tbl&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;Filter&lt;/span&gt;(not_na_agg)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;As is common in these circumstances, there was a simpler and more aesthetically pleasing solution available that didn’t require parsing of expressions. I’m much happier with the above code - it feels like a much better approach!&lt;/p&gt;
+&lt;p&gt;[Edited again!]&lt;/p&gt;
+&lt;p&gt;Ultimately we went with a different approach that implemented functionality that already exists in the Arrow package. This approach is even better as, instead of evaluating &lt;code&gt;!is.na&lt;/code&gt; on each column of data and combining them, we instead build an expression that is evaluated against the dataset.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb14" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb14-1"&gt;not_na &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; purrr&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;map&lt;/span&gt;(tbl&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;columns, &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;~&lt;/span&gt;arrow&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;:::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;build_array_expression&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"is_valid"&lt;/span&gt;, .x))&lt;/span&gt;
+&lt;span id="cb14-2"&gt;not_na_agg &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;Reduce&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"&amp;amp;"&lt;/span&gt;, not_na)&lt;/span&gt;
+&lt;span id="cb14-3"&gt;tbl&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;Filter&lt;/span&gt;(arrow&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;:::&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;eval_array_expression&lt;/span&gt;(not_na_agg))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## Table
+## 111 rows x 6 columns
+## $Ozone &amp;lt;int32&amp;gt;
+## $Solar.R &amp;lt;int32&amp;gt;
+## $Wind &amp;lt;double&amp;gt;
+## $Temp &amp;lt;int32&amp;gt;
+## $Month &amp;lt;int32&amp;gt;
+## $Day &amp;lt;int32&amp;gt;
+##
+## See $metadata for additional Schema metadata&lt;/code&gt;&lt;/pre&gt;
+
+
+
+ </description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/eval-parse/</guid>
+  <pubDate>Mon, 19 Apr 2021 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Three Valued Logic</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/three-valued-logic/</link>
+  <description> 
+
+
+
+
+
+&lt;p&gt;This week I was writing Arrow bindings for some R functions and came across a concept that was new to me: three-valued logic.&lt;/p&gt;
+&lt;p&gt;I encountered this when working out the expected behaviour of the functions &lt;code&gt;any&lt;/code&gt; and &lt;code&gt;all&lt;/code&gt; which are used for aggregation of boolean/logical values.&lt;/p&gt;
+&lt;p&gt;If I have a vector without any NA values, the behaviour of these functions is pretty straightforward. In the example below, &lt;code&gt;vec &amp;gt; 3&lt;/code&gt; evaluates to &lt;code&gt;FALSE FALSE FALSE  TRUE  TRUE&lt;/code&gt; and so a call to &lt;code&gt;any()&lt;/code&gt; results in &lt;code&gt;TRUE&lt;/code&gt; and a call to &lt;code&gt;all()&lt;/code&gt; results in &lt;code&gt;FALSE&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb1" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb1-1"&gt;vec &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;1&lt;/span&gt;&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;:&lt;/span&gt;&lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;5&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb1-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;any&lt;/span&gt;(vec &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;&amp;gt;&lt;/span&gt; &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;3&lt;/span&gt;) &lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# are any values greater than 5?&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] TRUE&lt;/code&gt;&lt;/pre&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb3" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb3-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;all&lt;/span&gt;(vec &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;&amp;gt;&lt;/span&gt; &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;3&lt;/span&gt;) &lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# are all values greater than 5?&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Things get a little more complicated when we have a vector containing &lt;code&gt;NA&lt;/code&gt; values. My vector, &lt;code&gt;na_vec&lt;/code&gt;, has had an &lt;code&gt;NA&lt;/code&gt; appended to the end and I’ve changed the expression to &lt;code&gt;na_vec &amp;gt; 5&lt;/code&gt;. In this case of &lt;code&gt;all()&lt;/code&gt;, as there are definitely some values which are less than 5, we can say definitively that the answer is &lt;code&gt;FALSE&lt;/code&gt;. However, in the case of &lt;code&gt;any()&lt;/code&gt;, things are less clear. As &lt;code&gt;NA&lt;/code&gt; represents a missing value, it might be the case that this missing value is greater than 5, and so even though none of the known values are greater than 5, we cannot be sure that the missing one is not. Therefore, we get &lt;code&gt;NA&lt;/code&gt; back.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb5" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb5-1"&gt;na_vec &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;c&lt;/span&gt;(&lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;1&lt;/span&gt;&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;:&lt;/span&gt;&lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;5&lt;/span&gt;, &lt;span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;"&gt;NA&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb5-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;any&lt;/span&gt;(na_vec &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;&amp;gt;&lt;/span&gt; &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;5&lt;/span&gt;) &lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# are any values greater than 5?&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] NA&lt;/code&gt;&lt;/pre&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb7" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb7-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;all&lt;/span&gt;(na_vec &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;&amp;gt;&lt;/span&gt; &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;5&lt;/span&gt;) &lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# are all values greater than 5?&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] FALSE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If needed in principle, we can set the argument &lt;code&gt;na.rm = TRUE&lt;/code&gt; for both of these functions, stripping out the &lt;code&gt;NA&lt;/code&gt; values and continuing with the evaluation as if they were not there.&lt;/p&gt;
+&lt;p&gt;I don’t think this is overly complex when using these functions, though it makes things more interesting when trying to implement them. There a &lt;a href="https://en.wikipedia.org/wiki/Three-valued_logic"&gt;Wikipedia article&lt;/a&gt; on the topic, and it also has other names like “Kleene logic”.&lt;/p&gt;
+&lt;p&gt;I drew this out as a simple flowchart to make sure I had it right, and this is the logic inside it:&lt;/p&gt;
+&lt;section id="in-the-case-of-any" class="level4"&gt;
+&lt;h4 class="anchored" data-anchor-id="in-the-case-of-any"&gt;In the case of &lt;code&gt;any&lt;/code&gt;:&lt;/h4&gt;
+&lt;ol type="1"&gt;
+&lt;li&gt;Can you say that the condition has been met? If yes, return TRUE. If no, go to next step.&lt;/li&gt;
+&lt;li&gt;Are there are missing values? If no, return FALSE. If yes, return NA.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/section&gt;
+&lt;section id="and-in-the-case-of-all" class="level4"&gt;
+&lt;h4 class="anchored" data-anchor-id="and-in-the-case-of-all"&gt;And in the case of &lt;code&gt;all&lt;/code&gt;:&lt;/h4&gt;
+&lt;ol type="1"&gt;
+&lt;li&gt;Can you say that the condition has been met? If no, return FALSE. If yes from the non-missing values (so more like “maybe”!), go to next step.&lt;/li&gt;
+&lt;li&gt;Are there are missing values? If no, return TRUE If yes, return NA.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/three-valued-logic/three_valued_logic.jpeg" class="img-fluid" style="width:25.0%"&gt;&lt;/p&gt;
+&lt;p&gt;Now I write it out, it doesn’t seem overly complex, but it was pretty interesting encountering it for the first time. This concept also exists in SQL and I’m surprised I’ve not come across it before.&lt;/p&gt;
+
+
+&lt;/section&gt;
+
+ </description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/three-valued-logic/</guid>
+  <pubDate>Fri, 16 Apr 2021 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Ten Steps to Becoming a Tidyverse Contributor</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/tidyverse-contributor/</link>
+  <description> 
+
+
+
+
+
+&lt;p&gt;This year has been a crazy whirlwind for me – I moved job once, moved house 3 times, &lt;a href="https://www.datacamp.com/courses/developing-r-packages"&gt;co-authored a course on Data Camp&lt;/a&gt;, got invited by a former colleague to assist with a workshop at rstudio::conf 2019, was accepted to present at the very same conference, and became a &lt;a href="https://github.com/tidymodels/broom/pull/486"&gt;minor contributor to the tidyverse&lt;/a&gt;. In this blog post I’ll talk about reasons for contributing and then walk through the steps I took to help guide others.&lt;/p&gt;
+&lt;p&gt;A disclaimer before I start: I am no expert here and am talking about something I have done once. My aim here is to clarify the process and hopefully make it clear to other members of the R community that this isn’t as hard or intimidating as it might sound.&lt;/p&gt;
+&lt;p&gt;It all started with the &lt;a href="https://www.rstudio.com/resources/videos/contributing-to-tidyverse-packages/"&gt;fantastic talk by Mara Averick at the 2018 RStudio Conference&lt;/a&gt;. Mara talked about different ways of getting involved and made me realise that contributing, specifically code, was both something I wanted to do, and something that was within reach.&lt;/p&gt;
+&lt;p&gt;A while later, I saw this tweet by &lt;a href="http://www.alexpghayes.com/"&gt;Alex Hayes&lt;/a&gt;, who was doing an &lt;a href="https://blog.rstudio.com/2018/04/18/summer-interns/"&gt;internship&lt;/a&gt; at RStudio, and couldn’t turn down the opportunity. Massive thanks once again to both Alex and Mara!&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/alex_hayes_tweet.png" class="img-fluid" style="width:30.0%"&gt;&lt;/p&gt;
+&lt;p&gt;I’d never thought about getting involved in contributing code because of my perception of some of the toxic culture of open source, and &lt;a href="https://opensourcesurvey.org/2017/#insights"&gt;this perception isn’t totally unwarranted&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This year, however, I’ve seen &lt;a href="https://www.theregister.co.uk/2018/09/17/linus_torvalds_linux_apology_break/"&gt;a lot of&lt;/a&gt; &lt;a href="https://stackoverflow.blog/2018/04/26/stack-overflow-isnt-very-welcoming-its-time-for-that-to-change/"&gt;evidence to suggest that this is changing&lt;/a&gt;, and, regardless, the R community, is &lt;a href="https://forwards.github.io/"&gt;way&lt;/a&gt; &lt;a href="https://rladies.org/"&gt;ahead&lt;/a&gt; &lt;a href="https://community.rstudio.com/"&gt;of the curve&lt;/a&gt; in terms of being &lt;a href="https://www.r-bloggers.com/the-r-community-is-awesome-and-fast/"&gt;welcoming, friendly&lt;/a&gt;, and &lt;a href="https://blog.revolutionanalytics.com/2017/06/r-community.html"&gt;willing to help newbies of all varieties to get involved&lt;/a&gt;. &lt;strong&gt;I do not believe for even a split second that my concerns apply to the R community in 2018.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;There are a lot of good reasons to contribute to open-source; half of the respondents to the Open Source Survey in 2017 &lt;a href="https://opensourcesurvey.org/2017/#data"&gt;said that their open source contributions helped them get their current job&lt;/a&gt;. My personal reasons for getting involved, however, were more about a) getting acquainted with some top-notch R code and hopefully levelling up my skills as a result, b) interacting with more of the R community, and c) helping lessen my imposter syndrome. I think it’s time for an inspirational quote now:&lt;/p&gt;
+&lt;blockquote class="blockquote"&gt;
+&lt;p&gt;“When I started my transition into data science, I said yes to pretty much every opportunity that came my way, even if it felt slightly beyond my skill set or experience level…I said yes to many of these things when it felt like I wasn’t sure if I was ready.” - Julia Silge (Interview with And Comfort, October 2018)&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;So, without further ado, let’s take a look at the ten steps to becoming a tidyverse contributor. Please note that there may be nuances and details that I have missed here, but this should provide a rough guide to anyone who’s thinking about getting involved and wants to know a bit more about exactly what that looks like.&lt;/p&gt;
+&lt;p&gt;Just to be clear; these steps apply to contributing to R packages in general and not just the tidyverse. However, the tidyverse team have been especially good for &lt;a href="https://www.tidyverse.org/articles/2017/08/contributing/"&gt;encouraging people to get involved&lt;/a&gt;.&lt;/p&gt;
+&lt;section id="step-1---decide-how-to-contribute" class="level1"&gt;
+&lt;h1&gt;Step 1 - Decide How to Contribute&lt;/h1&gt;
+&lt;p&gt;I want to emphasise at this point that contributing code is not the only way to get involved; the reason why I’m focussing on this in this blog post is because a) it’s what I did, and b) it’s the method of contribution I feel like people know the least about.&lt;/p&gt;
+&lt;p&gt;However, as &lt;a href="https://www.rstudio.com/resources/videos/contributing-to-tidyverse-packages/"&gt;Mara discusses in her talk&lt;/a&gt; (no really, just go watch it now, seriously!), there are other equally valid and important ways of getting involved.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-2---learn" class="level1"&gt;
+&lt;h1&gt;Step 2 - Learn!&lt;/h1&gt;
+&lt;p&gt;Whilst there is some pre-requisite knowledge required to contribute code to R packages, it’s not as much as I expected. You absolutely should be comfortable with working with and writing functions in R. Beyond that, some familiarity with git is needed – things like clone, commit, and push, though doing it all via RStudio is fine. You’ll need to know the basics of R package building – when I say basics, what I mean is that you’re not writing a package from scratch, so don’t need to know every little detail. However, you should have a good idea of the directory structure of an R package, how to write tests and documentation, and how to build the page. Finally, you’ll need to know how to create a pull request on GitHub, which, once you’ve conquered the other items on the list, fairly uncomplicated. I’ve linked to resources for all of these things at the end of this post.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-3---find-an-issue" class="level1"&gt;
+&lt;h1&gt;Step 3 - Find an Issue&lt;/h1&gt;
+&lt;p&gt;The next step is finding an issue to work on. Luckily, many issues are tagged on GitHub with “beginner friendly”, “help wanted”, or “good first issue” to help point you in the right direction.&lt;/p&gt;
+&lt;p&gt;In the GIF below, I show how to get from the CRAN page for a package – broom in this case – to a potential issue to work on. I first click on the URL next to “BugReports” to get taken to the GitHub issues page. Next I find a relevant tag – “beginner friendly” in this case. Once I click on the tag, I’m shown all issues with that tag. I then pick one, and read the description to see if it’s something I think would be good to look at getting involved with.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/broom_find_issue.gif" class="img-fluid" style="width:75.0%"&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-4---ask-if-you-can-help" class="level1"&gt;
+&lt;h1&gt;Step 4 - Ask if You Can Help&lt;/h1&gt;
+&lt;p&gt;Don’t charge straight into trying to write code! You need to ask for help – it’s always good to check that someone else isn’t already working on this issue, and ask to get involved. You don’t want to spend ages working on something and then find out someone else has submitted a pull request first! Try to be as specific as possible – unlike my comment here, ellessenne says exactly what they’ll be looking at!&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/ask_to_help.png" class="img-fluid"&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-5---fork-the-repo" class="level1"&gt;
+&lt;h1&gt;Step 5 - Fork the Repo&lt;/h1&gt;
+&lt;p&gt;Forking the repo means making a copy of it which is saved to your GitHub account. Click on the button as shown below.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/fork.png" class="img-fluid"&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-6---open-as-new-project-in-rstudio-make-a-branch" class="level1"&gt;
+&lt;h1&gt;Step 6 - Open as New Project in RStudio &amp;amp; Make a Branch&lt;/h1&gt;
+&lt;p&gt;Create a new project (“from version control”) in RStudio using the URL for your copy of the repo - the location for the URL is shown below.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/clone_url.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;p&gt;Once you’re in this project, make a new branch, making sure “sync with remote” is checked.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/branch_in_rstudio.gif" class="img-fluid"&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-7---familiarise-yourself-with-the-code" class="level1"&gt;
+&lt;h1&gt;Step 7 - Familiarise Yourself with the Code&lt;/h1&gt;
+&lt;p&gt;Play with the code and see if you can reproduce the issue, and work out the cause. I tend to run through things one line at a time, not moving on til I have a pretty good idea what each line is meant to be doing.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-8---write-code" class="level1"&gt;
+&lt;h1&gt;Step 8 - Write Code&lt;/h1&gt;
+&lt;p&gt;Once you’ve worked out how to fix the issue, it’s time to write your code! Conform to the coding style used in the rest of the code, be concise but clear, and don’t introduce any new dependencies (if this is needed, it should be discussed first). Don’t forget to update any function parameter documentation.&lt;/p&gt;
+&lt;p&gt;The image below shows a diff of the file I edited before and after the changes I made. There is very little changed – it’s best to work on small issues to build trust with the package maintainer over time.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/write_code.png" class="img-fluid"&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-9---submit-pr-and-wait" class="level1"&gt;
+&lt;h1&gt;Step 9 - Submit PR and Wait&lt;/h1&gt;
+&lt;p&gt;Once I’d submitted my pull request, I waited with the patience of your average toddler that’s been sat down in front of a plate of marshmallows and told not to eat any. Look, I was excited – I was making my first tidyverse pull request! I nearly lost sight of the fact that people have lives, jobs, and frankly, other things to be doing with their time. Ultimately, I’m glad I didn’t nudge as I feel like it would have felt rude. There were a few changes and additions needed, but eventually my changes got merged into the master branch.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/pr_and_wait.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-10---celebrate-then-encourage-others-to-get-involved-and-share-your-experience" class="level1"&gt;
+&lt;h1&gt;Step 10 - Celebrate! Then Encourage Others to Get Involved and Share Your Experience&lt;/h1&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/tidyverse-contributor/ermagerd.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;p&gt;I was pleasantly surprised by the fact that I already had most of the background knowledge required, and all I really needed was some inspiration to get involved and the patient Alex Hayes being awesome at guiding me through the process.&lt;/p&gt;
+&lt;p&gt;I’d like to end by emphasising that, although I’ve been using R on and off for 8 years, and as part of my job for 3, I believe I could have contributed sooner if I’d known more about the process. A lot is still unclear to me but I’m learning more by talking to people. If you’re unsure, watch the repos and see the conversations and how people go about different things. Look at the individual commits people make. Get a feel for what’s going on.&lt;/p&gt;
+&lt;p&gt;I’m still so new to this, and still agonise on phrasing every time I open an issue or pull request, but I think that as long as you’re polite, accept feedback well, and don’t try to get too far ahead of yourself, it’s probably going to be a really positive experience for you. The R community is made up of a lot of really awesome people.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="resources" class="level1"&gt;
+&lt;h1&gt;Resources&lt;/h1&gt;
+&lt;p&gt;Talk by Mara Averick on contributing: https://www.rstudio.com/resources/videos/contributing-to-tidyverse-packages/&lt;/p&gt;
+&lt;p&gt;Guide to contributing code to the tidyverse: https://www.tidyverse.org/articles/2017/08/contributing/&lt;/p&gt;
+&lt;p&gt;rOpenSci contributing guide: https://ropensci.github.io/dev_guide/contributingguide.html&lt;/p&gt;
+&lt;p&gt;Repo walking through making a pull request: https://github.com/firstcontributions/first-contributions&lt;/p&gt;
+
+
+&lt;/section&gt;
+
+ </description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/tidyverse-contributor/</guid>
+  <pubDate>Wed, 28 Nov 2018 00:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Scraping rstudio::conf 2018 Abstracts</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/scraping-rstudioconf-2018-abstracts/</link>
+  <description> 
+
+
+
+
+
+&lt;p&gt;RStudio Conference 2019 takes place in January 2019, and this week RStudio put out a &lt;a href="https://blog.rstudio.com/2018/08/20/rstudio-conf-2019-contributed-talks-eposters/"&gt;call for contributed talks and e-posters&lt;/a&gt;. Though I was eager to browse previous years’ abstracts for inspiration, I couldn’t find them all in one place, and so I decided to use one of my favourite R packages, &lt;code&gt;rvest&lt;/code&gt;, to do some web scraping to grab the content.&lt;/p&gt;
+&lt;p&gt;My main aim was to find all of the abstracts for the contributed talks only from 2018.&lt;/p&gt;
+&lt;p&gt;As this ended up being an unusually long blog post, here’s a table containing links to the videos and abstract for contributed talks. A detailed walk through of the code used to create it can be found below.&lt;/p&gt;
+&lt;p&gt;As ever, give me a shout &lt;a href="https://twitter.com/nic_crane"&gt;on Twitter&lt;/a&gt; if you have any comments or questions!&lt;/p&gt;
+&lt;p&gt;Here’s a walkthrough of the code, and the full list of abstracts.&lt;/p&gt;
+&lt;section id="getting-started" class="level1"&gt;
+&lt;h1&gt;Getting Started&lt;/h1&gt;
+&lt;p&gt;I found last year’s conference schedule &lt;a href="https://beta.rstudioconnect.com/content/3105/"&gt;here&lt;/a&gt;, which seemed as good a place as any to start. First, I loaded the &lt;code&gt;rvest&lt;/code&gt; package and used &lt;code&gt;read_html()&lt;/code&gt; (from &lt;code&gt;xml2&lt;/code&gt; which is automatically loaded when you load &lt;code&gt;rvest&lt;/code&gt;) to pull the html from the page.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb1" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb1-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;library&lt;/span&gt;(rvest)&lt;/span&gt;
+&lt;span id="cb1-2"&gt;my_html &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;read_html&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"https://beta.rstudioconnect.com/content/3105/"&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb1-3"&gt;my_html&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## {xml_document}
+## &amp;lt;html xmlns="http://www.w3.org/1999/xhtml"&amp;gt;
+## [1] &amp;lt;head&amp;gt;\n&amp;lt;meta charset="utf-8"&amp;gt;\n&amp;lt;meta http-equiv="Content-Type" cont ...
+## [2] &amp;lt;body&amp;gt;\n\n&amp;lt;style type="text/css"&amp;gt;\n.main-container {\n  max-width: 9 ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;my_html&lt;/code&gt; object is an xml document, and to do anything useful with it, I need to work out which components I need. I could do this manually, but it’s much simpler to use &lt;a href="https://selectorgadget.com/"&gt;Selector Gadget&lt;/a&gt; to help me.&lt;/p&gt;
+&lt;section id="selector-gadget" class="level2"&gt;
+&lt;h2 class="anchored" data-anchor-id="selector-gadget"&gt;Selector Gadget&lt;/h2&gt;
+&lt;p&gt;Selector Gadget is a tool which takes a lot of effort out of webscraping. For an in-depth description, check out &lt;a href="https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html"&gt;this rvest vignette&lt;/a&gt;. In short, once Selector Gadget is loaded, I click on any unselected components to pick which ones I need (in green), look at what else is highlighted (in yellow) and then click on these to deselect them (now in red) and carry on selecting and/or deselecting components until only the ones I want are in green or yellow.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/scraping-rstudioconf-2018-abstracts/selector_gadget.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;p&gt;Then, I copy the text out of the box, in the case, “.talk-title”. This is the CSS selector needed to grab those components, and I supply this as the &lt;code&gt;css&lt;/code&gt; argument to &lt;code&gt;html_nodes()&lt;/code&gt;. As I just want the inner text, I pipe the result of this into &lt;code&gt;html_text()&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb3" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb3-1"&gt;talks &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; my_html &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb3-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_nodes&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;".talk-title"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb3-3"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_text&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb3-4"&gt;&lt;/span&gt;
+&lt;span id="cb3-5"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(talks)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "\nTo the Tidyverse and Beyond: Challenges for the Future in Data Science\n\n"
+## [2] "\nTo the Tidyverse and Beyond: Challenges for the Future in Data Science\n\n"
+## [3] "\nTidy spatial data analysis\n\n"
+## [4] "Scaling Shiny apps with async programming"
+## [5] "\nRStudio 1.1 new features\n\n"
+## [6] "\nThe future of time series and financial analysis in the tidyverse\n\n"&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I now repeat this process to get the presenter names. Handily, the CSS selector for these is “.presenter”!&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb5" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb5-1"&gt;authors &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; my_html &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb5-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_nodes&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;".presenter"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb5-3"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_text&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb5-4"&gt;&lt;/span&gt;
+&lt;span id="cb5-5"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(authors)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "Dianne Cook"   "Dianne Cook"   "Edzer Pebesma" "Joe Cheng"
+## [5] "Kevin Ushey"   "Davis Vaughan"&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now I’ve got my talks and authors, I’m next going to combine them in a &lt;code&gt;data_frame&lt;/code&gt;. Once this is done, I’m also going to tidy them up by removing all the newline characters (“”) from the titles.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb7" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb7-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;library&lt;/span&gt;(dplyr)&lt;/span&gt;
+&lt;span id="cb7-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;library&lt;/span&gt;(stringr)&lt;/span&gt;
+&lt;span id="cb7-3"&gt;schedule &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;data_frame&lt;/span&gt;(talks, authors) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb7-4"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;mutate&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;talks =&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;str_remove_all&lt;/span&gt;(talks, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"&lt;/span&gt;&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;\n&lt;/span&gt;&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"&lt;/span&gt;)) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb7-5"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;distinct&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb7-6"&gt;&lt;/span&gt;
+&lt;span id="cb7-7"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(schedule)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 2
+##   talks                                                        authors
+##   &amp;lt;chr&amp;gt;                                                        &amp;lt;chr&amp;gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Future in D~ Dianne Cook
+## 2 Tidy spatial data analysis                                   Edzer Pebe~
+## 3 Scaling Shiny apps with async programming                    Joe Cheng
+## 4 RStudio 1.1 new features                                     Kevin Ushey
+## 5 The future of time series and financial analysis in the tid~ Davis Vaug~
+## 6 Developing robust shiny apps with regression testing         Winston Ch~&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Great! So now what? Well, the point of this analysis is to look at the contributed talks, rather than those from invited speakers or RStudio staff, so in the next part of this post, I’m going to be using lots of &lt;code&gt;dplyr&lt;/code&gt; joins to remove these!&lt;/p&gt;
+&lt;/section&gt;
+&lt;/section&gt;
+&lt;section id="finding-only-contributed-talks" class="level1"&gt;
+&lt;h1&gt;Finding Only Contributed Talks&lt;/h1&gt;
+&lt;p&gt;Let’s start of with identifying talks from invited speakers and RStudio staff.&lt;/p&gt;
+&lt;p&gt;I found &lt;a href="https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/"&gt;this post on the RStudio blog&lt;/a&gt; which lists the invited speakers. I repeat the process from earlier using &lt;code&gt;rvest&lt;/code&gt; and &lt;code&gt;xml2&lt;/code&gt; functions to scrape the list of invited speakers.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb9" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb9-1"&gt;invited_speakers &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;read_html&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"https://blog.rstudio.com/2017/07/12/join-us-at-rstudioconf-2018/"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb9-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_nodes&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"table:nth-child(6) td:nth-child(1)"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb9-3"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_text&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb9-4"&gt;&lt;/span&gt;
+&lt;span id="cb9-5"&gt;invited &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;data_frame&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;authors =&lt;/span&gt; invited_speakers, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;Status =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Invited"&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb9-6"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(invited)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 2
+##   authors         Status
+##   &amp;lt;chr&amp;gt;           &amp;lt;chr&amp;gt;
+## 1 Mara Averick    Invited
+## 2 Nick Carchedi   Invited
+## 3 Tanya Cashorali Invited
+## 4 Eric Colson     Invited
+## 5 Sandra Griffith Invited
+## 6 Aaron Horowitz  Invited&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now I need to combine this back with my original table, &lt;code&gt;schedule&lt;/code&gt;, so I use &lt;code&gt;left_join()&lt;/code&gt; from &lt;code&gt;dplyr&lt;/code&gt; to help me.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb11" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb11-1"&gt;author_tbl &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;left_join&lt;/span&gt;(schedule, invited, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"authors"&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb11-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(author_tbl)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 3
+##   talks                                                authors      Status
+##   &amp;lt;chr&amp;gt;                                                &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Fut~ Dianne Cook  &amp;lt;NA&amp;gt;
+## 2 Tidy spatial data analysis                           Edzer Peb~ Invit~
+## 3 Scaling Shiny apps with async programming            Joe Cheng    &amp;lt;NA&amp;gt;
+## 4 RStudio 1.1 new features                             Kevin Ush~ &amp;lt;NA&amp;gt;
+## 5 The future of time series and financial analysis in~ Davis Vaugh~ &amp;lt;NA&amp;gt;
+## 6 Developing robust shiny apps with regression testing Winston Ch~ &amp;lt;NA&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Something you may have noticed is that we have some duplicated rows in the table, and so I use &lt;code&gt;distinct()&lt;/code&gt; to remove these.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb13" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb13-1"&gt;author_tbl &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;distinct&lt;/span&gt;(author_tbl)&lt;/span&gt;
+&lt;span id="cb13-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(author_tbl)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 3
+##   talks                                                authors      Status
+##   &amp;lt;chr&amp;gt;                                                &amp;lt;chr&amp;gt;        &amp;lt;chr&amp;gt;
+## 1 To the Tidyverse and Beyond: Challenges for the Fut~ Dianne Cook  &amp;lt;NA&amp;gt;
+## 2 Tidy spatial data analysis                           Edzer Peb~ Invit~
+## 3 Scaling Shiny apps with async programming            Joe Cheng    &amp;lt;NA&amp;gt;
+## 4 RStudio 1.1 new features                             Kevin Ush~ &amp;lt;NA&amp;gt;
+## 5 The future of time series and financial analysis in~ Davis Vaugh~ &amp;lt;NA&amp;gt;
+## 6 Developing robust shiny apps with regression testing Winston Ch~ &amp;lt;NA&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Great! Now I’ve remove the duplications, let’s take a look at how many rows have no value in the &lt;code&gt;Status&lt;/code&gt; column. I can use &lt;code&gt;sum()&lt;/code&gt; and &lt;code&gt;is.na()&lt;/code&gt; to do this&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb15" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb15-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;sum&lt;/span&gt;(&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;is.na&lt;/span&gt;(author_tbl&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;Status))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] 51&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I still have 51 rows with no value in the &lt;code&gt;Status&lt;/code&gt; column, but I’m only expecting around 20. I need to remove talks from RStudio staff to get to my contributed talks.&lt;/p&gt;
+&lt;p&gt;I did the next bit manually, by searching for any of the individuals I hadn’t already heard of. It’s likely that there’s a quicker way to do this, using the web scraping techniques we’ve already looked at.&lt;/p&gt;
+&lt;p&gt;In no particular order…&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb17" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb17-1"&gt;rstudio_staff &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;c&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Joe Cheng"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Winston Chang"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Alan Dipert"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Sean Lopp"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb17-2"&gt;                   &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Kevin Ushey"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Jonathan McPherson"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Mel Gregory"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb17-3"&gt;                   &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Yihui Xie"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Max Kuhn"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Jenny Bryan"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Jim Hester"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb17-4"&gt;                   &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Joseph Rickert"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Jeff Allen"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Aron Atkins"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb17-5"&gt;                   &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Barbara Borges Ribeiro"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Nathan Stephens"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb17-6"&gt;                   &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Mine Cetinkaya-Rundel"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Aaron Berg"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Hadley Wickham"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb17-7"&gt;                   &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Edgar Ruiz"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Amanda Gadrow"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"JJ Allaire"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Kevin Kuo"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb17-8"&gt;                   &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Javier Luraschi"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Michael Quinn"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Tareef Kawaf"&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb17-9"&gt;&lt;/span&gt;
+&lt;span id="cb17-10"&gt;rstudio &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;data_frame&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;authors =&lt;/span&gt; rstudio_staff, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;Status =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"RStudio"&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb17-11"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(rstudio)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 2
+##   authors            Status
+##   &amp;lt;chr&amp;gt;              &amp;lt;chr&amp;gt;
+## 1 Joe Cheng          RStudio
+## 2 Winston Chang      RStudio
+## 3 Alan Dipert        RStudio
+## 4 Sean Lopp          RStudio
+## 5 Kevin Ushey        RStudio
+## 6 Jonathan McPherson RStudio&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OK, so this is where it gets a little complicated, so please bear with me.&lt;/p&gt;
+&lt;p&gt;What I need to do next is combine my list of RStudio people with the &lt;code&gt;schedule&lt;/code&gt; data_frame. However, I can’t just do a &lt;code&gt;left_join&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb19" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb19-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;left_join&lt;/span&gt;(author_tbl, rstudio, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"authors"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb19-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 4
+##   talks                                       authors    Status.x Status.y
+##   &amp;lt;chr&amp;gt;                                       &amp;lt;chr&amp;gt;      &amp;lt;chr&amp;gt;    &amp;lt;chr&amp;gt;
+## 1 To the Tidyverse and Beyond: Challenges fo~ Dianne Co~ &amp;lt;NA&amp;gt;     &amp;lt;NA&amp;gt;
+## 2 Tidy spatial data analysis                  Edzer Peb~ Invited  &amp;lt;NA&amp;gt;
+## 3 Scaling Shiny apps with async programming   Joe Cheng  &amp;lt;NA&amp;gt;     RStudio
+## 4 RStudio 1.1 new features                    Kevin Ush~ &amp;lt;NA&amp;gt;     RStudio
+## 5 The future of time series and financial an~ Davis Vau~ &amp;lt;NA&amp;gt;     &amp;lt;NA&amp;gt;
+## 6 Developing robust shiny apps with regressi~ Winston C~ &amp;lt;NA&amp;gt;     RStudio&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Oh no! The left join has created 2 new columns, &lt;code&gt;Status.x&lt;/code&gt; and &lt;code&gt;Status.y&lt;/code&gt;, representing the value of &lt;code&gt;Status&lt;/code&gt; in the &lt;code&gt;x&lt;/code&gt; and &lt;code&gt;y&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This is because all of the RStudio staff already exist in &lt;code&gt;author_tbl&lt;/code&gt;, with a &lt;code&gt;Status&lt;/code&gt; value of &lt;code&gt;NA&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Sad times! However, a quick trip to Stack Overflow tells me what I need to do: &lt;em&gt;Note that more efficient solutions may exist!&lt;/em&gt;&lt;/p&gt;
+&lt;ol type="1"&gt;
+&lt;li&gt;&lt;p&gt;Extract all of the speakers who are not RStudio staff from &lt;code&gt;author_tbl&lt;/code&gt; using &lt;code&gt;anti_join()&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Join my &lt;code&gt;rstudio&lt;/code&gt; table with my original &lt;code&gt;schedule&lt;/code&gt; table which does not have a &lt;code&gt;Status&lt;/code&gt; column, using &lt;code&gt;left_join()&lt;/code&gt;. As I removed duplicates after this, I’ll have to do it again, using &lt;code&gt;distinct()&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Combine the outputs from 1 and 2, using &lt;code&gt;bind_rows()&lt;/code&gt;. It looks kinda ugly below as I wanted to do it all in a single pipe.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I’ve used &lt;code&gt;tail()&lt;/code&gt; to have a peek at the last 6 rows of the data_frame as I expect the rows for all the RStudio staff to be at the bottom of the table.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb21" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb21-1"&gt;author_tbl &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;anti_join&lt;/span&gt;(author_tbl, rstudio, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"authors"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb21-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;bind_rows&lt;/span&gt;(&lt;/span&gt;
+&lt;span id="cb21-3"&gt;    &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;left_join&lt;/span&gt;(rstudio, schedule, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"authors"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb21-4"&gt;      &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;distinct&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb21-5"&gt;  )&lt;/span&gt;
+&lt;span id="cb21-6"&gt;&lt;/span&gt;
+&lt;span id="cb21-7"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;tail&lt;/span&gt;(author_tbl)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 3
+##   talks                                               authors       Status
+##   &amp;lt;chr&amp;gt;                                               &amp;lt;chr&amp;gt;         &amp;lt;chr&amp;gt;
+## 1 Debugging techniques in RStudio                     Amanda Gadrow RStud~
+## 2 Machine Learning with R and TensorFlow              JJ Allaire    RStud~
+## 3 Building Spark ML pipelines with sparklyr           Kevin Kuo     RStud~
+## 4 Deploying TensorFlow models with tfdeploy           Javier Luras~ RStud~
+## 5 Large scale machine learning using TensorFlow, Big~ Michael Quinn RStud~
+## 6 R for Presidents                                    Tareef Kawaf  RStud~&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Hooray!&lt;/p&gt;
+&lt;p&gt;I skim through the data and realise I probably need to add a &lt;code&gt;Status&lt;/code&gt; value for the keynote speakers. JJ Allaire has already been included in &lt;code&gt;RStudio&lt;/code&gt;, so it’s just Dianne Cook that I need to add. I use the same technique as before:&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb23" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb23-1"&gt;keynotes &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;data_frame&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;authors =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Dianne Cook"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb23-2"&gt;                       &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;Status =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"keynote"&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb23-3"&gt;&lt;/span&gt;
+&lt;span id="cb23-4"&gt;author_tbl &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;anti_join&lt;/span&gt;(author_tbl, keynotes, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"authors"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb23-5"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;bind_rows&lt;/span&gt;(&lt;/span&gt;
+&lt;span id="cb23-6"&gt;    &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;inner_join&lt;/span&gt;(keynotes, schedule, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"authors"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb23-7"&gt;      &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;distinct&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb23-8"&gt;  )&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;I have a quick look over the data, and remove the discussions and closing remarks from the data using &lt;code&gt;filter()&lt;/code&gt;.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb24" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb24-1"&gt;author_tbl &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; author_tbl &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb24-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;filter&lt;/span&gt;(&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;!&lt;/span&gt;talks &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%in%&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;c&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"R in industry discussion"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Tidyverse discussion"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Closing remarks"&lt;/span&gt;) )&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Finally, I &lt;code&gt;filter()&lt;/code&gt; again to only show the rows for which the &lt;code&gt;Status&lt;/code&gt; column contains an &lt;code&gt;NA&lt;/code&gt;, and drop the now-redundant &lt;code&gt;Status&lt;/code&gt; column.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb25" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb25-1"&gt;contributed_talks &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;filter&lt;/span&gt;(author_tbl, &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;is.na&lt;/span&gt;(Status)) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb25-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;select&lt;/span&gt;(&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;-&lt;/span&gt;Status)&lt;/span&gt;
+&lt;span id="cb25-3"&gt;&lt;/span&gt;
+&lt;span id="cb25-4"&gt;contributed_talks&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 20 x 2
+##    talks                                                 authors
+##    &amp;lt;chr&amp;gt;                                                 &amp;lt;chr&amp;gt;
+##  1 The future of time series and financial analysis in ~ Davis Vaughan
+##  2 infer: a package for tidy statistical inference       Andrew Bray
+##  3 Tidying up your network analysis with tidygraph and ~ Thomas Lin Peder~
+##  4 The lesser known stars of the tidyverse               Emily Robinson
+##  5 Creating interactive web graphics suitable for explo~ Carson Sievert
+##  6 Open-source solutions for medical marijuana           Carl Ganz
+##  7 Adaptive feedback for learnr tutorials                Daniel Kaplan
+##  8 tidycf: Turning analysis on its head by turning cash~ Emily Riederer
+##  9 Branding and automating your work with R Markdown     Daniel Hadley
+## 10 Understanding PCA using Shiny and Stack Overflow data Julia Silge
+## 11 Connecting to open source databases                   Kirill Müller
+## 12 An assignment operator to unpack vectors and lists    Nathan Teetor
+## 13 Developing and deploying large scale shiny applicati~ Herman Sontrop
+## 14 Five packages in five weeks - from boredom to contri~ Giora Simchoni
+## 15 A SAS-to-R success story                              Elizabeth J. Atk~
+## 16 Reinforcement learning in Minecraft with CNTK-R       Ali Zaidi
+## 17 Kaggle in the classroom: using R and GitHub to run p~ Colin Rundel
+## 18 Imagine Boston 2030: Using R-Shiny to keep ourselves~ Kayla Patel
+## 19 Something old, something new, something borrowed, so~ Chester Ismay
+## 20 Training an army of new data scientists               Marco Blume&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I’m now left with around 20 talks, which is the number I expected. Hooray!&lt;/p&gt;
+&lt;p&gt;The final step is to get hold of the abstracts.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="getting-the-urls-of-the-abstracts" class="level1"&gt;
+&lt;h1&gt;Getting the URLs of the Abstracts&lt;/h1&gt;
+&lt;p&gt;The only place I could find the abstracts for the talks was on the individual videos, so there’s a final bit of webscraping to do.&lt;/p&gt;
+&lt;p&gt;Like before, I used &lt;code&gt;read_html()&lt;/code&gt; to pull the entire page, and then &lt;code&gt;html_nodes()&lt;/code&gt; and &lt;code&gt;html_text()&lt;/code&gt; to pull out the text.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb27" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb27-1"&gt;video_links &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;read_html&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"https://www.rstudio.com/resources/videos/rstudioconf-2018-talks/"&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb27-2"&gt;&lt;/span&gt;
+&lt;span id="cb27-3"&gt;titles &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; video_links &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb27-4"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_nodes&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"#post-15671 a"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb27-5"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_text&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb27-6"&gt;&lt;/span&gt;
+&lt;span id="cb27-7"&gt;&lt;span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;# Get rid of any blank values&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb27-8"&gt;titles &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; titles[titles&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;!=&lt;/span&gt;&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;""&lt;/span&gt;]&lt;/span&gt;
+&lt;span id="cb27-9"&gt;&lt;/span&gt;
+&lt;span id="cb27-10"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(titles)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "Greg Swinehart"
+## [2] "The unreasonable effectiveness of empathy"
+## [3] "Teach the Tidyverse to beginners"
+## [4] "How I Learned to Stop Worrying and Love the Firewall"
+## [5] "Imagine Boston 2030: Using R-Shiny to keep ourselves accountable and empower the public"
+## [6] "Phrasing: communicating data science through tweets, gifs, and classic misdirection"&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I also need the links to the pages where the talks are. To pull these out, instead of &lt;code&gt;html_text()&lt;/code&gt;, I used &lt;code&gt;html_attr()&lt;/code&gt; which extracts everything with a specified attribute, in this case, “href” for the link locations.&lt;/p&gt;
+&lt;p&gt;As there is duplication I only keep every alternating value.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb29" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb29-1"&gt;links &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; video_links &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb29-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_nodes&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"#post-15671 a"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb29-3"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_attr&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"href"&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb29-4"&gt;&lt;/span&gt;
+&lt;span id="cb29-5"&gt;links &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; links[&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;seq&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;from =&lt;/span&gt; &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;1&lt;/span&gt;, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;to =&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;length&lt;/span&gt;(links), &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;2&lt;/span&gt;)]&lt;/span&gt;
+&lt;span id="cb29-6"&gt;&lt;/span&gt;
+&lt;span id="cb29-7"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(links)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "https://www.rstudio.com/rviews/author/greg/"
+## [2] "https://www.rstudio.com/resources/videos/the-unreasonable-effectiveness-of-empathy/"
+## [3] "https://www.rstudio.com/resources/videos/teach-the-tidyverse-to-beginners/"
+## [4] "https://www.rstudio.com/resources/videos/how-i-learned-to-stop-worrying-and-love-the-firewall/"
+## [5] "https://www.rstudio.com/resources/videos/imagine-boston-2030-using-r-shiny-to-keep-ourselves-accountable-and-empower-the-public/"
+## [6] "https://www.rstudio.com/resources/videos/phrasing-communicating-data-science-through-tweets-gifs-and-classic-misdirection/"&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I then grab the presenter names…&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb31" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb31-1"&gt;names &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; video_links &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb31-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_nodes&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"em"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb31-3"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_text&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb31-4"&gt;&lt;/span&gt;
+&lt;span id="cb31-5"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(names)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "JD Long"         "David Robinson"  "Ian Lyttle"      "Kayla Patel"
+## [5] "Mara Averick"    "Tanya Cashorali"&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Great! Now I’m ready to combine my titles, links, and names. If we look at the first few elements of &lt;code&gt;names&lt;/code&gt;, &lt;code&gt;titles&lt;/code&gt; and &lt;code&gt;links&lt;/code&gt;, we can see that there is an erroneous extra value in &lt;code&gt;titles&lt;/code&gt; and &lt;code&gt;links&lt;/code&gt; but not &lt;code&gt;names&lt;/code&gt; - I must have accidentally picked this up with my selectors from earlier.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb33" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb33-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(names, &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;3&lt;/span&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "JD Long"        "David Robinson" "Ian Lyttle"&lt;/code&gt;&lt;/pre&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb35" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb35-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(titles, &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;3&lt;/span&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "Greg Swinehart"
+## [2] "The unreasonable effectiveness of empathy"
+## [3] "Teach the Tidyverse to beginners"&lt;/code&gt;&lt;/pre&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb37" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb37-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(links, &lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;3&lt;/span&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## [1] "https://www.rstudio.com/rviews/author/greg/"
+## [2] "https://www.rstudio.com/resources/videos/the-unreasonable-effectiveness-of-empathy/"
+## [3] "https://www.rstudio.com/resources/videos/teach-the-tidyverse-to-beginners/"&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To get rid of this, I combine &lt;code&gt;names&lt;/code&gt; and &lt;code&gt;titles&lt;/code&gt; in a data_frame and then &lt;code&gt;slice()&lt;/code&gt; this extra row off before adding the &lt;code&gt;name&lt;/code&gt; column.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb39" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb39-1"&gt;abstract_links &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;data_frame&lt;/span&gt;(titles, links) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb39-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;slice&lt;/span&gt;(&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;-&lt;/span&gt;&lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;1&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb39-3"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;mutate&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;name =&lt;/span&gt; names)&lt;/span&gt;
+&lt;span id="cb39-4"&gt;&lt;/span&gt;
+&lt;span id="cb39-5"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(abstract_links)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 6 x 3
+##   titles                          links                           name
+##   &amp;lt;chr&amp;gt;                           &amp;lt;chr&amp;gt;                           &amp;lt;chr&amp;gt;
+## 1 The unreasonable effectiveness~ https://www.rstudio.com/resour~ JD Long
+## 2 Teach the Tidyverse to beginne~ https://www.rstudio.com/resour~ David R~
+## 3 How I Learned to Stop Worrying~ https://www.rstudio.com/resour~ Ian Lyt~
+## 4 Imagine Boston 2030: Using R-S~ https://www.rstudio.com/resour~ Kayla P~
+## 5 Phrasing: communicating data s~ https://www.rstudio.com/resour~ Mara Av~
+## 6 Rapid prototyping data product~ https://www.rstudio.com/resour~ Tanya C~&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Awesome, I have my table of URLs, talks, and authors. Let’s join that with my table of contributed talks.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb41" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb41-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;left_join&lt;/span&gt;(contributed_talks, abstract_links, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;c&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"authors"&lt;/span&gt; &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"name"&lt;/span&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;There are a couple of talks missing URLS and further inspection reveals that this is due to a missing middle name and a missing umlaut, so I make a couple of manual adjustments using &lt;code&gt;case_when()&lt;/code&gt; and redo my join.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb42" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb42-1"&gt;talks_and_urls &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; contributed_talks &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb42-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;mutate&lt;/span&gt;(&lt;/span&gt;
+&lt;span id="cb42-3"&gt;  &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;authors =&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;case_when&lt;/span&gt;(&lt;/span&gt;
+&lt;span id="cb42-4"&gt;    authors &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;==&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Ali Zaidi"&lt;/span&gt; &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;~&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Ali-Kazim Zaidi"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb42-5"&gt;    authors &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;==&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Kirill Müller"&lt;/span&gt; &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;~&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Kirill Muller"&lt;/span&gt;,&lt;/span&gt;
+&lt;span id="cb42-6"&gt;    &lt;span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;"&gt;TRUE&lt;/span&gt; &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;~&lt;/span&gt; authors&lt;/span&gt;
+&lt;span id="cb42-7"&gt;  )&lt;/span&gt;
+&lt;span id="cb42-8"&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb42-9"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;left_join&lt;/span&gt;(abstract_links, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;by =&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;c&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"authors"&lt;/span&gt; &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"name"&lt;/span&gt;))&lt;/span&gt;
+&lt;span id="cb42-10"&gt;&lt;/span&gt;
+&lt;span id="cb42-11"&gt;talks_and_urls&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;And it’s worked! But what I want is the actual abstract text, which is what I’ll be doing in the next section.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="scraping-the-abstracts" class="level1"&gt;
+&lt;h1&gt;Scraping the Abstracts&lt;/h1&gt;
+&lt;p&gt;In order to scrape the abstracts from the table of talks and URLs, I need to:&lt;/p&gt;
+&lt;ol type="1"&gt;
+&lt;li&gt;Read each URL&lt;/li&gt;
+&lt;li&gt;Use the relevant selector to pull out just the abstract text nodes&lt;/li&gt;
+&lt;li&gt;Use &lt;code&gt;html_text()&lt;/code&gt; to pull just the text out of each node.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I’ve done this a few times already, so it should be simple case of chucking this all into an &lt;code&gt;lapply()&lt;/code&gt;, right? Well, not quite…&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb43" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb43-1"&gt;abstracts &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;lapply&lt;/span&gt;(talks_and_urls&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;links, &lt;span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"&gt;function&lt;/span&gt;(i){&lt;/span&gt;
+&lt;span id="cb43-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;read_html&lt;/span&gt;(i) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb43-3"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_nodes&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;".2_3 p"&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb43-4"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_text&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb43-5"&gt;})&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## Error in parse_simple_selector(stream): Expected selector, got &amp;lt;NUMBER '.2' at 1&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I quickly get an error. I’m not sure of the source of this, but a remedy here is to use XPath instead of CSS (easily acquired from Selector Gadget) to specify the components I want:&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb45" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb45-1"&gt;abstracts &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;lapply&lt;/span&gt;(talks_and_urls&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;links, &lt;span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"&gt;function&lt;/span&gt;(i){&lt;/span&gt;
+&lt;span id="cb45-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;read_html&lt;/span&gt;(i) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb45-3"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_nodes&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;xpath=&lt;/span&gt;&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;'//*[contains(concat( " ", @class, " " ), concat( " ", "2_3", " " ))]//p'&lt;/span&gt;) &lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;%&amp;gt;%&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb45-4"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;html_text&lt;/span&gt;()&lt;/span&gt;
+&lt;span id="cb45-5"&gt;})&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;This takes a while as there are a lof of asbtracts to pull, but once it’s done, it’s looking good. This object is a list, each element containing a character vector of length 1 or more for each abstract. I want to make sure they’re all only 1 item long, so use &lt;code&gt;vapply()&lt;/code&gt; to &lt;code&gt;paste()&lt;/code&gt; the contents of each abstract into a single character object.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb46" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb46-1"&gt;abstracts &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;vapply&lt;/span&gt;(abstracts, &lt;span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"&gt;function&lt;/span&gt;(abstract){&lt;/span&gt;
+&lt;span id="cb46-2"&gt;  &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;paste&lt;/span&gt;(abstract, &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;collapse =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"  "&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb46-3"&gt;}, &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;character&lt;/span&gt;(&lt;span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;"&gt;1&lt;/span&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Finally, I append the abstracts column onto my &lt;code&gt;talks_and_urls&lt;/code&gt; table.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb47" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb47-1"&gt;talks_and_urls&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;abstracts &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; abstracts&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;So here we have it, the full list of abstracts. I’m not 100% sure it’s accurate, as &lt;a href="https://blog.rstudio.com/2017/11/06/rstudio-conf-2018-program/"&gt;this post&lt;/a&gt; on the RStudio blog suggests different numbers of people for each status. My best guess is that couple of people I have down as delivering “contributed” talks were actually invited speakers who were invited after the publication of this blog post.&lt;/p&gt;
+
+
+&lt;/section&gt;
+
+ </description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/scraping-rstudioconf-2018-abstracts/</guid>
+  <pubDate>Tue, 21 Aug 2018 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Comparing R packages using packagemetrics</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/packagemetrics/</link>
+  <description> 
+
+
+
+
+
+&lt;p&gt;A colleague asked for my opinion on 2 packages; &lt;code&gt;loggit&lt;/code&gt; and &lt;code&gt;futile.logger&lt;/code&gt;. Whilst I have used &lt;code&gt;futile.logger&lt;/code&gt; before, I hadn’t used &lt;code&gt;loggit&lt;/code&gt; and so used the metrics of the package to evaluate the package itself.&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;packagemetrics&lt;/code&gt; package allows us to generate a number of metrics about a package, so we can compare them. The first thing I do is call &lt;code&gt;package_list_metrics()&lt;/code&gt; to get metrics about these two packages. I’ve changed the shape of the table, just so it’s easier to read in this blog post.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb1" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb1-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;library&lt;/span&gt;(packagemetrics)&lt;/span&gt;
+&lt;span id="cb1-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;library&lt;/span&gt;(dplyr)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb2" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb2-1"&gt;pkg_df &lt;span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;"&gt;&amp;lt;-&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;package_list_metrics&lt;/span&gt;(&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;c&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"loggit"&lt;/span&gt;, &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"futile.logger"&lt;/span&gt;))&lt;/span&gt;
+&lt;span id="cb2-2"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;as_data_frame&lt;/span&gt;(&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;t&lt;/span&gt;(pkg_df), &lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;rownames =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"stat"&lt;/span&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;## # A tibble: 18 x 3
+##    stat               V1                           V2
+##    &amp;lt;chr&amp;gt;              &amp;lt;chr&amp;gt;                        &amp;lt;chr&amp;gt;
+##  1 package            loggit                       futile.logger
+##  2 published          2018-04-09                   2016-07-10
+##  3 title              Effortless Exception Logging A Logging Utility for R
+##  4 depends_count      1                            1
+##  5 suggests_count     3                            2
+##  6 tidyverse_happy    " TRUE"                      FALSE
+##  7 has_vignette_build FALSE                        FALSE
+##  8 has_tests          TRUE                         TRUE
+##  9 reverse_count      " 0"                         27
+## 10 dl_last_month      "  250"                      37313
+## 11 ci                 Travis                       &amp;lt;NA&amp;gt;
+## 12 test_coverage      NONE                         &amp;lt;NA&amp;gt;
+## 13 forks              " 0"                         &amp;lt;NA&amp;gt;
+## 14 stars              15                           &amp;lt;NA&amp;gt;
+## 15 watchers           " 5"                         &amp;lt;NA&amp;gt;
+## 16 last_commit        &amp;lt;NA&amp;gt;                         &amp;lt;NA&amp;gt;
+## 17 last_issue_closed  8.4                          &amp;lt;NA&amp;gt;
+## 18 contributors       " 3"                         &amp;lt;NA&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You can see from the table that the last publication date for &lt;code&gt;loggit&lt;/code&gt; is April 2018 whereas for &lt;code&gt;futile.logger&lt;/code&gt; it is July 2016. It can be quite hard to gain much from this metric; whereas more recent updates can suggest active development and ongoing improvements to functionality, a lack of update may indicate that a package has reached a stable state.&lt;/p&gt;
+&lt;p&gt;Reverse dependencies, however, tells us a lot more; if a package has a high number of reverse dependencies, one might conclude that there is a higher degree of trust in it in the community, but also more importantly, that it has been exposed to a higher number of users and therefore be less likely to have undiscovered bug. This is also true for the number of downloads.&lt;/p&gt;
+&lt;p&gt;The second half of the values in the table are blank, implying that futile.logger isn’t on GitHub. For me, if this were true, it’d be a cause for concern as I’d like to be able to see the number of open issues and how recent updates were. However, a quick Google search tells me that futile.logger is in fact on GitHub, but just not linked to in its CRAN page.&lt;/p&gt;
+&lt;p&gt;Reading GitHub issues pages is fairly simple. Rather than read every issue in detail, I try to get a rough idea of what’s going on, by skimming through. Typically a large number of issues tend to stem from user questions and enhancement requests, so just looking at the raw numbers isn’t enough.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/packagemetrics/futile.logger-issues.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;p&gt;Looking through the open issues for &lt;code&gt;futile.logger&lt;/code&gt;, the package authors has already flagged a couple of items as bugs, reducing my work. They appear to be do with namespacing issues, so certainly something to be aware of although not necessarily important.&lt;/p&gt;
+&lt;p&gt;Going to the equivalent page for &lt;code&gt;loggit&lt;/code&gt;, I see that there is only one ticket open, but has been flagged as an enhancement. However, fewer issues is not necessarily a sign of package quality, as it cannot be decoupled from package popularity.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/packagemetrics/loggit-issues.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;p&gt;At this point, I could go on, and explore the source code for each package, but at this point I feel it’d lead to diminishing returns. The conclusion I draw and pass on to my colleague is that both packages seem to be functional with no glaring issues. As I’ve used &lt;code&gt;futile.logger&lt;/code&gt; before, and it seems to be more widely used, I’d lean towards that one. My colleague thanks me for my advice and goes with &lt;code&gt;loggit&lt;/code&gt; anyway because he’s used it before on a project and it worked pretty well there, which is fair enough.&lt;/p&gt;
+&lt;p&gt;Package metrics can be a useful source of information about a package, but ultimately, there’s no substitute for experience. Other logging packages are available; these were merely the ones I’d heard of.&lt;/p&gt;
+
+
+
+ </description>
+  <category>R</category>
+  <guid>https://niccrane.com/posts/packagemetrics/</guid>
+  <pubDate>Mon, 30 Jul 2018 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Pop-up to confirm action in Shiny</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/shiny-confirm-popup/</link>
+  <description> 
+
+
+
+
+
+&lt;p&gt;It’s a gorgeous evening in Bath tonight, and my evening has been improved by finding a free table outside at the pub, a large glass of Sauvignon Blanc, and working out how to include a JavaScript confirmation box in Shiny. Here, I’m using Shiny dashboard, although this methodology will work fine with other UI layouts.&lt;/p&gt;
+&lt;p&gt;In the UI file, near the top of the dashboardBody, call &lt;code&gt;tags$head&lt;/code&gt; and &lt;code&gt;tags$script&lt;/code&gt; to give the source of the JavaScript file:&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb1" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode r code-with-copy"&gt;&lt;code class="sourceCode r"&gt;&lt;span id="cb1-1"&gt;tags&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;head&lt;/span&gt;(&lt;/span&gt;
+&lt;span id="cb1-2"&gt;  tags&lt;span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;script&lt;/span&gt;(&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;src =&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;'custom.js'&lt;/span&gt;)&lt;/span&gt;
+&lt;span id="cb1-3"&gt;),&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Then, in a file named &lt;code&gt;custom.js&lt;/code&gt; as above, within the &lt;code&gt;www&lt;/code&gt; folder, include the following code. Here, the button which the user clicks on has the inputId set to “submit”.&lt;/p&gt;
+&lt;div class="code-copy-outer-scaffold"&gt;&lt;div class="sourceCode" id="cb2" style="background: #f1f3f5;"&gt;&lt;pre class="sourceCode js code-with-copy"&gt;&lt;code class="sourceCode javascript"&gt;&lt;span id="cb2-1"&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;$&lt;/span&gt;(&lt;span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;"&gt;document&lt;/span&gt;)&lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;.&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;on&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;'shiny:inputchanged'&lt;/span&gt;&lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;,&lt;/span&gt; &lt;span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"&gt;function&lt;/span&gt;(&lt;span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;"&gt;event&lt;/span&gt;) {&lt;/span&gt;
+&lt;span id="cb2-2"&gt;&lt;/span&gt;
+&lt;span id="cb2-3"&gt;  &lt;span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"&gt;if&lt;/span&gt; (&lt;span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;"&gt;event&lt;/span&gt;&lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;.&lt;/span&gt;&lt;span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;"&gt;name&lt;/span&gt; &lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;===&lt;/span&gt; &lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;'submit'&lt;/span&gt;) {&lt;/span&gt;
+&lt;span id="cb2-4"&gt;&lt;/span&gt;
+&lt;span id="cb2-5"&gt;    &lt;span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"&gt;var&lt;/span&gt; r &lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;=&lt;/span&gt; &lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;confirm&lt;/span&gt;(&lt;span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;"&gt;"Are you sure you want to continue?"&lt;/span&gt;)&lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb2-6"&gt;&lt;/span&gt;
+&lt;span id="cb2-7"&gt;    &lt;span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"&gt;if&lt;/span&gt; (r &lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;===&lt;/span&gt; &lt;span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;"&gt;false&lt;/span&gt;) {&lt;/span&gt;
+&lt;span id="cb2-8"&gt;      &lt;span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;"&gt;event&lt;/span&gt;&lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;.&lt;/span&gt;&lt;span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"&gt;preventDefault&lt;/span&gt;()&lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;;&lt;/span&gt;&lt;/span&gt;
+&lt;span id="cb2-9"&gt;    }&lt;/span&gt;
+&lt;span id="cb2-10"&gt;&lt;/span&gt;
+&lt;span id="cb2-11"&gt;  }&lt;/span&gt;
+&lt;span id="cb2-12"&gt;&lt;/span&gt;
+&lt;span id="cb2-13"&gt;})&lt;span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"&gt;;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Want to know more about JavaScript events in Shiny? Visit this article on the RStudio website for a comprehensive guide: &lt;a href="http://shiny.rstudio.com/articles/js-events.html" class="uri"&gt;http://shiny.rstudio.com/articles/js-events.html&lt;/a&gt;&lt;/p&gt;
+
+
+
+ </description>
+  <category>R</category>
+  <category>Shiny</category>
+  <guid>https://niccrane.com/posts/shiny-confirm-popup/</guid>
+  <pubDate>Mon, 15 Aug 2016 23:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Getting started with Leaflet in Shiny - interactive map apps</title>
+  <dc:creator>Nic Crane</dc:creator>
+  <link>https://niccrane.com/posts/leaflet-shiny/</link>
+  <description> 
+
+
+
+
+
+&lt;p&gt;Lately I’ve been enjoying learning how to use &lt;a href="http://www.shinyapps.io/"&gt;Shiny&lt;/a&gt;, and experimenting with making a &lt;a href="https://thisisnic.shinyapps.io/anscombe/"&gt;fairly basic app&lt;/a&gt;, and wanted to develop my skills further. I’d been looking at an example app from the Shiny website which shows &lt;a href="http://shiny.rstudio.com/gallery/bus-dashboard.html"&gt;live bus locations&lt;/a&gt; in the US, refreshing at short intervals. It looked fairly complex at first, so I was pretty happy when, within 48 hours I’d managed to recreate &lt;a href="https://thisisnic.shinyapps.io/London-Income-Map/"&gt;something of similar complexity&lt;/a&gt;, so here’s your guide on how you can quickly get up to speed using interactive reactive maps in Shiny.&lt;/p&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/leaflet-shiny/london_income_map.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;p&gt;If you follow all of my steps, you will learn:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The basics of geographic information systems (GIS)&lt;/li&gt;
+&lt;li&gt;Spatial mapping in R&lt;/li&gt;
+&lt;li&gt;How to use the R pipe (%&amp;gt;%) operator&lt;/li&gt;
+&lt;li&gt;How to use some features of the dplyr package&lt;/li&gt;
+&lt;li&gt;How to make &lt;a href="https://thisisnic.shinyapps.io/London-Income-Map/"&gt;choropleth maps&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How to use the &lt;a href="https://rstudio.github.io/leaflet/"&gt;Leaflet&lt;/a&gt; JavaScript library in R&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here I’m presuming you already have a reasonable working knowledge of Shiny, and are at least at the point of having created your own app and run some of the examples. I’m also presuming that, like me, you have no prior knowledge of GISs, visualising spatial data, or Leaflet.&lt;/p&gt;
+&lt;section id="step-1-really-get-to-know-the-bus-dashboard-example" class="level2"&gt;
+&lt;h2 class="anchored" data-anchor-id="step-1-really-get-to-know-the-bus-dashboard-example"&gt;Step 1: really get to know the bus dashboard example&lt;/h2&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/leaflet-shiny/bus_dashboard.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;p&gt;The bus dashboard example can be downloaded here. After playing around with the app in a browser, I printed out all of the code and annotated it with a few different colour pens. I went back and forth, writing notes and drawing diagrams until I understood what all the different components did and how they interacted with each other. This took a few hours, but the time invested was well worth it, as the design of the components of my app later felt pretty easy despite my lack of experience in making complex apps.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-2-read-up-on-visualising-spatial-data-in-r" class="level2"&gt;
+&lt;h2 class="anchored" data-anchor-id="step-2-read-up-on-visualising-spatial-data-in-r"&gt;Step 2: read up on visualising spatial data in R&lt;/h2&gt;
+&lt;p&gt;Next, go through the &lt;a href="https://cran.r-project.org/doc/contrib/intro-spatial-rl.pdf"&gt;Introduction to visualising spatial data in R&lt;/a&gt; by Robin Lovelace and James Cheshire, and be sure to run all the code examples. It’s a great introduction to the topic and covers all the relevant background you need, without being verbose. You might want to have a quick read up about geographical mapping systems, but don’t worry too much about in-depth understanding; a basic knowledge of the fact that &lt;a href="https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system"&gt;different&lt;/a&gt; &lt;a href="https://en.wikipedia.org/wiki/World_Geodetic_System"&gt;systems&lt;/a&gt; exist will do.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-3-read-up-on-leaflet-for-r" class="level2"&gt;
+&lt;h2 class="anchored" data-anchor-id="step-3-read-up-on-leaflet-for-r"&gt;Step 3: read up on Leaflet for R&lt;/h2&gt;
+&lt;p&gt;The official site of &lt;a href="https://rstudio.github.io/leaflet/"&gt;Leaflet for R&lt;/a&gt; tells you everything you need to know to get started. You don’t need to read everything here, but as a bare minimum make sure you check out the sections labelled “Introduction”, “The Map Widget”, and “Shiny Integration”.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-4-get-some-gis-boundary-files" class="level2"&gt;
+&lt;h2 class="anchored" data-anchor-id="step-4-get-some-gis-boundary-files"&gt;Step 4: get some GIS boundary files&lt;/h2&gt;
+&lt;p&gt;So now you know that the basics, you need some data to work with. We’ll start off with the boundaries for our maps. I had a few false starts and red herrings, but eventually found the boundary file I was after at the &lt;a href="http://data.london.gov.uk/dataset/statistical-gis-boundary-files-london"&gt;London Datastore&lt;/a&gt;. Once I’d downloaded the data and selected the relevant files, I did a quick plot to check it was what I was after.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-5-get-some-data" class="level2"&gt;
+&lt;h2 class="anchored" data-anchor-id="step-5-get-some-data"&gt;Step 5: get some data&lt;/h2&gt;
+&lt;p&gt;Again, I went to the London Datastore, but this time I downloaded data on the average income of tax payers by London borough. This was really easy to merge with my GIS boundary files, using the dplyr package to do SQL-style joins.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-6-code" class="level2"&gt;
+&lt;h2 class="anchored" data-anchor-id="step-6-code"&gt;Step 6: code!&lt;/h2&gt;
+&lt;p&gt;&lt;img src="https://niccrane.com/posts/leaflet-shiny/code.png" class="img-fluid" style="width:50.0%"&gt;&lt;/p&gt;
+&lt;p&gt;Finally, it was time to pull it all together. I started off by writing a basic Shiny UI file, with placeholders for content, and then started filling in the different sections. First I added a static map, and then proceeded to adapt my code so that the map would change based on the user’s selections.&lt;/p&gt;
+&lt;/section&gt;
+&lt;section id="step-7-refine" class="level2"&gt;
+&lt;h2 class="anchored" data-anchor-id="step-7-refine"&gt;Step 7: refine&lt;/h2&gt;
+&lt;p&gt;This is the step that I’m still at now. Whilst coding the map, my design changed to take into account the capabilities of Shiny and Leaflet. Originally I’d planned to use Shiny’s animated slider to scroll through the different years, but it became quickly apparent that this would render too slowly to be visually appealing. Although I offset some of this slowness by using the leafletProxy function to only redraw the coloured tiles but keep the underlying map, there was still some delay.&lt;/p&gt;
+&lt;p&gt;With the resources I’ve linked to above and the occasional bit of Googling when things don’t quite work as expected, it’s fairly easy to get up and running making interactive maps with Shiny and Leaflet, so give it a go!&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://github.com/thisisnic/Shiny-London-Income-Map"&gt;Click here to view source code on GitHub.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;[Edited to add: I’ve been thinking about how I’d improve my code, and came to the conclusion that whilst this functions as a good introduction to a number of topics, if my goal was solely to create a choropleth of an area, I’d use something more lightweight than Leaflet to accomplish this.]&lt;/em&gt;&lt;/p&gt;
+
+
+&lt;/section&gt;
+
+ </description>
+  <category>R</category>
+  <category>Shiny</category>
+  <guid>https://niccrane.com/posts/leaflet-shiny/</guid>
+  <pubDate>Wed, 27 Apr 2016 23:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
