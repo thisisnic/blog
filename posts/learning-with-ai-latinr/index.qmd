@@ -7,6 +7,9 @@ toc: true
 toc-depth: 2
 image: "retro-future-highway.jpg"
 draft: true
+css: [chat-bubbles.css, chat-blog.css]
+include-after-body: chat-init.html
+resources: [chat-bubbles.js]
 ---
 
 [Nic's intro goes here: LatinR, Medellín, the people, the community.]
@@ -73,7 +76,158 @@ A paper by [Lin (2023)](https://doi.org/10.1177/10451595231184928), "Using LLMs 
 
 The skill is at <https://github.com/thisisnic/rapid-learning>, and I wrote more about it in [an earlier post](../rapid-learning-skill/index.qmd).
 
-My example was: how do tool calls work in ellmer? I know the LLM can't run code on my machine, so how does it call my function? The skill starts by setting a specific, time-bounded goal. Then it finds the code, and gives me activities where it asks me questions and sends me to look at things, never just telling me the answer. As we go, it checks I can explain things in my own words before moving on. At the end it asks what worked and what didn't, and updates itself.
+My example was: how do tool calls work in ellmer? A tool gives the LLM access to information by running R code. If I ask a model what the time is, it can't tell me:
+
+```r
+library(ellmer)
+chat <- chat_anthropic()
+
+chat$chat("what's the time")
+#> I don't have access to real-time
+#> information, so I can't tell you
+#> the current time.
+```
+
+But if I wrap `Sys.time()` up as a tool and register it with the chat, it can:
+
+```r
+time <- tool(
+  fun = Sys.time,
+  description = "Get the time",
+  name = "time"
+)
+
+chat$register_tool(time)
+
+chat$chat("what's the time")
+#> ◯ [tool call] time()
+#> ● #> "2026-11-12 08:40:46"
+#> The current time is **8:40:46 AM**.
+```
+
+I know the LLM can't run code on my machine. So who called `time()`? Here's a shortened version of how the skill took me through it, following the five steps of the framework.
+
+**1. Establish learning goals.** The skill starts by asking what I want to learn and why, where I'm starting from, how I'd like to learn, and how much time I have. My answers were: how tool calling works in ellmer; I've used tools before but that's it; by running code; 10 minutes. It turned that into a specific, time-bounded goal and a way of getting there:
+
+::: {.chat names="🤖,Nic" self="2"}
+::: {.speaker-1}
+**Primary learning goal:** by the end of 10 minutes, be able to explain what happens between asking a question and getting an answer, and where a tool call fits in.
+:::
+::: {.speaker-1}
+**Supporting objective:** compare a conversation with and without a tool call and spot the difference.
+:::
+:::
+
+If I was learning this on my own, I wouldn't spell things out like this. I do sometimes find myself reading through code and forgetting why I was reading it in the first place, so even just having an explicit goal is brilliant. And I wouldn't have known how to get there, because I hadn't read the code yet.
+
+**2. Locate and access resources.** If this wasn't about code, the agent would ask me what kind of resources I wanted to learn from. Here I'd said I wanted to learn by running code, so the resource was an R session with ellmer loaded, and there wasn't much more to it.
+
+**3. Adopt and execute learning activities.** The important bit of this step is that it doesn't tell me the answer. It asks me questions and sends me to go and look at things, so I learn by figuring it out. It usually suggests two to five small activities, and I'll show one here: have a conversation without a tool call and one with, and after each, run `chat$get_turns()` to list everything sent back and forth.
+
+Without a tool call there are two turns, mine and the assistant's, exactly as you'd expect:
+
+```r
+chat$chat("Say hi!")
+#> Hi there! 👋
+#>
+#> How are you doing today? I'm happy to help with whatever you need...
+
+chat$get_turns()
+#> [[1]]
+#> <Turn: user>
+#> Say hi!
+#>
+#> [[2]]
+#> <Turn: assistant>
+#> Hi there! 👋
+#> ...
+```
+
+With a tool call, there are four:
+
+```r
+chat$register_tool(time)
+chat$chat("what's the time")
+#> ◯ [tool call] time()
+#> ● #> "2026-11-12 08:43:13"
+#> The current time is **8:43:13 AM**.
+
+chat$get_turns()
+#> [[1]]
+#> <Turn: user>
+#> what's the time
+#>
+#> [[2]]
+#> <Turn: assistant>
+#> [tool request (toolu_01CW...)]: time()
+#>
+#> [[3]]
+#> <Turn: user>
+#> [tool result (toolu_01CW...)]: "2026-11-12 08:43:13"
+#>
+#> [[4]]
+#> <Turn: assistant>
+#> The current time is **8:43:13 AM**.
+```
+
+Then it asked me about what I was looking at:
+
+::: {.chat names="🤖,Nic" self="2"}
+::: {.speaker-1}
+What do you see in the second turn?
+:::
+::: {.speaker-2}
+The assistant turn is calling `time()`?
+:::
+::: {.speaker-1}
+Is it calling it, or requesting it?
+:::
+::: {.speaker-2}
+Oh. Requesting.
+:::
+::: {.speaker-1}
+Right. The model never calls anything. It only asks. And what do you see in the third turn?
+:::
+::: {.speaker-2}
+There's a user turn with the result, but I didn't type that.
+:::
+::: {.speaker-1}
+So who ran `time()`?
+:::
+::: {.speaker-2}
+...ellmer?
+:::
+::: {.speaker-1}
+And who did it send the result to, and as whom?
+:::
+::: {.speaker-2}
+To the LLM. As me?
+:::
+::: {.speaker-1}
+Yes. Why would it need to do that?
+:::
+::: {.speaker-2}
+So the LLM has what it needs to answer.
+:::
+:::
+
+So that's the answer. The model only ever requests the tool. ellmer runs the R function itself, gets the result, and sends it back to the LLM as if I'd sent it myself.
+
+**4. Monitor and evaluate performance.** As we go, it does checkpoints where it asks me to explain things in my own words, to make sure I really understand before moving on. It congratulates me if I get it right, corrects me if I don't, and writes things to a file as we go.
+
+::: {.chat names="🤖,Nic" self="2"}
+::: {.speaker-1}
+Checkpoint before we move on. In your own words: who decides to use the tool, who runs it, and who sees the result?
+:::
+::: {.speaker-2}
+The LLM decides, ellmer runs it, and the LLM gets the result as if I'd sent it.
+:::
+::: {.speaker-1}
+That's the whole mechanism, and you got there yourself. 🎉 Activity 1 done, five minutes under its timebox.
+:::
+:::
+
+**5. Reassess learning strategies.** At the end it asks what worked and what didn't, and updates the skill itself based on my feedback. I said the most valuable thing was comparing the two conversations side by side, and it noted that it should lead with a comparison next time.
 
 What did this give me? It takes away the overhead of planning how to learn, so I can get straight to the learning, and I'm more ambitious about what I take on. And I have more confidence in what I learn. On Arrow I was learning by analogy. This teaches me how things actually work, so learning with AI is going deeper than learning on my own did.
 
@@ -99,17 +253,26 @@ What was actually going on is that we merge pull requests into Arrow with a scri
 
 The funny thing is that I'd been getting it to write everything up as a Quarto report as I went, and it gave me some quite damning commentary about how bad an experience this was for newcomers. One thing it said was that there was a big stack of pull requests sitting there unacknowledged. When I looked, it was 16 pull requests opened within three minutes of each other. It said they weren't AI generated. Of course they were, and they'd been closed by the person who opened them in the first place.
 
-> **AI:** These PRs are sitting entirely unacknowledged, which is both a poor contributor experience and a growing triage burden for maintainers.
->
-> **AI:** Some are substantive pieces of work (look at \<list of PRs\>) that just didn't make it through.
->
-> **Me:** 😢
->
-> **Me:** 🤔
->
-> **Me:** Don't add judgemental comments about poor contributor experience please, just report the facts.
->
-> **Me:** Hmm... how do you know? These were opened within 3 mins of each other...
+::: {.chat names="🤖,Nic" self="2"}
+::: {.speaker-1}
+These PRs are sitting entirely unacknowledged, which is both a poor contributor experience and a growing triage burden for maintainers.
+:::
+::: {.speaker-1}
+Some are substantive pieces of work (look at \<list of PRs\>) that just didn't make it through.
+:::
+::: {.speaker-2}
+😢
+:::
+::: {.speaker-2}
+🤔
+:::
+::: {.speaker-2}
+Don't add judgemental comments about poor contributor experience please, just report the facts.
+:::
+::: {.speaker-2}
+Hmm... how do you know? These were opened within 3 mins of each other...
+:::
+:::
 
 So some of its conclusions were complete bollocks, and the commentary was leading me in a certain direction. What I took from it: don't have it write the commentary. Have it report the facts, and I'll write the commentary.
 

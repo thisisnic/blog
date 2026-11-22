@@ -1,0 +1,81 @@
+/* Blog-page adjustments for Emil Hvitfeldt's chat-bubbles extension
+   (https://github.com/EmilHvitfeldt/quarto-revealjs-chat-bubbles), which is built for
+   revealjs slides. On a page the chat should take its natural height, not scroll. */
+.chat {
+  overflow: visible;
+  max-height: none;
+  margin: 1.25rem 0;
+}
+
+.chat::after {
+  display: none;
+}
+
+/* The rules below are the same overrides the LatinR slides use, minus the .reveal scope. */
+/* Chat bubbles (iMessage theme): deck font, avatars pinned beside each bubble.
+   Speaker 1 is the agent, named with an emoji so that emoji becomes its avatar.
+   Speaker 2 (self) uses an image avatar. */
+.chat[data-chat-theme="imessage"] {
+  padding: 0 2.4em;
+}
+
+[data-chat-theme="imessage"] [data-slot] {
+  font-weight: 400;
+  font-size: 0.8em;
+  padding: 0.4em 0.8em;
+}
+
+.chat[data-chat-theme="imessage"] {
+  --chat-gap: 0.3rem;
+}
+
+/* Self avatar: GitHub profile picture, embedded so the single-file HTML keeps it */
+[data-chat-theme="imessage"] [data-self] .bubble-avatar {
+  background-image: url("data:image/jpeg;base64,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");
+  background-size: cover;
+  background-position: center;
+  color: transparent;
+}
+
+[data-chat-theme="imessage"] .bubble-avatar {
+  display: flex;
+  position: absolute;
+  bottom: 0;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 50%;
+}
+
+[data-chat-theme="imessage"] [data-slot]:not([data-self]) .bubble-avatar {
+  left: -2.2em;
+}
+
+[data-chat-theme="imessage"] [data-self] .bubble-avatar {
+  right: -2.2em;
+}
+
+/* Lists and inline code inside the blue agent bubble stay readable */
+[data-chat-theme="imessage"] [data-slot="1"] ol,
+[data-chat-theme="imessage"] [data-slot="1"] ul {
+  color: #ffffff;
+  margin-bottom: 0;
+}
+
+[data-chat-theme="imessage"] [data-slot="1"] li::marker {
+  color: #ffffff;
+}
+
+[data-chat-theme="imessage"] [data-slot="1"] code {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Emoji avatar: no coloured disc behind it, just the glyph */
+[data-chat-theme="imessage"] [data-slot="1"] .bubble-avatar {
+  background-color: transparent;
+  font-size: 1.5em;
+  width: 1.2em;
+  height: 1.2em;
+  left: -1.5em;
+}
+

@@ -163,10 +163,14 @@ background-color: null;
 font-style: inherit;">#&gt; The current time is **8:40:46 AM**.</span></span></code></pre></div></div>
 <p>I know the LLM can’t run code on my machine. So who called <code>time()</code>? Here’s a shortened version of how the skill took me through it, following the five steps of the framework.</p>
 <p><strong>1. Establish learning goals.</strong> The skill starts by asking what I want to learn and why, where I’m starting from, how I’d like to learn, and how much time I have. My answers were: how tool calling works in ellmer; I’ve used tools before but that’s it; by running code; 10 minutes. It turned that into a specific, time-bounded goal and a way of getting there:</p>
-<blockquote class="blockquote">
+<div class="chat" data-names="🤖,Nic" data-self="2">
+<div class="speaker-1">
 <p><strong>Primary learning goal:</strong> by the end of 10 minutes, be able to explain what happens between asking a question and getting an answer, and where a tool call fits in.</p>
+</div>
+<div class="speaker-1">
 <p><strong>Supporting objective:</strong> compare a conversation with and without a tool call and spot the difference.</p>
-</blockquote>
+</div>
+</div>
 <p>If I was learning this on my own, I wouldn’t spell things out like this. I do sometimes find myself reading through code and forgetting why I was reading it in the first place, so even just having an explicit goal is brilliant. And I wouldn’t have known how to get there, because I hadn’t read the code yet.</p>
 <p><strong>2. Locate and access resources.</strong> If this wasn’t about code, the agent would ask me what kind of resources I wanted to learn from. Here I’d said I wanted to learn by running code, so the resource was an R session with ellmer loaded, and there wasn’t much more to it.</p>
 <p><strong>3. Adopt and execute learning activities.</strong> The important bit of this step is that it doesn’t tell me the answer. It asks me questions and sends me to go and look at things, so I learn by figuring it out. It usually suggests two to five small activities, and I’ll show one here: have a conversation without a tool call and one with, and after each, run <code>chat$get_turns()</code> to list everything sent back and forth.</p>
@@ -291,27 +295,57 @@ font-style: inherit;">#&gt; &lt;Turn: assistant&gt;</span></span>
 background-color: null;
 font-style: inherit;">#&gt; The current time is **8:43:13 AM**.</span></span></code></pre></div></div>
 <p>Then it asked me about what I was looking at:</p>
-<blockquote class="blockquote">
-<p><strong>AI:</strong> What do you see in the second turn?</p>
-<p><strong>Me:</strong> The assistant turn is calling <code>time()</code>?</p>
-<p><strong>AI:</strong> Is it calling it, or requesting it?</p>
-<p><strong>Me:</strong> Oh. Requesting.</p>
-<p><strong>AI:</strong> Right. The model never calls anything. It only asks. And what do you see in the third turn?</p>
-<p><strong>Me:</strong> There’s a user turn with the result, but I didn’t type that.</p>
-<p><strong>AI:</strong> So who ran <code>time()</code>?</p>
-<p><strong>Me:</strong> …ellmer?</p>
-<p><strong>AI:</strong> And who did it send the result to, and as whom?</p>
-<p><strong>Me:</strong> To the LLM. As me?</p>
-<p><strong>AI:</strong> Yes. Why would it need to do that?</p>
-<p><strong>Me:</strong> So the LLM has what it needs to answer.</p>
-</blockquote>
+<div class="chat" data-names="🤖,Nic" data-self="2">
+<div class="speaker-1">
+<p>What do you see in the second turn?</p>
+</div>
+<div class="speaker-2">
+<p>The assistant turn is calling <code>time()</code>?</p>
+</div>
+<div class="speaker-1">
+<p>Is it calling it, or requesting it?</p>
+</div>
+<div class="speaker-2">
+<p>Oh. Requesting.</p>
+</div>
+<div class="speaker-1">
+<p>Right. The model never calls anything. It only asks. And what do you see in the third turn?</p>
+</div>
+<div class="speaker-2">
+<p>There’s a user turn with the result, but I didn’t type that.</p>
+</div>
+<div class="speaker-1">
+<p>So who ran <code>time()</code>?</p>
+</div>
+<div class="speaker-2">
+<p>…ellmer?</p>
+</div>
+<div class="speaker-1">
+<p>And who did it send the result to, and as whom?</p>
+</div>
+<div class="speaker-2">
+<p>To the LLM. As me?</p>
+</div>
+<div class="speaker-1">
+<p>Yes. Why would it need to do that?</p>
+</div>
+<div class="speaker-2">
+<p>So the LLM has what it needs to answer.</p>
+</div>
+</div>
 <p>So that’s the answer. The model only ever requests the tool. ellmer runs the R function itself, gets the result, and sends it back to the LLM as if I’d sent it myself.</p>
 <p><strong>4. Monitor and evaluate performance.</strong> As we go, it does checkpoints where it asks me to explain things in my own words, to make sure I really understand before moving on. It congratulates me if I get it right, corrects me if I don’t, and writes things to a file as we go.</p>
-<blockquote class="blockquote">
-<p><strong>AI:</strong> Checkpoint before we move on. In your own words: who decides to use the tool, who runs it, and who sees the result?</p>
-<p><strong>Me:</strong> The LLM decides, ellmer runs it, and the LLM gets the result as if I’d sent it.</p>
-<p><strong>AI:</strong> That’s the whole mechanism, and you got there yourself. 🎉 Activity 1 done, five minutes under its timebox.</p>
-</blockquote>
+<div class="chat" data-names="🤖,Nic" data-self="2">
+<div class="speaker-1">
+<p>Checkpoint before we move on. In your own words: who decides to use the tool, who runs it, and who sees the result?</p>
+</div>
+<div class="speaker-2">
+<p>The LLM decides, ellmer runs it, and the LLM gets the result as if I’d sent it.</p>
+</div>
+<div class="speaker-1">
+<p>That’s the whole mechanism, and you got there yourself. 🎉 Activity 1 done, five minutes under its timebox.</p>
+</div>
+</div>
 <p><strong>5. Reassess learning strategies.</strong> At the end it asks what worked and what didn’t, and updates the skill itself based on my feedback. I said the most valuable thing was comparing the two conversations side by side, and it noted that it should lead with a comparison next time.</p>
 <p>What did this give me? It takes away the overhead of planning how to learn, so I can get straight to the learning, and I’m more ambitious about what I take on. And I have more confidence in what I learn. On Arrow I was learning by analogy. This teaches me how things actually work, so learning with AI is going deeper than learning on my own did.</p>
 <p><strong>Use AI to customise learning to make it work for you.</strong></p>
@@ -339,14 +373,26 @@ font-style: inherit;">#&gt; The current time is **8:43:13 AM**.</span></span></c
 </div>
 <p>What was actually going on is that we merge pull requests into Arrow with a script, which does a few extra bits and pieces. On GitHub it looks like the pull request was closed without merging, when it actually was merged. So when the agent queried the GitHub API, it looked like nobody had got anything merged. That wasn’t true, but it took a moment to figure out.</p>
 <p>The funny thing is that I’d been getting it to write everything up as a Quarto report as I went, and it gave me some quite damning commentary about how bad an experience this was for newcomers. One thing it said was that there was a big stack of pull requests sitting there unacknowledged. When I looked, it was 16 pull requests opened within three minutes of each other. It said they weren’t AI generated. Of course they were, and they’d been closed by the person who opened them in the first place.</p>
-<blockquote class="blockquote">
-<p><strong>AI:</strong> These PRs are sitting entirely unacknowledged, which is both a poor contributor experience and a growing triage burden for maintainers.</p>
-<p><strong>AI:</strong> Some are substantive pieces of work (look at &lt;list of PRs&gt;) that just didn’t make it through.</p>
-<p><strong>Me:</strong> 😢</p>
-<p><strong>Me:</strong> 🤔</p>
-<p><strong>Me:</strong> Don’t add judgemental comments about poor contributor experience please, just report the facts.</p>
-<p><strong>Me:</strong> Hmm… how do you know? These were opened within 3 mins of each other…</p>
-</blockquote>
+<div class="chat" data-names="🤖,Nic" data-self="2">
+<div class="speaker-1">
+<p>These PRs are sitting entirely unacknowledged, which is both a poor contributor experience and a growing triage burden for maintainers.</p>
+</div>
+<div class="speaker-1">
+<p>Some are substantive pieces of work (look at &lt;list of PRs&gt;) that just didn’t make it through.</p>
+</div>
+<div class="speaker-2">
+<p>😢</p>
+</div>
+<div class="speaker-2">
+<p>🤔</p>
+</div>
+<div class="speaker-2">
+<p>Don’t add judgemental comments about poor contributor experience please, just report the facts.</p>
+</div>
+<div class="speaker-2">
+<p>Hmm… how do you know? These were opened within 3 mins of each other…</p>
+</div>
+</div>
 <p>So some of its conclusions were complete bollocks, and the commentary was leading me in a certain direction. What I took from it: don’t have it write the commentary. Have it report the facts, and I’ll write the commentary.</p>
 <p>After that minor trauma, I carried on. I worked out a better way of calculating first contributions, and got a plot of what actually happens to new contributors’ PRs. A load of them get merged. Some get closed without merging, for various reasons. And a lot are still open, skewed towards the more recent ones, which makes sense: it can take a while to get a review, especially after that horrible January peak.</p>
 <div class="quarto-figure quarto-figure-center">
