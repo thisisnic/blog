@@ -10,7 +10,7 @@
 <atom:link href="https://niccrane.com/blog.xml" rel="self" type="application/rss+xml"/>
 <description></description>
 <generator>quarto-1.9.35</generator>
-<lastBuildDate>Sun, 22 Nov 2026 05:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 22 Nov 2026 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Learning with AI: my LatinR 2026 keynote</title>
   <dc:creator>Nic Crane</dc:creator>
@@ -21,8 +21,8 @@
 
 
 
-<p>[Nic’s intro goes here: LatinR, Medellín, the people, the community.]</p>
-<p>The slides are at <a href="https://thisisnic.github.io/latinr/" class="uri">https://thisisnic.github.io/latinr/</a>.</p>
+<p>I had the honour of being invited to deliver a keynote at the 2026 LatinR conference in Medellín, Colombia, earlier this month. The conference was amazing - the LatinR community is the most welcoming I’ve encountered, with some fantastic people who I hope to collaborate with in future.</p>
+<p>This blog post covers the key ideas from my talk, and the slides are at <a href="https://thisisnic.github.io/latinr/" class="uri">https://thisisnic.github.io/latinr/</a>.</p>
 <p><em>A note on how this was written: the talk wasn’t recorded, so I did a shortened run-through into speech-to-text, had Claude turn the transcript and my slides into a first draft, and then edited it myself so that it says what I meant.</em></p>
 <section id="learning-with-ai" class="level2">
 <h2 class="anchored" data-anchor-id="learning-with-ai">Learning with AI</h2>
@@ -472,6 +472,12 @@ font-style: inherit;">#&gt; The current time is **8:43:13 AM**.</span></span></c
 <h2 class="anchored" data-anchor-id="wrapping-up">Wrapping up</h2>
 <p>I started by talking about 2016, but we can go back a lot further to see how people react to new technology. Around 370 BC, Socrates said that reading and writing would ruin people’s ability to memorise things and recite them from memory. In the 1970s, people thought pocket calculators would mean we lost the ability to do mental arithmetic. In the 1990s, people complained that the internet would cost us our library research and critical thinking skills.</p>
 <p>In all of these cases there was some truth in it. Certain skills absolutely did atrophy. But at the same time, the possibilities for what we could do massively increased. And that is the bit that is exciting to me.</p>
+</section>
+<section id="qa" class="level2">
+<h2 class="anchored" data-anchor-id="qa">Q&amp;A</h2>
+<p>In the Q&amp;A after my talk, I got a question about whether we can use AI to help us set boundaries. The answer is yes!</p>
+<p>I mentioned a prompt I’d found on a Reddit thread that you can use to practice assertiveness; I actually used this and it really did help.</p>
+<p><a href="https://www.reddit.com/r/socialskills/comments/18ezzpm/i_trained_myself_to_stop_people_pleasing_and/" class="uri">https://www.reddit.com/r/socialskills/comments/18ezzpm/i_trained_myself_to_stop_people_pleasing_and/</a></p>
 
 
 </section>
@@ -481,7 +487,7 @@ font-style: inherit;">#&gt; The current time is **8:43:13 AM**.</span></span></c
   <category>Open Source</category>
   <category>R</category>
   <guid>https://niccrane.com/posts/learning-with-ai-latinr/</guid>
-  <pubDate>Sun, 22 Nov 2026 05:00:00 GMT</pubDate>
+  <pubDate>Sun, 22 Nov 2026 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/learning-with-ai-latinr/retro-future-highway.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -621,7 +627,7 @@ a add · e edit · n notes · p progress · h hit · m missed · c clear · d de
  ]]></description>
   <category>AI</category>
   <guid>https://niccrane.com/posts/go-utilities/</guid>
-  <pubDate>Mon, 28 Sep 2026 04:00:00 GMT</pubDate>
+  <pubDate>Sun, 27 Sep 2026 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/go-utilities/gopher.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -955,7 +961,7 @@ a add · e edit · n notes · p progress · h hit · m missed · c clear · d de
   <category>AI</category>
   <category>R</category>
   <guid>https://niccrane.com/posts/rapid-learning-skill/</guid>
-  <pubDate>Thu, 24 Sep 2026 04:00:00 GMT</pubDate>
+  <pubDate>Wed, 23 Sep 2026 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rapid-learning-skill/featured.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -1041,7 +1047,7 @@ a add · e edit · n notes · p progress · h hit · m missed · c clear · d de
   <category>AI</category>
   <category>Open Source</category>
   <guid>https://niccrane.com/posts/ai-open-source-contribution/</guid>
-  <pubDate>Sat, 20 Jun 2026 04:00:00 GMT</pubDate>
+  <pubDate>Fri, 19 Jun 2026 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/ai-open-source-contribution/manchesterroof.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -2155,7 +2161,7 @@ font-style: inherit;">collect</span>()</span></code></pre></div></div>
   <category>Arrow</category>
   <category>Data Engineering</category>
   <guid>https://niccrane.com/posts/intro-to-parquet/</guid>
-  <pubDate>Tue, 02 Jun 2026 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 01 Jun 2026 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/intro-to-parquet/Apache_Parquet_logo.svg.png" medium="image" type="image/png" height="29" width="144"/>
 </item>
 <item>
@@ -2323,7 +2329,7 @@ font-style: inherit;">"Strongly agree"</span></span>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/claude-code-dplyr-arrow/</guid>
-  <pubDate>Fri, 10 Apr 2026 04:00:00 GMT</pubDate>
+  <pubDate>Thu, 09 Apr 2026 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/claude-code-dplyr-arrow/dplyr_arrow.png" medium="image" type="image/png" height="45" width="144"/>
 </item>
 <item>
@@ -3152,7 +3158,7 @@ C++</code></pre>
   <category>R</category>
   <category>LLMs</category>
   <guid>https://niccrane.com/posts/llm-issue-triage/</guid>
-  <pubDate>Fri, 06 Mar 2026 05:00:00 GMT</pubDate>
+  <pubDate>Fri, 06 Mar 2026 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>AI Tooling and Open Source</title>
@@ -3230,7 +3236,7 @@ C++</code></pre>
  ]]></description>
   <category>AI</category>
   <guid>https://niccrane.com/posts/ai-tooling-open-source/</guid>
-  <pubDate>Tue, 27 Jan 2026 05:00:00 GMT</pubDate>
+  <pubDate>Tue, 27 Jan 2026 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/ai-tooling-open-source/ai_code_future.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -4040,7 +4046,7 @@ font-style: inherit;">datatable</span>(packages)</span></code></pre></div></div>
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/llms_for_learning/</guid>
-  <pubDate>Sun, 03 Aug 2025 04:00:00 GMT</pubDate>
+  <pubDate>Sat, 02 Aug 2025 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/llms_for_learning/tutor_img.png" medium="image" type="image/png" height="144" width="144"/>
 </item>
 <item>
@@ -4368,7 +4374,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socalmediagen2/</guid>
-  <pubDate>Mon, 17 Feb 2025 05:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 Feb 2025 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socalmediagen2/ellmershiny.png" medium="image" type="image/png" height="172" width="144"/>
 </item>
 <item>
@@ -4442,7 +4448,7 @@ What's your biggest video recording fear? Share in the comments! 👇
   <category>R</category>
   <category>AI</category>
   <guid>https://niccrane.com/posts/socialmediagen/</guid>
-  <pubDate>Fri, 14 Feb 2025 05:00:00 GMT</pubDate>
+  <pubDate>Fri, 14 Feb 2025 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/socialmediagen/preview.png" medium="image" type="image/png" height="98" width="144"/>
 </item>
 <item>
@@ -4595,7 +4601,7 @@ on:
   <category>R</category>
   <category>GitHub Actions</category>
   <guid>https://niccrane.com/posts/rwatcher/</guid>
-  <pubDate>Thu, 28 Dec 2023 05:00:00 GMT</pubDate>
+  <pubDate>Thu, 28 Dec 2023 00:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/rwatcher/job.png" medium="image" type="image/png" height="117" width="144"/>
 </item>
 <item>
@@ -4623,7 +4629,7 @@ on:
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/debugging/</guid>
-  <pubDate>Wed, 04 Oct 2023 04:00:00 GMT</pubDate>
+  <pubDate>Tue, 03 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/debugging/ahab.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -4677,7 +4683,7 @@ on:
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/goats/</guid>
-  <pubDate>Tue, 03 Oct 2023 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 02 Oct 2023 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/goats/goats.jpg" medium="image" type="image/jpeg"/>
 </item>
 <item>
@@ -5520,7 +5526,7 @@ font-style: inherit;">FALSE</span>)</span></code></pre></div></div>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/type-inference/</guid>
-  <pubDate>Mon, 21 Nov 2022 05:00:00 GMT</pubDate>
+  <pubDate>Mon, 21 Nov 2022 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Arrow New Feature Showcase: show_exec_plan()</title>
@@ -5610,7 +5616,7 @@ font-style: inherit;">show_exec_plan</span>()</span></code></pre></div></div>
   <category>R</category>
   <category>Arrow</category>
   <guid>https://niccrane.com/posts/show-exec-plan/</guid>
-  <pubDate>Fri, 26 Aug 2022 04:00:00 GMT</pubDate>
+  <pubDate>Thu, 25 Aug 2022 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Customising pkgdown with a version selector</title>
@@ -6535,7 +6541,7 @@ font-style: inherit;">;</span></span>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/pkgdown-version-selector/</guid>
-  <pubDate>Fri, 15 Apr 2022 04:00:00 GMT</pubDate>
+  <pubDate>Thu, 14 Apr 2022 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Error chaining</title>
@@ -7192,7 +7198,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/error-chaining/</guid>
-  <pubDate>Sat, 09 Apr 2022 04:00:00 GMT</pubDate>
+  <pubDate>Fri, 08 Apr 2022 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Open Source Developer Apprenticeship - 9 months in</title>
@@ -7256,7 +7262,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>Arrow</category>
   <category>Career</category>
   <guid>https://niccrane.com/posts/open-source-apprenticeship/</guid>
-  <pubDate>Sun, 23 Jan 2022 05:00:00 GMT</pubDate>
+  <pubDate>Sun, 23 Jan 2022 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>R package documentation - what makes a good example?</title>
@@ -7346,7 +7352,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>R</category>
   <category>Python</category>
   <guid>https://niccrane.com/posts/r-examples/</guid>
-  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
   <media:content url="https://niccrane.com/posts/r-examples/arrow_examples.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 <item>
@@ -7421,7 +7427,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/good-examples/</guid>
-  <pubDate>Tue, 18 May 2021 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 17 May 2021 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>My First Month at Ursa Computing</title>
@@ -7451,7 +7457,7 @@ font-style: inherit;">"even_more_cats.csv"</span>)</span></code></pre></div></di
   <category>Arrow</category>
   <category>Career</category>
   <guid>https://niccrane.com/posts/ursa-computing-first-month/</guid>
-  <pubDate>Thu, 13 May 2021 04:00:00 GMT</pubDate>
+  <pubDate>Wed, 12 May 2021 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Why is eval parse bad?</title>
@@ -7747,7 +7753,7 @@ font-style: inherit;">eval_array_expression</span>(not_na_agg))</span></code></p
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/eval-parse/</guid>
-  <pubDate>Tue, 20 Apr 2021 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 19 Apr 2021 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Three Valued Logic</title>
@@ -7850,7 +7856,7 @@ font-style: inherit;"># are all values greater than 5?</span></span></code></pre
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/three-valued-logic/</guid>
-  <pubDate>Sat, 17 Apr 2021 04:00:00 GMT</pubDate>
+  <pubDate>Fri, 16 Apr 2021 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Ten Steps to Becoming a Tidyverse Contributor</title>
@@ -7942,7 +7948,7 @@ font-style: inherit;"># are all values greater than 5?</span></span></code></pre
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/tidyverse-contributor/</guid>
-  <pubDate>Wed, 28 Nov 2018 05:00:00 GMT</pubDate>
+  <pubDate>Wed, 28 Nov 2018 00:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Scraping rstudio::conf 2018 Abstracts</title>
@@ -8792,7 +8798,7 @@ font-style: inherit;">=</span> abstracts</span></code></pre></div></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/scraping-rstudioconf-2018-abstracts/</guid>
-  <pubDate>Wed, 22 Aug 2018 04:00:00 GMT</pubDate>
+  <pubDate>Tue, 21 Aug 2018 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Comparing R packages using packagemetrics</title>
@@ -8869,7 +8875,7 @@ font-style: inherit;">"stat"</span>)</span></code></pre></div></div>
  ]]></description>
   <category>R</category>
   <guid>https://niccrane.com/posts/packagemetrics/</guid>
-  <pubDate>Tue, 31 Jul 2018 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 30 Jul 2018 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Pop-up to confirm action in Shiny</title>
@@ -8979,7 +8985,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
   <category>R</category>
   <category>Shiny</category>
   <guid>https://niccrane.com/posts/shiny-confirm-popup/</guid>
-  <pubDate>Tue, 16 Aug 2016 04:00:00 GMT</pubDate>
+  <pubDate>Mon, 15 Aug 2016 23:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Getting started with Leaflet in Shiny - interactive map apps</title>
@@ -9043,7 +9049,7 @@ font-style: inherit;">;</span></span></code></pre></div></div>
   <category>R</category>
   <category>Shiny</category>
   <guid>https://niccrane.com/posts/leaflet-shiny/</guid>
-  <pubDate>Thu, 28 Apr 2016 04:00:00 GMT</pubDate>
+  <pubDate>Wed, 27 Apr 2016 23:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>
